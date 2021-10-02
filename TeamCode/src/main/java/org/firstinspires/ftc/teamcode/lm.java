@@ -12,7 +12,9 @@ public class lm extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        telemetry.addLine("LMAO I LIB");
-        telemetry.update();
+        while (opModeIsActive()) {
+            telemetry.addLine("LMAO I LIB olololololollo");
+            telemetry.update();
+        }
     }
 }
