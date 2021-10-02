@@ -12,7 +12,7 @@ public class unnnn extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addLine("HA LMAO");
+            telemetry.addLine("HA");
             telemetry.update();
         }
     }
