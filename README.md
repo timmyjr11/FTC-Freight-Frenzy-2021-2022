@@ -1,6 +1,6 @@
 ## NOTICE
 
-This repository is NOT the offical FTC SDK for the 2021 - 2022 season, this is for FTC Team 14436, Roaring Robotics.
+This repository is NOT the official FTC SDK for the 2021 - 2022 season, this is for FTC Team 14436, Roaring Robotics.
 
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
