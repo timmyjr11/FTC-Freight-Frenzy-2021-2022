@@ -9,5 +9,9 @@ public class GitTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         waitForStart();
+
+        while (opModeIsActive()) {
+
+        }
     }
 }
