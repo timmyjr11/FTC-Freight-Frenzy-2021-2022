@@ -11,7 +11,7 @@ public class GitTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
+            telemetry.addLine("Ah yes, git works. Good stuff.");
         }
     }
 }
