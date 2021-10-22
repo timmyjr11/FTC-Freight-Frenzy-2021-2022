@@ -11,7 +11,7 @@ public class PurplePotato extends LinearOpMode {
         telemetry.update();
         waitForStart();
         while (opModeIsActive()){
-            telemetry.addLine("gae");
+            telemetry.addLine("gaaaaaaaaaaaaaaaaaaaa");
             telemetry.update();
         }
 
