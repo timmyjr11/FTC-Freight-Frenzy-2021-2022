@@ -11,7 +11,7 @@ public class PurplePotato extends LinearOpMode {
         telemetry.update();
         waitForStart();
         while (opModeIsActive()){
-            telemetry.addLine("ga");
+            telemetry.addLine("https://github.com/timmyjr11/Team14436-FTC-Freight-Frenzy-2021-2022/invitations");
             telemetry.update();
         }
 
