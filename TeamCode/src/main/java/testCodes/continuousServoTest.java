@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package testCodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,8 +15,7 @@ public class continuousServoTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         continuous = hardwareMap.get(CRServo.class, "continuous");
         continuous2 = hardwareMap.get(CRServo.class, "continuous2");
-
-
+        
         waitForStart();
 
         while (opModeIsActive()) {
