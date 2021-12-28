@@ -63,7 +63,6 @@ public class dualUsbCameras extends LinearOpMode {
                 });
 
         FtcDashboard.getInstance().startCameraStream(usbBoi, 30);
-        FtcDashboard.getInstance().startCameraStream(usbBoi2, 30);
 
         waitForStart();
 
