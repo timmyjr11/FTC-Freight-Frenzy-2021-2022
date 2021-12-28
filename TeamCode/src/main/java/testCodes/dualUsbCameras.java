@@ -34,41 +34,42 @@ public class dualUsbCameras extends LinearOpMode {
                 usbBoi.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                     @Override
                     public void onOpened() {
-                        usbBoi.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                        usbBoi.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
                     }
 
                     @Override
                     public void onError(int errorCode) {
                         usbBoi.closeCameraDevice();
-                        telemetry.addLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA1");
+                        telemetry.addLine("AA1");
+                        telemetry.addData("error", errorCode);
+
                         telemetry.update();
-
-
                     }
                 });
 
                 usbBoi2.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                     @Override
                     public void onOpened() {
-                        usbBoi2.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                        usbBoi2.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
                     }
 
                     @Override
                     public void onError(int errorCode) {
                         usbBoi.closeCameraDevice();
-                        telemetry.addLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA2");
+                        telemetry.addLine("AA2");
+                        telemetry.addData("error", errorCode);
                         telemetry.update();
                     }
                 });
 
-        FtcDashboard.getInstance().startCameraStream(usbBoi2, 30);
         FtcDashboard.getInstance().startCameraStream(usbBoi, 30);
-
+        FtcDashboard.getInstance().startCameraStream(usbBoi2, 30);
 
         waitForStart();
 
                 while (opModeIsActive() && !isStopRequested()) {
                     telemetry.update();
+                    dash.getTelemetry();
                 }
 
 
