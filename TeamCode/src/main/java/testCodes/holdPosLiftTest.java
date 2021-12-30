@@ -2,75 +2,69 @@ package testCodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class holdPosLiftTest<state> extends LinearOpMode {
+public class holdPosLiftTest extends LinearOpMode {
     DcMotorEx rightLiftMotor;
     DcMotorEx leftLiftMotor;
 
-    int currentLeftPosition;
-    int currentRightPosition;
+    Servo leftLinkage;
+    Servo rightLinkage;
+
+    boolean previousA = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
         rightLiftMotor = hardwareMap.get(DcMotorEx.class, "rightLiftMotor");
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
+        leftLinkage = hardwareMap.get(Servo.class, "leftLinkage");
+        rightLinkage = hardwareMap.get(Servo.class, "rightLinkage");
 
         rightLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         leftLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        leftLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        currentLeftPosition = leftLiftMotor.getCurrentPosition();
-        currentRightPosition = rightLiftMotor.getCurrentPosition();
+        leftLinkage.setDirection(Servo.Direction.REVERSE);
 
+        leftLinkage.setPosition(0);
+        rightLinkage.setPosition(0);
 
 
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            if(gamepad1.dpad_up){
-                rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rightLiftMotor.setVelocity(750);
-                leftLiftMotor.setVelocity(750);
-            }
 
-            if (gamepad1.dpad_down){
-                rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            if (gamepad1.dpad_up && !gamepad1.dpad_down){
+                rightLiftMotor.setVelocity(850);
+                leftLiftMotor.setVelocity(850);
+            } else if (gamepad1.dpad_down && !gamepad1.dpad_up){
                 rightLiftMotor.setVelocity(-750);
                 leftLiftMotor.setVelocity(-750);
+            } else if (!gamepad1.dpad_up && !gamepad1.dpad_down) {
+                leftLiftMotor.setVelocity(1);
+                rightLiftMotor.setVelocity(1);
             }
 
-            if (!gamepad1.dpad_up && !gamepad1.dpad_down){
-                rightLiftMotor.setVelocity(0);
-                leftLiftMotor.setVelocity(0);
-
-                rightLiftMotor.setTargetPosition(currentRightPosition);
-                leftLiftMotor.setTargetPosition(currentLeftPosition);
-
-                rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                if (currentRightPosition < rightLiftMotor.getTargetPosition()) {
-                    rightLiftMotor.setPower(0.2);
-                }   else if (currentRightPosition > rightLiftMotor.getTargetPosition()) {
-                        rightLiftMotor.setPower(0);
-                }
-
-                if (currentLeftPosition < leftLiftMotor.getTargetPosition()) {
-                    leftLiftMotor.setPower(0.2);
-                } else if (currentLeftPosition > leftLiftMotor.getTargetPosition()) {
-                    leftLiftMotor.setPower(0);
+            if (gamepad1.a && !previousA){
+                if (leftLinkage.getPosition() == 0 && rightLinkage.getPosition() == 0) {
+                    leftLinkage.setPosition(1);
+                    rightLinkage.setPosition(1);
+                } else if (leftLinkage.getPosition() == 1 && rightLinkage.getPosition() == 1) {
+                    leftLinkage.setPosition(0);
+                    rightLinkage.setPosition(0);
                 }
             }
 
-            telemetry.addData("left motor", leftLiftMotor.getCurrentPosition());
-            telemetry.addData("right motor", rightLiftMotor.getCurrentPosition());
+            previousA = gamepad1.a;
+
+            telemetry.addData("D-Pad up", gamepad1.dpad_up);
+            telemetry.addData("D-pad down", gamepad1.dpad_down);
+            telemetry.addData("A", gamepad1.a);
+            telemetry.addData("previous A", previousA);
             telemetry.update();
         }
     }

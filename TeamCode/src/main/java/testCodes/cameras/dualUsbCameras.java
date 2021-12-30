@@ -1,4 +1,4 @@
-package testCodes;
+package testCodes.cameras;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;

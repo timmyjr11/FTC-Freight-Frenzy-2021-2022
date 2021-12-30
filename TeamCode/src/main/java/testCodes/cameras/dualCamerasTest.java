@@ -1,4 +1,4 @@
-package testCodes;
+package testCodes.cameras;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
