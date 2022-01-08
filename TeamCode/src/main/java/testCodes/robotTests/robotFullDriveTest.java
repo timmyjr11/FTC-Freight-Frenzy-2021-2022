@@ -16,6 +16,7 @@ public class robotFullDriveTest extends LinearOpMode {
     DcMotorEx backRight;
     DcMotorEx rightLiftMotor;
     DcMotorEx leftLiftMotor;
+    DcMotorEx intake;
 
     Servo leftLinkage;
     Servo rightLinkage;
@@ -33,6 +34,7 @@ public class robotFullDriveTest extends LinearOpMode {
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         rightLiftMotor = hardwareMap.get(DcMotorEx.class, "rightLiftMotor");
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         leftLinkage = hardwareMap.get(Servo.class, "leftLinkage");
         rightLinkage = hardwareMap.get(Servo.class, "rightLinkage");
@@ -49,6 +51,7 @@ public class robotFullDriveTest extends LinearOpMode {
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         rightLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         leftLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -97,6 +100,16 @@ public class robotFullDriveTest extends LinearOpMode {
         if (gamepad2.b) {
             rightServoWheel.setPower(1);
             leftServoWheel.setPower(1);
+        }
+
+        if (gamepad2.right_trigger >= 0.5) {
+            intake.setPower(1);
+        } else if (gamepad2.left_trigger >= 0.5) {
+            intake.setPower(-1);
+        }
+
+        if (gamepad2.right_trigger < 0.5 && gamepad2.left_trigger < 0.5){
+            intake.setPower(0);
         }
 
         previousA = gamepad1.a;

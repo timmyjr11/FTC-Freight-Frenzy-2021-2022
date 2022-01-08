@@ -112,8 +112,6 @@ public class dualUsbPipeline extends LinearOpMode {
             return OutPut;
 
         }
-        public Mat getDaResults() {
-            return OutPut;
-        }
+        public Mat getDaResults() { return OutPut; }
     }
 }
