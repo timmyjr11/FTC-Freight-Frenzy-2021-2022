@@ -31,6 +31,13 @@ public class brakeInDatBot extends LinearOpMode {
             frontRight.setPower(1);
             backLeft.setPower(1);
             backRight.setPower(1);
+
+            if(gamepad1.a){
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
+            }
         }
     }
 }
