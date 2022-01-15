@@ -20,11 +20,14 @@ public class robotFullDriveTest extends LinearOpMode {
 
     Servo leftLinkage;
     Servo rightLinkage;
+    Servo rightBox;
+    Servo leftBox;
 
     CRServo rightServoWheel;
     CRServo leftServoWheel;
 
     boolean previousA = false;
+    boolean previousB = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,6 +41,8 @@ public class robotFullDriveTest extends LinearOpMode {
 
         leftLinkage = hardwareMap.get(Servo.class, "leftLinkage");
         rightLinkage = hardwareMap.get(Servo.class, "rightLinkage");
+        rightBox = hardwareMap.get(Servo.class, "rightBox");
+        leftBox = hardwareMap.get(Servo.class, "leftBox");
 
         rightServoWheel = hardwareMap.get(CRServo.class, "rightServoWheel");
         leftServoWheel = hardwareMap.get(CRServo.class, "leftServoWheel");
@@ -46,6 +51,7 @@ public class robotFullDriveTest extends LinearOpMode {
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         rightLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         leftLinkage.setDirection(Servo.Direction.REVERSE);
+        leftBox.setDirection(Servo.Direction.REVERSE);
         leftServoWheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
@@ -68,19 +74,22 @@ public class robotFullDriveTest extends LinearOpMode {
 
         leftLinkage.setPosition(0);
         rightLinkage.setPosition(0);
+        rightBox.setPosition(0);
+        leftBox.setPosition(0);
 
         while (opModeIsActive() && !isStopRequested()) {
             Driving();
             Action();
             zeroPowerBehavior();
+            teleBoi();
         }
     }
 
-    private void Action(){
-        if (gamepad2.dpad_up && !gamepad2.dpad_down){
+    private void Action() {
+        if (gamepad2.dpad_up && !gamepad2.dpad_down) {
             rightLiftMotor.setVelocity(850);
             leftLiftMotor.setVelocity(850);
-        } else if (gamepad2.dpad_down && !gamepad2.dpad_up){
+        } else if (gamepad2.dpad_down && !gamepad2.dpad_up) {
             rightLiftMotor.setVelocity(-750);
             leftLiftMotor.setVelocity(-750);
         } else if (!gamepad2.dpad_up && !gamepad2.dpad_down) {
@@ -88,7 +97,7 @@ public class robotFullDriveTest extends LinearOpMode {
             rightLiftMotor.setVelocity(1);
         }
 
-        if (gamepad2.a && !previousA){
+        if (gamepad2.a && !previousA) {
             if (leftLinkage.getPosition() == 0 && rightLinkage.getPosition() == 0) {
                 leftLinkage.setPosition(1);
                 rightLinkage.setPosition(1);
@@ -116,14 +125,25 @@ public class robotFullDriveTest extends LinearOpMode {
             intake.setPower(-1);
         }
 
-        if (gamepad2.right_trigger < 0.5 && gamepad2.left_trigger < 0.5){
+        if (gamepad2.right_trigger < 0.5 && gamepad2.left_trigger < 0.5) {
             intake.setPower(0);
         }
 
+        if (gamepad2.b && !previousB) {
+            if (rightBox.getPosition() == 1 && leftBox.getPosition() == 1) {
+                rightBox.setPosition(0);
+                leftBox.setPosition(0);
+            } else if (rightBox.getPosition() == 0 && leftBox.getPosition() == 0) {
+                rightBox.setPosition(1);
+                leftBox.setPosition(1);
+            }
+        }
+
         previousA = gamepad2.a;
+        previousB = gamepad2.b;
     }
 
-    private void Driving(){
+    private void Driving() {
         if (gamepad1.right_bumper) {
             setPower05(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         } else if (gamepad1.left_bumper) {
@@ -175,8 +195,8 @@ public class robotFullDriveTest extends LinearOpMode {
         backRight.setPower(backLRightPower * 0.25);
     }
 
-    private void zeroPowerBehavior(){
-        if (gamepad1.left_stick_button){
+    private void zeroPowerBehavior() {
+        if (gamepad1.left_stick_button) {
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -187,5 +207,10 @@ public class robotFullDriveTest extends LinearOpMode {
             backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
+    }
+
+    private void teleBoi() {
+        telemetry.addData("Right lift position", rightLiftMotor.getCurrentPosition());
+        telemetry.addData("Left lift position", leftLiftMotor.getCurrentPosition());
     }
 }

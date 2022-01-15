@@ -1,42 +1,40 @@
 package testCodes.robotTests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
-
+@TeleOp
 public class dropOffBox extends LinearOpMode {
-    Servo leftDropOffBox;
-    Servo rightDropOffBox;
+    Servo leftBox;
+    Servo rightBox;
 
     boolean previousA = false;
 
-
-
     @Override
     public void runOpMode() throws InterruptedException {
-        leftDropOffBox = hardwareMap.get(Servo.class, "leftDropOffBox");
-        rightDropOffBox = hardwareMap.get(Servo.class, "rightDropOffBox");
+        leftBox = hardwareMap.get(Servo.class, "leftBox");
+        rightBox = hardwareMap.get(Servo.class, "rightBox");
 
-        leftDropOffBox.setDirection(Servo.Direction.REVERSE);
+        leftBox.setDirection(Servo.Direction.REVERSE);
 
         waitForStart();
 
-        leftDropOffBox.setPosition(0);
-        rightDropOffBox.setPosition(0);
+        leftBox.setPosition(0);
+        rightBox.setPosition(0);
 
         while (opModeIsActive() && !isStopRequested()) {
 
             if (gamepad2.a && !previousA){
-                if (leftDropOffBox.getPosition() == 0 && rightDropOffBox.getPosition() == 0) {
-                    leftDropOffBox.setPosition(1);
-                    rightDropOffBox.setPosition(1);
-                } else if (rightDropOffBox.getPosition() == 1 && rightDropOffBox.getPosition() ==1) {
-                    leftDropOffBox.setPosition(0);
-                    rightDropOffBox.setPosition(0);
+                if (leftBox.getPosition() == 0 && rightBox.getPosition() == 0) {
+                    leftBox.setPosition(1);
+                    rightBox.setPosition(1);
+                } else if (rightBox.getPosition() == 1 && rightBox.getPosition() ==1) {
+                    leftBox.setPosition(0);
+                    rightBox.setPosition(0);
                 }
             }
 
             previousA = gamepad2.a;
         }
-
-;    }
+    }
 }
