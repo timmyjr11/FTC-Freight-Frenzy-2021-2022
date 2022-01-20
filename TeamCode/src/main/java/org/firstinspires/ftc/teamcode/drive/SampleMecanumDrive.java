@@ -19,11 +19,13 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -75,6 +77,18 @@ public class SampleMecanumDrive extends MecanumDrive {
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
+    DcMotorEx rightLiftMotor;
+    DcMotorEx leftLiftMotor;
+    DcMotorEx intake;
+
+    Servo leftLinkage;
+    Servo rightLinkage;
+    Servo rightBox;
+    Servo leftBox;
+
+    CRServo rightServoWheel;
+    CRServo leftServoWheel;
+
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
@@ -104,6 +118,18 @@ public class SampleMecanumDrive extends MecanumDrive {
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
 
+        rightLiftMotor = hardwareMap.get(DcMotorEx.class, "rightLiftMotor");
+        leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
+
+        leftLinkage = hardwareMap.get(Servo.class, "leftLinkage");
+        rightLinkage = hardwareMap.get(Servo.class, "rightLinkage");
+        rightBox = hardwareMap.get(Servo.class, "rightBox");
+        leftBox = hardwareMap.get(Servo.class, "leftBox");
+
+        rightServoWheel = hardwareMap.get(CRServo.class, "rightServoWheel");
+        leftServoWheel = hardwareMap.get(CRServo.class, "leftServoWheel");
+
         motors = Arrays.asList(frontLeft, backLeft, backRight, frontRight);
 
         for (DcMotorEx motor : motors) {
@@ -125,6 +151,13 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: reverse any motors using DcMotor.setDirection()
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLinkage.setDirection(Servo.Direction.REVERSE);
+        leftBox.setDirection(Servo.Direction.REVERSE);
+        leftServoWheel.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        rightLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        leftLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
