@@ -33,7 +33,7 @@ public class DriveConstants {
      */
     public static final boolean RUN_USING_ENCODER = true;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(20, 0, 4.5,
-           14.5);
+           13);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -44,8 +44,8 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 1.89; // in
-    public static double GEAR_RATIO = 1 * 70.0/61.357; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 16.7625; // in
+    public static double GEAR_RATIO = 1 * 73.9/59.7; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 18.125; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using

@@ -13,8 +13,13 @@ public class holdPosLiftTest extends LinearOpMode {
 
     Servo leftLinkage;
     Servo rightLinkage;
+    Servo rightBox;
+    Servo leftBox;
 
     boolean previousA = false;
+    boolean previousX = false;
+    boolean previousY = false;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,17 +27,20 @@ public class holdPosLiftTest extends LinearOpMode {
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
         leftLinkage = hardwareMap.get(Servo.class, "leftLinkage");
         rightLinkage = hardwareMap.get(Servo.class, "rightLinkage");
+        rightBox = hardwareMap.get(Servo.class, "rightBox");
+        leftBox = hardwareMap.get(Servo.class, "leftBox");
 
         rightLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         leftLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         rightLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        leftBox.setDirection(Servo.Direction.REVERSE);
         leftLinkage.setDirection(Servo.Direction.REVERSE);
 
         leftLinkage.setPosition(0);
         rightLinkage.setPosition(0);
-
+        rightBox.setPosition(0);
+        leftBox.setPosition(0);
 
         waitForStart();
 
@@ -59,12 +67,33 @@ public class holdPosLiftTest extends LinearOpMode {
                 }
             }
 
-            previousA = gamepad1.a;
+            if (rightLiftMotor.getCurrentPosition() > 400 && leftLiftMotor.getCurrentPosition() > 400) {
+                rightBox.setPosition(0.3);
+                leftBox.setPosition(0.3);
 
-            telemetry.addData("D-Pad up", gamepad1.dpad_up);
-            telemetry.addData("D-pad down", gamepad1.dpad_down);
-            telemetry.addData("A", gamepad1.a);
-            telemetry.addData("previous A", previousA);
+                if (gamepad2.x && !previousX) {
+                    if (rightBox.getPosition() == 1 && leftBox.getPosition() == 1) {
+                        rightBox.setPosition(0);
+                        leftBox.setPosition(0);
+                    } else if (rightBox.getPosition() == 0 && leftBox.getPosition() == 0) {
+                        rightBox.setPosition(1);
+                        leftBox.setPosition(1);
+                    } else if (rightBox.getPosition() == 0.3 && leftBox.getPosition() == 0.3) {
+                        rightBox.setPosition(1);
+                        leftBox.setPosition(1);
+                    }
+                }
+
+                rightBox.setPosition(0.3);
+                leftBox.setPosition(0.3);
+            }
+
+            previousA = gamepad1.a;
+            previousX = gamepad2.x;
+            previousY = gamepad2.y;
+
+            telemetry.addData("Left lift", leftLiftMotor.getCurrentPosition());
+            telemetry.addData("Right Lift", rightLiftMotor.getCurrentPosition());
             telemetry.update();
         }
     }

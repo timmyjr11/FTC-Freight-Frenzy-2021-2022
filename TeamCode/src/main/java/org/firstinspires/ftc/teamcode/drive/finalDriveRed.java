@@ -13,6 +13,8 @@ public class finalDriveRed extends LinearOpMode {
 
     boolean previousA = false;
     boolean previousB = false;
+    boolean previousX = false;
+    boolean previousY = false;
 
     SampleMecanumDrive d;
 
@@ -38,7 +40,8 @@ public class finalDriveRed extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             driving();
             action();
-            d.updatePoseEstimate();
+            telemetry.addData("Left Servo", d.leftBox.getPosition());
+            telemetry.addData("Right Servo", d.rightBox.getPosition());
         }
     }
 
@@ -76,28 +79,45 @@ public class finalDriveRed extends LinearOpMode {
             d.leftServoWheel.setPower(0);
         }
 
-        if (gamepad2.right_trigger >= 0.5) {
-            d.intake.setPower(1);
-        } else if (gamepad2.left_trigger >= 0.5) {
-            d.intake.setPower(-1);
+        if (gamepad2.right_trigger >= 0.1) {
+            d.intake.setPower(gamepad2.right_trigger);
+        } else if (gamepad2.left_trigger >= 0.1) {
+            d.intake.setPower(gamepad2.left_trigger);
         }
 
-        if (gamepad2.right_trigger < 0.5 && gamepad2.left_trigger < 0.5) {
+        if (gamepad2.right_trigger < 0.1 && gamepad2.left_trigger < 0.1) {
             d.intake.setPower(0);
         }
+//0.45 does not work, but 1 does
+        if(d.rightLiftMotor.getCurrentPosition() > 400 && d.leftLiftMotor.getCurrentPosition() > 400) {
+            if (gamepad2.x && !previousX) {
+                if (d.rightBox.getPosition() == 1 && d.leftBox.getPosition() == 1) {
+                    d.rightBox.setPosition(0);
+                    d.leftBox.setPosition(0);
+                } else if (d.rightBox.getPosition() == 0 && d.leftBox.getPosition() == 0) {
+                    d.rightBox.setPosition(1);
+                    d.leftBox.setPosition(1);
+                } else if (d.rightBox.getPosition() == 0.45 && d.leftBox.getPosition() == 0.45) {
+                    d.rightBox.setPosition(1);
+                    d.leftBox.setPosition(1);
+                }
+            }
 
-        if (gamepad2.b && !previousB) {
-            if (d.rightBox.getPosition() == 1 && d.leftBox.getPosition() == 1) {
-                d.rightBox.setPosition(0);
-                d.leftBox.setPosition(0);
-            } else if (d.rightBox.getPosition() == 0 && d.leftBox.getPosition() == 0) {
-                d.rightBox.setPosition(1);
-                d.leftBox.setPosition(1);
+            if (gamepad2.y && !previousY) {
+                if ((d.rightBox.getPosition() == 1 && d.leftBox.getPosition() == 1) || (d.rightBox.getPosition() == 0.45 && d.leftBox.getPosition() == 0.45)) {
+                    d.rightBox.setPosition(0);
+                    d.leftBox.setPosition(0);
+                } else if (d.rightBox.getPosition() == 0 && d.leftBox.getPosition() == 0) {
+                    d.rightBox.setPosition(0.45);
+                    d.leftBox.setPosition(0.45);
+                }
             }
         }
 
         previousA = gamepad2.a;
         previousB = gamepad2.b;
+        previousX = gamepad2.x;
+        previousY = gamepad2.y;
 
     }
 
