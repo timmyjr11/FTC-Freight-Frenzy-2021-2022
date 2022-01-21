@@ -2,6 +2,7 @@ package testCodes.cameras.examples;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -23,6 +24,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * method in order to concurrently display the preview of two cameras, using
  * OpenCV on both.
  */
+@Disabled
 @TeleOp
 public class dualCamerasExp extends LinearOpMode {
     OpenCvCamera phoneCam;

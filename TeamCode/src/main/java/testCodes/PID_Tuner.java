@@ -1,10 +1,11 @@
 package testCodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+@Disabled
 public class PID_Tuner extends LinearOpMode {
 
     DcMotorEx motor;

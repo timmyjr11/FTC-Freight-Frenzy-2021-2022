@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -8,6 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.openftc.easyopencv.OpenCvWebcam;
+
+@Config
 @TeleOp
 public class finalDriveRed extends LinearOpMode {
 
@@ -16,12 +20,17 @@ public class finalDriveRed extends LinearOpMode {
     boolean previousX = false;
     boolean previousY = false;
 
+    int boxState;
+
     SampleMecanumDrive d;
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        boxState = 1;
+
         d = new SampleMecanumDrive(hardwareMap);
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
@@ -29,6 +38,10 @@ public class finalDriveRed extends LinearOpMode {
         d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         d.setPoseEstimate(PoseStorage.telePower);
+
+
+
+
 
         waitForStart();
 
@@ -82,7 +95,7 @@ public class finalDriveRed extends LinearOpMode {
         if (gamepad2.right_trigger >= 0.1) {
             d.intake.setPower(gamepad2.right_trigger);
         } else if (gamepad2.left_trigger >= 0.1) {
-            d.intake.setPower(gamepad2.left_trigger);
+            d.intake.setPower(-gamepad2.left_trigger);
         }
 
         if (gamepad2.right_trigger < 0.1 && gamepad2.left_trigger < 0.1) {
@@ -91,25 +104,18 @@ public class finalDriveRed extends LinearOpMode {
 //0.45 does not work, but 1 does
         if(d.rightLiftMotor.getCurrentPosition() > 400 && d.leftLiftMotor.getCurrentPosition() > 400) {
             if (gamepad2.x && !previousX) {
-                if (d.rightBox.getPosition() == 1 && d.leftBox.getPosition() == 1) {
-                    d.rightBox.setPosition(0);
-                    d.leftBox.setPosition(0);
-                } else if (d.rightBox.getPosition() == 0 && d.leftBox.getPosition() == 0) {
-                    d.rightBox.setPosition(1);
-                    d.leftBox.setPosition(1);
-                } else if (d.rightBox.getPosition() == 0.45 && d.leftBox.getPosition() == 0.45) {
-                    d.rightBox.setPosition(1);
-                    d.leftBox.setPosition(1);
-                }
-            }
-
-            if (gamepad2.y && !previousY) {
-                if ((d.rightBox.getPosition() == 1 && d.leftBox.getPosition() == 1) || (d.rightBox.getPosition() == 0.45 && d.leftBox.getPosition() == 0.45)) {
-                    d.rightBox.setPosition(0);
-                    d.leftBox.setPosition(0);
-                } else if (d.rightBox.getPosition() == 0 && d.leftBox.getPosition() == 0) {
+                if (boxState == 1) {
                     d.rightBox.setPosition(0.45);
                     d.leftBox.setPosition(0.45);
+                    boxState = 2;
+                } else if (boxState == 2) {
+                    d.rightBox.setPosition(1);
+                    d.leftBox.setPosition(1);
+                    boxState = 3;
+                } else if (boxState == 3) {
+                    d.rightBox.setPosition(0);
+                    d.leftBox.setPosition(0);
+                    boxState = 1;
                 }
             }
         }

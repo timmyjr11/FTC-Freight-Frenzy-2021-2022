@@ -1,11 +1,14 @@
 package testCodes.robotTests;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
 @TeleOp
 public class holdPosLiftTest extends LinearOpMode {
     DcMotorEx rightLiftMotor;
@@ -20,9 +23,22 @@ public class holdPosLiftTest extends LinearOpMode {
     boolean previousX = false;
     boolean previousY = false;
 
+    public static double halfBox;
+    public static double limitBox;
+
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        halfBox = 0.45;
+        limitBox = 0.55;
+
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
+
         rightLiftMotor = hardwareMap.get(DcMotorEx.class, "rightLiftMotor");
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
         leftLinkage = hardwareMap.get(Servo.class, "leftLinkage");
@@ -46,18 +62,18 @@ public class holdPosLiftTest extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
 
-            if (gamepad1.dpad_up && !gamepad1.dpad_down){
+            if (gamepad2.dpad_up && !gamepad2.dpad_down){
                 rightLiftMotor.setVelocity(850);
                 leftLiftMotor.setVelocity(850);
-            } else if (gamepad1.dpad_down && !gamepad1.dpad_up){
+            } else if (gamepad2.dpad_down && !gamepad2.dpad_up){
                 rightLiftMotor.setVelocity(-750);
                 leftLiftMotor.setVelocity(-750);
-            } else if (!gamepad1.dpad_up && !gamepad1.dpad_down) {
+            } else if (!gamepad2.dpad_up && !gamepad2.dpad_down) {
                 leftLiftMotor.setVelocity(1);
                 rightLiftMotor.setVelocity(1);
             }
 
-            if (gamepad1.a && !previousA){
+            if (gamepad2.a && !previousA){
                 if (leftLinkage.getPosition() == 0 && rightLinkage.getPosition() == 0) {
                     leftLinkage.setPosition(1);
                     rightLinkage.setPosition(1);
@@ -67,10 +83,7 @@ public class holdPosLiftTest extends LinearOpMode {
                 }
             }
 
-            if (rightLiftMotor.getCurrentPosition() > 400 && leftLiftMotor.getCurrentPosition() > 400) {
-                rightBox.setPosition(0.3);
-                leftBox.setPosition(0.3);
-
+            if(rightLiftMotor.getCurrentPosition() > 400 && leftLiftMotor.getCurrentPosition() > 400) {
                 if (gamepad2.x && !previousX) {
                     if (rightBox.getPosition() == 1 && leftBox.getPosition() == 1) {
                         rightBox.setPosition(0);
@@ -78,14 +91,21 @@ public class holdPosLiftTest extends LinearOpMode {
                     } else if (rightBox.getPosition() == 0 && leftBox.getPosition() == 0) {
                         rightBox.setPosition(1);
                         leftBox.setPosition(1);
-                    } else if (rightBox.getPosition() == 0.3 && leftBox.getPosition() == 0.3) {
+                    } else if (rightBox.getPosition() <= limitBox && leftBox.getPosition() <= limitBox) {
                         rightBox.setPosition(1);
                         leftBox.setPosition(1);
                     }
                 }
 
-                rightBox.setPosition(0.3);
-                leftBox.setPosition(0.3);
+                if (gamepad2.y && !previousY) {
+                    if ((rightBox.getPosition() == 1 && leftBox.getPosition() == 1) || (rightBox.getPosition() <= limitBox && leftBox.getPosition() <= limitBox)) {
+                        rightBox.setPosition(0);
+                        leftBox.setPosition(0);
+                    } else if (rightBox.getPosition() == 0 && leftBox.getPosition() == 0) {
+                        rightBox.setPosition(halfBox);
+                        leftBox.setPosition(halfBox);
+                    }
+                }
             }
 
             previousA = gamepad1.a;
@@ -94,6 +114,10 @@ public class holdPosLiftTest extends LinearOpMode {
 
             telemetry.addData("Left lift", leftLiftMotor.getCurrentPosition());
             telemetry.addData("Right Lift", rightLiftMotor.getCurrentPosition());
+
+            telemetry.addData("Left Servo", leftBox.getPosition());
+            telemetry.addData("Right Servo", rightBox.getPosition());
+
             telemetry.update();
         }
     }

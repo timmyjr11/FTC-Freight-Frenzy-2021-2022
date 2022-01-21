@@ -1,4 +1,5 @@
 package testCodes.cameras.examples;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -19,6 +20,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * 100% accurate) method of detecting the skystone when lined up with
  * the sample regions over the first 3 stones.
  */
+@Disabled
 @TeleOp
 public class SkystoneDeterminationExample extends LinearOpMode
 {
