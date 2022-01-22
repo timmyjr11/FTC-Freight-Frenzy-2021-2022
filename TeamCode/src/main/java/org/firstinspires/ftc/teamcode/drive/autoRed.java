@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode.drive;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -22,19 +23,26 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class autoRed extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
     SampleMecanumDrive d;
 
     OpenCvWebcam cam;
 
-    static double duck;
-
     duckDetector pipeline;
+
+    Pose2d start;
 
 
     int startingPosition;
 
-    int rect1x = 179;
-    int rect1y = 107;
+    public static int rectLeftx = 179;
+    public static int rectLefty = 107;
+
+    public static int rectRighty;
+    public static int rectRightx;
+
+    public static int rectCentery;
+    public static int rectCenterx;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,13 +57,14 @@ public class autoRed extends LinearOpMode {
         cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                cam.startStreaming(1280, 720, OpenCvCameraRotation.UPSIDE_DOWN);
+                cam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+                cam.setPipeline(pipeline);
             }
 
             @Override
             public void onError(int errorCode) {
                 cam.closeCameraDevice();
-
+                telemetry.addData("errorCode:", errorCode);
             }
         });
 
@@ -66,18 +75,28 @@ public class autoRed extends LinearOpMode {
         telemetry.update();
 
         startingPosition();
-        if (startingPosition == 1){
-            d.setPoseEstimate(PoseStorage.rightAutoRed);
-        } else if (startingPosition == -1) {
-            d.setPoseEstimate(PoseStorage.leftAutoRed);
-        }
+
+        d.setPoseEstimate(start);
+
+
 
         d.leftLinkage.setPosition(0);
         d.rightLinkage.setPosition(0);
         d.rightBox.setPosition(0);
         d.leftBox.setPosition(0);
 
-        telemetry.addData("Starting side", startingPosition);
+        if (startingPosition == 1) {
+            telemetry.addData("Starting side: Right", startingPosition);
+            telemetry.addData("Duck position:", pipeline.getDuckPosition());
+            telemetry.update();
+        } else if (startingPosition == -1) {
+            telemetry.addData("starting side: Left", startingPosition);
+            telemetry.addData("Duck position:", pipeline.getDuckPosition());
+            telemetry.update();
+        }
+
+        Trajectory moveToAllianceHub = d.trajectoryBuilder(start)
+                .
 
         waitForStart();
 
@@ -85,19 +104,27 @@ public class autoRed extends LinearOpMode {
 
     }
 
-    class duckDetector extends OpenCvPipeline {
+    public static class duckDetector extends OpenCvPipeline {
         //Creates the YCbCr color space as a mat
         Mat HSV = new Mat();
 
         //Creates output as a mat
         Mat outPut = new Mat();
 
-        // Creates the lower part of the rectangle as a mat
+        // Creates the rectangles as a mat
         Mat cropLeft = new Mat();
 
         Mat cropRight = new Mat();
 
         Mat cropCenter = new Mat();
+
+        public enum DuckPosition {
+            Left,
+            Center,
+            Right
+        }
+
+        private volatile DuckPosition position =  DuckPosition.Center;
 
         @Override
         public Mat processFrame(Mat input) {
@@ -106,34 +133,48 @@ public class autoRed extends LinearOpMode {
 
             input.copyTo(outPut);
 
-            Rect rect1 = new Rect(rect1x, rect1y, 47, 40);
+            Rect rectLeft = new Rect(rectLeftx, rectLefty, 37, 30);
+            Rect rectRight = new Rect(rectRightx, rectRighty, 37, 30);
+            Rect rectCenter = new Rect(rectCenterx,rectCentery, 37, 30);
 
             Scalar rectangleColor = new Scalar(0,0, 255);
 
-            Imgproc.rectangle(outPut, rect1, rectangleColor, 2);
+            Imgproc.rectangle(outPut, rectLeft, rectangleColor, 2);
+            Imgproc.rectangle(outPut, rectRight, rectangleColor, 2);
+            Imgproc.rectangle(outPut, rectCenter, rectangleColor, 2);
 
-            cropLeft = HSV.submat(rect1);
+            cropLeft = HSV.submat(rectLeft);
+            cropRight = HSV.submat(rectRight);
+            cropCenter = HSV.submat(rectCenter);
 
             Core.extractChannel(cropLeft, cropLeft, 2);
+            Core.extractChannel(cropRight, cropRight, 2);
+            Core.extractChannel(cropCenter, cropCenter, 2);
 
-            Scalar lowerAverageOrange = Core.mean(cropLeft);
+            Scalar leftAverage = Core.mean(cropLeft);
+            Scalar rightAverage = Core.mean(cropRight);
+            Scalar centerAverage = Core.mean(cropCenter);
 
-            double finalAverage = lowerAverageOrange.val[0];
+            double finalLeftAverage = leftAverage.val[0];
+            double finalRightAverage = rightAverage.val[0];
+            double finalCenterAverage = centerAverage.val[0];
 
-            if (finalAverage > 109) {
-                duck = 0;
-            } else if (finalAverage > 97) {
-                duck = 1;
-            } else {
-                duck = 2;
+
+            if(finalCenterAverage > finalRightAverage && finalCenterAverage > finalLeftAverage) {
+               position = DuckPosition.Center;
+            } else if (finalLeftAverage > finalCenterAverage && finalLeftAverage > finalRightAverage) {
+                position = DuckPosition.Left;
+            } else if (finalRightAverage > finalCenterAverage && finalRightAverage > finalCenterAverage) {
+                position = DuckPosition.Right;
             }
-            telemetry.addData("Average", finalAverage);
-            telemetry.addLine("There are" + duck + "ducks.");
-            telemetry.update();
 
             return outPut;
             }
-;        }
+
+            public DuckPosition getDuckPosition() {
+            return position;
+        }
+    }
 
 
     private void startingPosition() {
@@ -148,6 +189,12 @@ public class autoRed extends LinearOpMode {
                 startingPosition = 1;
                 break;
             }
+        }
+
+        if (startingPosition == 1){
+            start = PoseStorage.rightAutoRed;
+        } else {
+            start = PoseStorage.leftAutoRed;
         }
     }
 }

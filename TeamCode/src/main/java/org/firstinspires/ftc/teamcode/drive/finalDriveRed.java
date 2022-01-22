@@ -101,7 +101,7 @@ public class finalDriveRed extends LinearOpMode {
         if (gamepad2.right_trigger < 0.1 && gamepad2.left_trigger < 0.1) {
             d.intake.setPower(0);
         }
-//0.45 does not work, but 1 does
+
         if(d.rightLiftMotor.getCurrentPosition() > 400 && d.leftLiftMotor.getCurrentPosition() > 400) {
             if (gamepad2.x && !previousX) {
                 if (boxState == 1) {
