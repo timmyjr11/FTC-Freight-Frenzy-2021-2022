@@ -1,6 +1,7 @@
 package testCodes.cameras;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -15,12 +16,10 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
-@Disabled
+@Config
 @Autonomous
 public class dualUsbPipeline extends LinearOpMode {
     OpenCvCamera usbBoi;
-    OpenCvCamera usbBoi2;
-
     //stage pipeline lmao
 
     int rectx = 60;
@@ -30,16 +29,12 @@ public class dualUsbPipeline extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
         telemetry = new MultipleTelemetry(telemetry, dash.getTelemetry());
 
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
-        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
-                .splitLayoutForMultipleViewports(cameraMonitorViewId, 2,OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY);
-
-        usbBoi = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), viewportContainerIds[0]);
-        usbBoi2 = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 2"), viewportContainerIds[1]);
+        usbBoi = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         usbBoi.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -58,20 +53,6 @@ public class dualUsbPipeline extends LinearOpMode {
             }
         });
 
-        usbBoi2.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                usbBoi2.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                usbBoi.closeCameraDevice();
-                telemetry.addLine("AA2");
-                telemetry.addData("error", errorCode);
-                telemetry.update();
-            }
-        });
 
         FtcDashboard.getInstance().startCameraStream(usbBoi, 30);
 

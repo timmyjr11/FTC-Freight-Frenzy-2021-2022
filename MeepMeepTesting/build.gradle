@@ -13,4 +13,5 @@ repositories {
 
 dependencies {
     implementation 'com.github.NoahBres:MeepMeep:2.0.0'
+    api 'com.acmerobotics.roadrunner:core:0.5.4'
 }

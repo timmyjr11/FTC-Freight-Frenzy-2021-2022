@@ -1,8 +1,12 @@
 package testCodes.cameras.examples;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -14,16 +18,19 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 /*
  * This sample demonstrates a basic (but battle-tested and essentially
  * 100% accurate) method of detecting the skystone when lined up with
  * the sample regions over the first 3 stones.
  */
-@Disabled
+@Config
 @TeleOp
 public class SkystoneDeterminationExample extends LinearOpMode {
-    OpenCvInternalCamera phoneCam;
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    OpenCvWebcam phoneCam;
     SkystoneDeterminationPipeline pipeline;
 
     @Override
@@ -35,8 +42,11 @@ public class SkystoneDeterminationExample extends LinearOpMode {
          * webcam counterpart, {@link WebcamExample} first.
          */
 
+
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         pipeline = new SkystoneDeterminationPipeline();
         phoneCam.setPipeline(pipeline);
 
@@ -58,6 +68,9 @@ public class SkystoneDeterminationExample extends LinearOpMode {
                  */
             }
         });
+
+        FtcDashboard.getInstance().startCameraStream(phoneCam, 30);
+
 
         waitForStart();
 
