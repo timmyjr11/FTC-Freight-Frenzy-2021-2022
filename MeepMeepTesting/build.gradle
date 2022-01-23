@@ -7,11 +7,12 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-repositories {
-    maven { url 'https://jitpack.io' }
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
 }
 
 dependencies {
     implementation 'com.github.NoahBres:MeepMeep:2.0.0'
-    api 'com.acmerobotics.roadrunner:core:0.5.4'
 }

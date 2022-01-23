@@ -120,7 +120,7 @@ public class autoRed extends LinearOpMode {
 
         Trajectory allianceLeftSideRightDuck = d.trajectoryBuilder(start)
                 .lineToLinearHeading(new Pose2d(0, 0, Math.toRadians(0)))
-               /* .addTemporalMarker(0.1, () -> {
+                .addTemporalMarker(0.1, () -> {
                     d.leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     d.rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -132,7 +132,7 @@ public class autoRed extends LinearOpMode {
 
                     d.rightLiftMotor.setPower(0.75);
                     d.leftLiftMotor.setPower(0.75);
-                })*/
+                })
                 .build();
 
 
