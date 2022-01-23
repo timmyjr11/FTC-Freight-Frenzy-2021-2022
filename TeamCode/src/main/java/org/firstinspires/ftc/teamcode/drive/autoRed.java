@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
@@ -21,6 +20,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
+
 @Config
 @Autonomous
 public class autoRed extends LinearOpMode {
@@ -118,29 +118,67 @@ public class autoRed extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        Trajectory allianceLeftSideRightDuck = d.trajectoryBuilder(start)
-                .lineToLinearHeading(new Pose2d(0, 0, Math.toRadians(0)))
-                .addTemporalMarker(0.1, () -> {
-                    d.leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    d.rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-                    d.leftLiftMotor.setTargetPosition(1100);
-                    d.rightLiftMotor.setTargetPosition(1100);
-
-                    d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                    d.rightLiftMotor.setPower(0.75);
-                    d.leftLiftMotor.setPower(0.75);
-                })
+        Trajectory leftSideToCarasel = d.trajectoryBuilder(start)
+                .lineToConstantHeading(new Vector2d(-58, -58))
                 .build();
+
+        Trajectory leftSideToHub = d.trajectoryBuilder(leftSideToCarasel.end())
+                .lineToConstantHeading(new Vector2d (-57, -20))
+                .splineToSplineHeading(new Pose2d(-35, -35, Math.toRadians(180)), Math.toRadians(0))
+                .build();
+
+        Trajectory leftGoBackToDuckpt1 = d.trajectoryBuilder(leftSideToHub.end())
+                .lineToLinearHeading(new Pose2d(-61, -24, Math.toRadians(270)))
+                .build();
+
+        Trajectory leftGoBackToDuckpt2 = d.trajectoryBuilder(leftGoBackToDuckpt1.end())
+                .lineToConstantHeading(new Vector2d(-58, -58))
+                .build();
+
+        Trajectory leftplaceTheDuckpt1 = d.trajectoryBuilder(leftGoBackToDuckpt2.end())
+                .lineToConstantHeading(new Vector2d(-58, -20))
+                .build();
+        
+        Trajectory leftplaceTheDuckpt2 = d.trajectoryBuilder(leftplaceTheDuckpt1.end())
+                .lineToSplineHeading(new Pose2d(-35, -24, Math.toRadians(180)))
+                .build();
+        //37
+        Trajectory leftParkSetup = d.trajectoryBuilder(leftplaceTheDuckpt2.end())
+                .lineToConstantHeading(new Vector2d (-58, -24))
+                .build();
+
+        Trajectory leftParkInsideStorageUnit = d.trajectoryBuilder(leftParkSetup.end())
+                .lineToConstantHeading(new Vector2d(-58, -37))
+                .build();
+
+        Trajectory leftParkInsideWarehousept1 = d.trajectoryBuilder(leftParkSetup.end())
+                .lineToConstantHeading(new Vector2d(-58, -58))
+                .build();
+
+        Trajectory leftParkInsideWarehousept2 = d.trajectoryBuilder(leftParkInsideWarehousept1.end())
+                .splineToConstantHeading(new Vector2d(-15, -58), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(10, -48), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(37, -48), Math.toRadians(0))
+                .build();
+
+        Trajectory leftParkWareHouserightSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
+                .lineToConstantHeading(new Vector2d(37, -60))
+                .build();
+
+        Trajectory leftParkWareHouseLeftSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
+                .lineToConstantHeading(new Vector2d(40, -38))
+                .build();
+
+        Trajectory leftParkWareHouseTopleft = d.trajectoryBuilder(leftParkWareHouseLeftSide.end())
+                .lineToConstantHeading(new Vector2d(60, -38))
+                .build();
+
+        //TODO: Create configurations for parking and duck position. Create left side
 
 
         waitForStart();
 
         cam.stopStreaming();
-
-        d.followTrajectory(allianceLeftSideRightDuck);
 
 
 
