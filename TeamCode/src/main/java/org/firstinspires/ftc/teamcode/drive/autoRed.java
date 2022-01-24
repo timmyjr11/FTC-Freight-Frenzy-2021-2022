@@ -35,8 +35,9 @@ public class autoRed extends LinearOpMode {
 
     Pose2d start;
 
-
     int startingPosition;
+    int parkingPosition;
+    int warehousePosition;
 
     public static int rectLeftx = 65;
     public static int rectLefty = 385;
@@ -80,10 +81,13 @@ public class autoRed extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(cam, 30);
 
 
-        telemetry.addLine("Which side? Press right on D-pad for right and left on D-pad for left.");
-        telemetry.update();
-
         startingPosition();
+        sleep(500);
+        parkingPosition();
+        sleep(500);
+        if (parkingPosition == 1) {
+            wareHousePosition();
+        }
 
         d.setPoseEstimate(start);
 
@@ -94,35 +98,44 @@ public class autoRed extends LinearOpMode {
         d.rightBox.setPosition(0);
         d.leftBox.setPosition(0);
 
-        if (startingPosition == 1) {
-            telemetry.addData("Starting side: Right", startingPosition);
-            if (position == 1) {
-                telemetry.addLine("Duck position is on the right side");
-            } else if (position == 0) {
-                telemetry.addLine("Duck position is in the center");
-            } else if (position == -1) {
-                telemetry.addLine("Duck position is on the left side");
-            }
-            telemetry.update();
-        } else if (startingPosition == -1) {
-            telemetry.addData("starting side: Left", startingPosition);
-            if (position == 1) {
-                telemetry.addLine("Duck position is on the right side");
-            } else if (position == 0) {
-                telemetry.addLine("Duck position is in the center");
-            } else if (position == -1) {
-                telemetry.addLine("Duck position is on the left side");
-            }
-            telemetry.update();
+        telemetry.addLine("Current configuration:");
+        if (startingPosition == -1) {
+            telemetry.addLine("Left side");
+        } else if(startingPosition == 1) {
+            telemetry.addLine("Right side");
         }
+
+        if(parkingPosition == -1) {
+            telemetry.addLine("Park in storage unit");
+        } else if (parkingPosition == 1) {
+            if (warehousePosition == 0) {
+                telemetry.addLine("Park in the warehouse on left side near the shared hub");
+            } else if (warehousePosition == 1) {
+                telemetry.addLine("Park in the warehouse right side near the wall");
+            } else if (warehousePosition == -1) {
+                telemetry.addLine("Park in the warehouse top left closest to the wall and shared hub");
+            }
+        }
+
+        if (position == 0) {
+            telemetry.addLine("Duck is in the center");
+        } else if (position == 1) {
+            telemetry.addLine("Duck is on the right side");
+        } else if (position == -1) {
+            telemetry.addLine("Duck is on the left side");
+        }
+
+        telemetry.addLine("Something wrong with the configuration? Just restart from the beginning!");
+        telemetry.addLine("Thank you for using Tim's auto selector!");
+        telemetry.update();
 
         if (isStopRequested()) return;
 
-        Trajectory leftSideToCarasel = d.trajectoryBuilder(start)
+        Trajectory leftSideToCarousel = d.trajectoryBuilder(start)
                 .lineToConstantHeading(new Vector2d(-58, -58))
                 .build();
 
-        Trajectory leftSideToHub = d.trajectoryBuilder(leftSideToCarasel.end())
+        Trajectory leftSideToHub = d.trajectoryBuilder(leftSideToCarousel.end())
                 .lineToConstantHeading(new Vector2d (-57, -20))
                 .splineToSplineHeading(new Pose2d(-35, -35, Math.toRadians(180)), Math.toRadians(0))
                 .build();
@@ -184,7 +197,7 @@ public class autoRed extends LinearOpMode {
 
     }
 
-     class duckDetector extends OpenCvPipeline {
+     static class duckDetector extends OpenCvPipeline {
         //Creates the YCbCr color space as a mat
         Mat HSV = new Mat();
 
@@ -248,6 +261,7 @@ public class autoRed extends LinearOpMode {
 
 
     private void startingPosition() {
+        telemetry.addLine("Welcome to Tim's auto selector!");
         telemetry.addLine("Choose side, left on D-pad for left, right on D-pad for right");
         telemetry.update();
         while (true) {
@@ -266,6 +280,48 @@ public class autoRed extends LinearOpMode {
             start = PoseStorage.rightAutoRed;
         } else {
             start = PoseStorage.leftAutoRed;
+        }
+    }
+    private void parkingPosition() {
+        if (startingPosition == -1) {
+            telemetry.addLine("Left side selected, where would you like to park?");
+            telemetry.addLine("Press left on D-pad to park in the storage unit");
+            telemetry.addLine("Press right on D-pad to park inside the warehouse");
+        } else if (startingPosition == 1) {
+            telemetry.addLine("Right side selected, where would you like to park?");
+            telemetry.addLine("Press left on D-pad to park in the storage unit");
+            telemetry.addLine("Press right on D-pad to park inside the warehouse");
+        }
+        telemetry.update();
+        while (true) {
+            if (gamepad1.dpad_left) {
+                parkingPosition = -1;
+                break;
+            } else if (gamepad1.dpad_right) {
+                parkingPosition = 1;
+                break;
+            }
+            if (isStopRequested()) return;
+        }
+    }
+    private void wareHousePosition() {
+        telemetry.addLine("Warehouse selected, where would you like to park specifically?");
+        telemetry.addLine("Press right on D-pad to park on the right side near the wall");
+        telemetry.addLine("Press left on D-pad to park on the left side near the shared hub");
+        telemetry.addLine("Press up on D-pad to park on in the top left closest to the wall and shared hub");
+        telemetry.update();
+        while (true) {
+            if (gamepad1.dpad_up) {
+                warehousePosition = -1;
+                break;
+            } else if (gamepad1.dpad_right) {
+                warehousePosition = 1;
+                break;
+            } else if (gamepad1.dpad_left) {
+                warehousePosition = 0;
+                break;
+            }
+            if (isStopRequested()) return;
         }
     }
 }
