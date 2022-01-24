@@ -9,8 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.openftc.easyopencv.OpenCvWebcam;
-
 @Config
 @TeleOp
 public class finalDriveRed extends LinearOpMode {
@@ -39,10 +37,6 @@ public class finalDriveRed extends LinearOpMode {
 
         d.setPoseEstimate(PoseStorage.telePower);
 
-
-
-
-
         waitForStart();
 
         d.leftLinkage.setPosition(0);
@@ -53,8 +47,6 @@ public class finalDriveRed extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             driving();
             action();
-            telemetry.addData("Left Servo", d.leftBox.getPosition());
-            telemetry.addData("Right Servo", d.rightBox.getPosition());
         }
     }
 
@@ -103,7 +95,7 @@ public class finalDriveRed extends LinearOpMode {
         }
 
         if(d.rightLiftMotor.getCurrentPosition() > 400 && d.leftLiftMotor.getCurrentPosition() > 400) {
-            if (gamepad2.x && !previousX) {
+            if (gamepad2.y && !previousY) {
                 if (boxState == 1) {
                     d.rightBox.setPosition(0.45);
                     d.leftBox.setPosition(0.45);
