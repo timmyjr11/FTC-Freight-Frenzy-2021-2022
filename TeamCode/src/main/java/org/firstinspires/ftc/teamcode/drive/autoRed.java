@@ -174,7 +174,7 @@ public class autoRed extends LinearOpMode {
         Trajectory leftPlaceTheDuckpt2 = d.trajectoryBuilder(leftPlaceTheDuckpt1.end())
                 .lineToSplineHeading(new Pose2d(-35, -24, Math.toRadians(180)))
                 .build();
-        //37
+
         Trajectory leftParkSetup = d.trajectoryBuilder(leftPlaceTheDuckpt2.end())
                 .lineToConstantHeading(new Vector2d (-58, -24))
                 .build();
