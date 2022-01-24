@@ -193,19 +193,48 @@ public class autoRed extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(37, -48), Math.toRadians(0))
                 .build();
 
-        Trajectory leftParkWareHouseRightSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
+        Trajectory leftParkWarehouseRightSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
                 .lineToConstantHeading(new Vector2d(37, -60))
                 .build();
 
-        Trajectory leftParkWareHouseLeftSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
+        Trajectory leftParkWarehouseLeftSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
                 .lineToConstantHeading(new Vector2d(40, -38))
-                .build();
-
-        Trajectory leftParkWareHouseTopLeft = d.trajectoryBuilder(leftParkWareHouseLeftSide.end())
+                .build();        Trajectory leftParkWarehouseTopLeft = d.trajectoryBuilder(leftParkWarehouseLeftSide.end())
                 .lineToConstantHeading(new Vector2d(60, -38))
                 .build();
 
-        //TODO: Create left side
+
+        Trajectory rightSideToHub = d.trajectoryBuilder(start)
+                .lineToConstantHeading(new Vector2d(-11, 45))
+                .build();
+
+        Trajectory rightSideToWarehousept1 = d.trajectoryBuilder(rightSideToHub.end())
+                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(180)))
+                .build();
+
+        Trajectory rightSideToWarehousept2 = d.trajectoryBuilder(rightSideToWarehousept1.end())
+                .lineToConstantHeading(new Vector2d(39, -48))
+                .build();
+
+        Trajectory rightSideToWarehouseRight = d.trajectoryBuilder(rightSideToWarehousept2.end())
+                .lineToConstantHeading(new Vector2d(39, -61))
+                .build();
+
+        Trajectory rightSideToWarehouseLeft = d.trajectoryBuilder(rightSideToWarehousept2.end())
+                .lineToConstantHeading(new Vector2d(39, -38))
+                .build();
+
+        Trajectory rightSideToWarehouseTopLeft = d.trajectoryBuilder(rightSideToWarehouseLeft.end())
+                .lineToConstantHeading(new Vector2d(60, -38))
+                .build();
+
+        Trajectory rightSideToStorageUnitpt1 = d.trajectoryBuilder(rightSideToHub.end())
+                .lineToLinearHeading(new Pose2d(-45, -60, Math.toRadians(180)))
+                .build();
+
+        Trajectory rightSideToStorageUnitpt2 = d.trajectoryBuilder(rightSideToStorageUnitpt1.end())
+                .lineToConstantHeading(new Vector2d(-60, -35))
+                .build();
 
 
         waitForStart();
@@ -227,17 +256,34 @@ public class autoRed extends LinearOpMode {
                 d.followTrajectory(leftParkInsideWarehousept1);
                 d.followTrajectory(leftParkInsideWarehousept2);
                 if(warehousePosition == 0) {
-                    d.followTrajectory(leftParkWareHouseLeftSide);
+                    d.followTrajectory(leftParkWarehouseLeftSide);
                 } else if(warehousePosition == 1) {
-                    d.followTrajectory(leftParkWareHouseRightSide);
+                    d.followTrajectory(leftParkWarehouseRightSide);
                 } else if(warehousePosition == -1) {
-                    d.followTrajectory(leftParkWareHouseLeftSide);
-                    d.followTrajectory(leftParkWareHouseTopLeft);
+                    d.followTrajectory(leftParkWarehouseLeftSide);
+                    d.followTrajectory(leftParkWarehouseTopLeft);
                 }
             }
         }
 
-
+        if (startingPosition == 1) {
+            d.followTrajectory(rightSideToHub);
+            if (parkingPosition == -1) {
+                d.followTrajectory(rightSideToStorageUnitpt1);
+                d.followTrajectory(rightSideToStorageUnitpt2);
+            } else if(parkingPosition == 1) {
+                d.followTrajectory(rightSideToWarehousept1);
+                d.followTrajectory(rightSideToWarehousept2);
+                if (warehousePosition == 0) {
+                    d.followTrajectory(rightSideToWarehouseLeft);
+                } else if (warehousePosition == 1) {
+                    d.followTrajectory(rightSideToWarehouseRight);
+                } else if(warehousePosition == -1) {
+                    d.followTrajectory(rightSideToWarehouseLeft);
+                    d.followTrajectory(rightSideToWarehouseTopLeft);
+                }
+            }
+        }
     }
 
 //The openCV code that detects ducks
