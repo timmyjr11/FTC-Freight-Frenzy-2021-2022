@@ -205,10 +205,11 @@ public class autoRed extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(60, -38))
                 .build();
 
-        //TODO: Create configurations for parking and duck position. Create left side
+        //TODO: Create left side
 
 
         waitForStart();
+
 //When the robot has started, the camera stops streaming
         cam.stopStreaming();
 
@@ -273,7 +274,7 @@ public class autoRed extends LinearOpMode {
             double finalRightAverage = rightAverage.val[0];
             double finalCenterAverage = centerAverage.val[0];
 
-//If a certain rectangle has a higher value than the other two rectangles, the duck is in that certain rectangle
+//If a certain rectangle has a higher value than the other two rectangles then duck is in that certain rectangle
             if(finalCenterAverage > finalRightAverage && finalCenterAverage > finalLeftAverage) {
                 position = 0;
             } else if (finalLeftAverage > finalCenterAverage && finalLeftAverage > finalRightAverage) {
