@@ -167,15 +167,15 @@ public class autoRed extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-58, -58))
                 .build();
 
-        Trajectory leftplaceTheDuckpt1 = d.trajectoryBuilder(leftGoBackToDuckpt2.end())
+        Trajectory leftPlaceTheDuckpt1 = d.trajectoryBuilder(leftGoBackToDuckpt2.end())
                 .lineToConstantHeading(new Vector2d(-58, -20))
                 .build();
         
-        Trajectory leftplaceTheDuckpt2 = d.trajectoryBuilder(leftplaceTheDuckpt1.end())
+        Trajectory leftPlaceTheDuckpt2 = d.trajectoryBuilder(leftPlaceTheDuckpt1.end())
                 .lineToSplineHeading(new Pose2d(-35, -24, Math.toRadians(180)))
                 .build();
         //37
-        Trajectory leftParkSetup = d.trajectoryBuilder(leftplaceTheDuckpt2.end())
+        Trajectory leftParkSetup = d.trajectoryBuilder(leftPlaceTheDuckpt2.end())
                 .lineToConstantHeading(new Vector2d (-58, -24))
                 .build();
 
@@ -193,7 +193,7 @@ public class autoRed extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(37, -48), Math.toRadians(0))
                 .build();
 
-        Trajectory leftParkWareHouserightSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
+        Trajectory leftParkWareHouseRightSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
                 .lineToConstantHeading(new Vector2d(37, -60))
                 .build();
 
@@ -201,7 +201,7 @@ public class autoRed extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(40, -38))
                 .build();
 
-        Trajectory leftParkWareHouseTopleft = d.trajectoryBuilder(leftParkWareHouseLeftSide.end())
+        Trajectory leftParkWareHouseTopLeft = d.trajectoryBuilder(leftParkWareHouseLeftSide.end())
                 .lineToConstantHeading(new Vector2d(60, -38))
                 .build();
 
@@ -213,6 +213,30 @@ public class autoRed extends LinearOpMode {
 //When the robot has started, the camera stops streaming
         cam.stopStreaming();
 
+        if(startingPosition == -1) {
+            d.followTrajectory(leftSideToCarousel);
+            d.followTrajectory(leftSideToHub);
+            d.followTrajectory(leftGoBackToDuckpt1);
+            d.followTrajectory(leftGoBackToDuckpt2);
+            d.followTrajectory(leftPlaceTheDuckpt1);
+            d.followTrajectory(leftPlaceTheDuckpt2);
+            d.followTrajectory(leftParkSetup);
+            if (parkingPosition == -1) {
+                d.followTrajectory(leftParkInsideStorageUnit);
+            } else if(parkingPosition == 1) {
+                d.followTrajectory(leftParkInsideWarehousept1);
+                d.followTrajectory(leftParkInsideWarehousept2);
+                if(warehousePosition == 0) {
+                    d.followTrajectory(leftParkWareHouseLeftSide);
+                } else if(warehousePosition == 1) {
+                    d.followTrajectory(leftParkWareHouseRightSide);
+                } else if(warehousePosition == -1) {
+                    d.followTrajectory(leftParkWareHouseLeftSide);
+                    d.followTrajectory(leftParkWareHouseTopLeft);
+                }
+
+            }
+        }
 
 
     }
