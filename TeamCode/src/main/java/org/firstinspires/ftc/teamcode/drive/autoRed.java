@@ -234,7 +234,6 @@ public class autoRed extends LinearOpMode {
                     d.followTrajectory(leftParkWareHouseLeftSide);
                     d.followTrajectory(leftParkWareHouseTopLeft);
                 }
-
             }
         }
 
