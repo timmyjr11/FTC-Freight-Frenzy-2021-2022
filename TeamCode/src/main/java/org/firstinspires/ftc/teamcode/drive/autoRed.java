@@ -39,6 +39,7 @@ public class autoRed extends LinearOpMode {
     //Will Be used SOON
     double liftHeight;
 
+    //Variable to be used for the lift timing
     double waitTime;
 
     //Creates the webcam
