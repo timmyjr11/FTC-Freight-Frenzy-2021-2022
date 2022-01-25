@@ -105,6 +105,95 @@ public class autoRed extends LinearOpMode {
         d.rightBox.setPosition(0);
         d.leftBox.setPosition(0);
 
+        Trajectory leftSideToCarousel = d.trajectoryBuilder(start)
+                .lineToConstantHeading(new Vector2d(-58, -58))
+                .build();
+
+
+        Trajectory leftSideToHub = d.trajectoryBuilder(leftSideToCarousel.end())
+                .lineToConstantHeading(new Vector2d (-57, -20))
+                .splineToSplineHeading(new Pose2d(-35, -35, Math.toRadians(180)), Math.toRadians(0))
+                .build();
+
+        Trajectory leftGoBackToDuckpt1 = d.trajectoryBuilder(leftSideToHub.end())
+                .lineToLinearHeading(new Pose2d(-61, -24, Math.toRadians(270)))
+                .build();
+
+        Trajectory leftGoBackToDuckpt2 = d.trajectoryBuilder(leftGoBackToDuckpt1.end())
+                .lineToConstantHeading(new Vector2d(-58, -58))
+                .build();
+
+        Trajectory leftPlaceTheDuckpt1 = d.trajectoryBuilder(leftGoBackToDuckpt2.end())
+                .lineToConstantHeading(new Vector2d(-58, -20))
+                .build();
+
+        Trajectory leftPlaceTheDuckpt2 = d.trajectoryBuilder(leftPlaceTheDuckpt1.end())
+                .lineToSplineHeading(new Pose2d(-35, -24, Math.toRadians(180)))
+                .build();
+
+        Trajectory leftParkSetup = d.trajectoryBuilder(leftPlaceTheDuckpt2.end())
+                .lineToConstantHeading(new Vector2d (-58, -24))
+                .build();
+
+        Trajectory leftParkInsideStorageUnit = d.trajectoryBuilder(leftParkSetup.end())
+                .lineToConstantHeading(new Vector2d(-58, -37))
+                .build();
+
+        Trajectory leftParkInsideWarehousept1 = d.trajectoryBuilder(leftParkSetup.end())
+                .lineToConstantHeading(new Vector2d(-58, -58))
+                .build();
+
+        Trajectory leftParkInsideWarehousept2 = d.trajectoryBuilder(leftParkInsideWarehousept1.end())
+                .splineToConstantHeading(new Vector2d(-15, -58), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(10, -48), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(37, -48), Math.toRadians(0))
+                .build();
+
+        Trajectory leftParkWarehouseRightSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
+                .lineToConstantHeading(new Vector2d(37, -60))
+                .build();
+
+        Trajectory leftParkWarehouseLeftSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
+                .lineToConstantHeading(new Vector2d(40, -38))
+                .build();
+
+        Trajectory leftParkWarehouseTopLeft = d.trajectoryBuilder(leftParkWarehouseLeftSide.end())
+                .lineToConstantHeading(new Vector2d(60, -38))
+                .build();
+
+
+        Trajectory rightSideToHub = d.trajectoryBuilder(start)
+                .lineToConstantHeading(new Vector2d(-11, 45))
+                .build();
+
+        Trajectory rightSideToWarehousept1 = d.trajectoryBuilder(rightSideToHub.end())
+                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(180)))
+                .build();
+
+        Trajectory rightSideToWarehousept2 = d.trajectoryBuilder(rightSideToWarehousept1.end())
+                .lineToConstantHeading(new Vector2d(39, -48))
+                .build();
+
+        Trajectory rightSideToWarehouseRight = d.trajectoryBuilder(rightSideToWarehousept2.end())
+                .lineToConstantHeading(new Vector2d(39, -61))
+                .build();
+
+        Trajectory rightSideToWarehouseLeft = d.trajectoryBuilder(rightSideToWarehousept2.end())
+                .lineToConstantHeading(new Vector2d(39, -38))
+                .build();
+
+        Trajectory rightSideToWarehouseTopLeft = d.trajectoryBuilder(rightSideToWarehouseLeft.end())
+                .lineToConstantHeading(new Vector2d(60, -38))
+                .build();
+
+        Trajectory rightSideToStorageUnitpt1 = d.trajectoryBuilder(rightSideToHub.end())
+                .lineToLinearHeading(new Pose2d(-45, -60, Math.toRadians(180)))
+                .build();
+
+        Trajectory rightSideToStorageUnitpt2 = d.trajectoryBuilder(rightSideToStorageUnitpt1.end())
+                .lineToConstantHeading(new Vector2d(-60, -35))
+                .build();
+
 //Creating the auto configuration
         startingPosition();
         sleep(500);
@@ -149,92 +238,6 @@ public class autoRed extends LinearOpMode {
         if (isStopRequested()) return;
 
 //TODO: Come back to comment what the Trajectories do
-
-        Trajectory leftSideToCarousel = d.trajectoryBuilder(start)
-                .lineToConstantHeading(new Vector2d(-58, -58))
-                .build();
-
-        Trajectory leftSideToHub = d.trajectoryBuilder(leftSideToCarousel.end())
-                .lineToConstantHeading(new Vector2d (-57, -20))
-                .splineToSplineHeading(new Pose2d(-35, -35, Math.toRadians(180)), Math.toRadians(0))
-                .build();
-
-        Trajectory leftGoBackToDuckpt1 = d.trajectoryBuilder(leftSideToHub.end())
-                .lineToLinearHeading(new Pose2d(-61, -24, Math.toRadians(270)))
-                .build();
-
-        Trajectory leftGoBackToDuckpt2 = d.trajectoryBuilder(leftGoBackToDuckpt1.end())
-                .lineToConstantHeading(new Vector2d(-58, -58))
-                .build();
-
-        Trajectory leftPlaceTheDuckpt1 = d.trajectoryBuilder(leftGoBackToDuckpt2.end())
-                .lineToConstantHeading(new Vector2d(-58, -20))
-                .build();
-        
-        Trajectory leftPlaceTheDuckpt2 = d.trajectoryBuilder(leftPlaceTheDuckpt1.end())
-                .lineToSplineHeading(new Pose2d(-35, -24, Math.toRadians(180)))
-                .build();
-
-        Trajectory leftParkSetup = d.trajectoryBuilder(leftPlaceTheDuckpt2.end())
-                .lineToConstantHeading(new Vector2d (-58, -24))
-                .build();
-
-        Trajectory leftParkInsideStorageUnit = d.trajectoryBuilder(leftParkSetup.end())
-                .lineToConstantHeading(new Vector2d(-58, -37))
-                .build();
-
-        Trajectory leftParkInsideWarehousept1 = d.trajectoryBuilder(leftParkSetup.end())
-                .lineToConstantHeading(new Vector2d(-58, -58))
-                .build();
-
-        Trajectory leftParkInsideWarehousept2 = d.trajectoryBuilder(leftParkInsideWarehousept1.end())
-                .splineToConstantHeading(new Vector2d(-15, -58), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(10, -48), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(37, -48), Math.toRadians(0))
-                .build();
-
-        Trajectory leftParkWarehouseRightSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
-                .lineToConstantHeading(new Vector2d(37, -60))
-                .build();
-
-        Trajectory leftParkWarehouseLeftSide = d.trajectoryBuilder(leftParkInsideWarehousept2.end())
-                .lineToConstantHeading(new Vector2d(40, -38))
-                .build();        Trajectory leftParkWarehouseTopLeft = d.trajectoryBuilder(leftParkWarehouseLeftSide.end())
-                .lineToConstantHeading(new Vector2d(60, -38))
-                .build();
-
-
-        Trajectory rightSideToHub = d.trajectoryBuilder(start)
-                .lineToConstantHeading(new Vector2d(-11, 45))
-                .build();
-
-        Trajectory rightSideToWarehousept1 = d.trajectoryBuilder(rightSideToHub.end())
-                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(180)))
-                .build();
-
-        Trajectory rightSideToWarehousept2 = d.trajectoryBuilder(rightSideToWarehousept1.end())
-                .lineToConstantHeading(new Vector2d(39, -48))
-                .build();
-
-        Trajectory rightSideToWarehouseRight = d.trajectoryBuilder(rightSideToWarehousept2.end())
-                .lineToConstantHeading(new Vector2d(39, -61))
-                .build();
-
-        Trajectory rightSideToWarehouseLeft = d.trajectoryBuilder(rightSideToWarehousept2.end())
-                .lineToConstantHeading(new Vector2d(39, -38))
-                .build();
-
-        Trajectory rightSideToWarehouseTopLeft = d.trajectoryBuilder(rightSideToWarehouseLeft.end())
-                .lineToConstantHeading(new Vector2d(60, -38))
-                .build();
-
-        Trajectory rightSideToStorageUnitpt1 = d.trajectoryBuilder(rightSideToHub.end())
-                .lineToLinearHeading(new Pose2d(-45, -60, Math.toRadians(180)))
-                .build();
-
-        Trajectory rightSideToStorageUnitpt2 = d.trajectoryBuilder(rightSideToStorageUnitpt1.end())
-                .lineToConstantHeading(new Vector2d(-60, -35))
-                .build();
 
 
         waitForStart();

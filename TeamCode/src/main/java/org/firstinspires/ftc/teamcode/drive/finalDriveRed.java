@@ -13,7 +13,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp
 public class finalDriveRed extends LinearOpMode {
 
-    boolean previousA = false;
+    boolean previousA1;
+    boolean previousA2 = false;
     boolean previousB = false;
     boolean previousX = false;
     boolean previousY = false;
@@ -52,17 +53,27 @@ public class finalDriveRed extends LinearOpMode {
 
     private void action() {
         if (gamepad2.dpad_up && !gamepad2.dpad_down) {
+            d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             d.rightLiftMotor.setVelocity(850);
             d.leftLiftMotor.setVelocity(850);
         } else if (gamepad2.dpad_down && !gamepad2.dpad_up) {
+            d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             d.rightLiftMotor.setVelocity(-750);
             d.leftLiftMotor.setVelocity(-750);
         } else if (!gamepad2.dpad_up && !gamepad2.dpad_down) {
-            d.leftLiftMotor.setVelocity(1);
-            d.rightLiftMotor.setVelocity(1);
+            d.rightLiftMotor.setTargetPosition(d.rightLiftMotor.getCurrentPosition());
+            d.leftLiftMotor.setTargetPosition(d.leftLiftMotor.getCurrentPosition());
+
+            d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            d.leftLiftMotor.setPower(0.25);
+            d.rightLiftMotor.setPower(0.25);
         }
 
-        if (gamepad2.a && !previousA) {
+        if (gamepad2.a && !previousA2) {
             if (d.leftLinkage.getPosition() == 0 && d.rightLinkage.getPosition() == 0) {
                 d.leftLinkage.setPosition(1);
                 d.rightLinkage.setPosition(1);
@@ -97,8 +108,8 @@ public class finalDriveRed extends LinearOpMode {
         if(d.rightLiftMotor.getCurrentPosition() > 400 && d.leftLiftMotor.getCurrentPosition() > 400) {
             if (gamepad2.y && !previousY) {
                 if (boxState == 1) {
-                    d.rightBox.setPosition(0.45);
-                    d.leftBox.setPosition(0.45);
+                    d.rightBox.setPosition(0.6);
+                    d.leftBox.setPosition(0.6);
                     boxState = 2;
                 } else if (boxState == 2) {
                     d.rightBox.setPosition(1);
@@ -112,7 +123,12 @@ public class finalDriveRed extends LinearOpMode {
             }
         }
 
-        previousA = gamepad2.a;
+        if(gamepad1.a && !previousA1) {
+            d.setPoseEstimate(PoseStorage.telePower);
+        }
+
+        previousA1 = gamepad1.a;
+        previousA2 = gamepad2.a;
         previousB = gamepad2.b;
         previousX = gamepad2.x;
         previousY = gamepad2.y;
