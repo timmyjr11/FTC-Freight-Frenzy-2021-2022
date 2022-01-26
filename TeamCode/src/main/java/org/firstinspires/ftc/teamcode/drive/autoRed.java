@@ -160,30 +160,30 @@ public class autoRed extends LinearOpMode {
 
         //TODO: Come back to comment what the Trajectories do
         TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
-                .lineToConstantHeading(new Vector2d(-11, 45))
+                .lineToConstantHeading(new Vector2d(-11, -45))
                 .waitSeconds(waitTime)
                 //Lift
                 .build();
 
         TrajectorySequence rightSideStorageUnit = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(-45, -60, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-45, -60, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(-60, -35))
                 .build();
 
         TrajectorySequence rightSideWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(39, -48))
                 .lineToConstantHeading(new Vector2d(39, -61))
                 .build();
 
         TrajectorySequence rightSideWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(39, -48))
                 .lineToConstantHeading(new Vector2d(39, -38))
                 .build();
 
         TrajectorySequence rightSideWarehouseTop = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(39, -48))
                 .lineToConstantHeading(new Vector2d(39, -38))
                 .lineToConstantHeading(new Vector2d(60, -38))
@@ -195,7 +195,7 @@ public class autoRed extends LinearOpMode {
                 .waitSeconds(waitTime)
                 //Front wheel
                 .lineToConstantHeading(new Vector2d(-57, -20))
-                .splineToSplineHeading(new Pose2d(-35, -35, Math.toRadians(180)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(-35, -24, Math.toRadians(180)), Math.toRadians(0))
                 .waitSeconds(waitTime)
                 //Lift
                 .lineToLinearHeading(new Pose2d(-61, -24, Math.toRadians(270)))
