@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp
 public class finalDriveRed extends LinearOpMode {
 
+    int rightLiftHeight;
+    int leftLiftHeight;
     boolean previousA1;
     boolean previousA2 = false;
     boolean previousB = false;
@@ -53,18 +55,22 @@ public class finalDriveRed extends LinearOpMode {
 
     private void action() {
         if (gamepad2.dpad_up && !gamepad2.dpad_down) {
+            rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
+            leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
             d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             d.rightLiftMotor.setVelocity(850);
             d.leftLiftMotor.setVelocity(850);
         } else if (gamepad2.dpad_down && !gamepad2.dpad_up) {
+            rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
+            leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
             d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             d.rightLiftMotor.setVelocity(-750);
             d.leftLiftMotor.setVelocity(-750);
         } else if (!gamepad2.dpad_up && !gamepad2.dpad_down) {
-            d.rightLiftMotor.setTargetPosition(d.rightLiftMotor.getCurrentPosition());
-            d.leftLiftMotor.setTargetPosition(d.leftLiftMotor.getCurrentPosition());
+            d.rightLiftMotor.setTargetPosition(rightLiftHeight);
+            d.leftLiftMotor.setTargetPosition(leftLiftHeight);
 
             d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -105,7 +111,7 @@ public class finalDriveRed extends LinearOpMode {
             d.intake.setPower(0);
         }
 
-        if(d.rightLiftMotor.getCurrentPosition() > 400 && d.leftLiftMotor.getCurrentPosition() > 400) {
+        if(d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200) {
             if (gamepad2.y && !previousY) {
                 if (boxState == 1) {
                     d.rightBox.setPosition(0.6);

@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode.drive;
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -142,13 +140,7 @@ public class autoRed extends LinearOpMode {
             }
         }
 
-        if (position == 0) {
-            telemetry.addLine("Duck is in the center");
-        } else if (position == 1) {
-            telemetry.addLine("Duck is on the right side");
-        } else if (position == -1) {
-            telemetry.addLine("Duck is on the left side");
-        }
+        //add duck if telemetry not work
 
         telemetry.addLine("");
         telemetry.addLine("Thank you for using Tim's auto selector! Please give me some time to build your configuration :)");
@@ -175,38 +167,50 @@ public class autoRed extends LinearOpMode {
 
         TrajectorySequence rightSideWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(39, -48))
-                .lineToConstantHeading(new Vector2d(39, -61))
+                .lineToConstantHeading(new Vector2d(60, -48))
+                .lineToConstantHeading(new Vector2d(60, -50))
                 .build();
 
         TrajectorySequence rightSideWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(39, -48))
-                .lineToConstantHeading(new Vector2d(39, -38))
+                .lineToConstantHeading(new Vector2d(60, -48))
+                .lineToConstantHeading(new Vector2d(60, -35))
                 .build();
 
         TrajectorySequence rightSideWarehouseTop = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(39, -48))
-                .lineToConstantHeading(new Vector2d(39, -38))
-                .lineToConstantHeading(new Vector2d(60, -38))
+                .lineToConstantHeading(new Vector2d(60, -48))
+                .lineToConstantHeading(new Vector2d(60, -35))
+                .lineToConstantHeading(new Vector2d(80, -38))
                 .build();
 
         TrajectorySequence leftSide = d.trajectorySequenceBuilder(start)
                 .lineToLinearHeading(new Pose2d(-59.5, -53.5, Math.toRadians(180)))
                 .lineToLinearHeading(new Pose2d(-60, -54, Math.toRadians(180)))
                 .waitSeconds(3)
-                .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
-                    d.leftServoWheel.setPower(1);
-                })
-                .UNSTABLE_addTemporalMarkerOffset(5, () -> {
-                    d.leftServoWheel.setPower(0);
-                })
+                .UNSTABLE_addTemporalMarkerOffset(-5, () -> d.leftServoWheel.setPower(1))
+                .UNSTABLE_addTemporalMarkerOffset(5, () -> d.leftServoWheel.setPower(0))
                 //Front wheel
                 .lineToConstantHeading(new Vector2d(-57, -20))
-                .splineToSplineHeading(new Pose2d(-35, -24, Math.toRadians(180)), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
+                    if (position == 1) {
+                        d.leftLiftMotor.setTargetPosition(1100);
+                        d.rightLiftMotor.setTargetPosition(1100);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(0.8);
+                        d.rightLiftMotor.setPower(0.8);
+                    } else if (position == 0) {
+                        d.leftLiftMotor.setTargetPosition(450);
+                        d.rightLiftMotor.setTargetPosition(450);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(0.8);
+                        d.rightLiftMotor.setPower(0.8);
+                    } //TODO: get the -1 position done
+                })
+                .lineToLinearHeading(new Pose2d(-35, -24, Math.toRadians(180)))
                 .waitSeconds(waitTime)
-                //Lift
                 .lineToLinearHeading(new Pose2d(-57, -23.5, Math.toRadians(270)))
                 .lineToConstantHeading(new Vector2d(-56, -55))
                 .build();
@@ -223,7 +227,7 @@ public class autoRed extends LinearOpMode {
                 .build();
 
         TrajectorySequence leftSideParkWarehouseLeft = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToLinearHeading(new Pose2d(-10, -37, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-30, -50, Math.toRadians(180)))
                 .lineToConstantHeading(new Vector2d(60, -37))
                 .lineToConstantHeading(new Vector2d(60, -30))
                 .build();
@@ -403,6 +407,17 @@ public class autoRed extends LinearOpMode {
                 warehousePosition = 0;
                 break;
             }
+
+
+            if (position == 0) {
+                telemetry.addLine("Duck is in the center");
+            } else if (position == 1) {
+                telemetry.addLine("Duck is on the right side");
+            } else if (position == -1) {
+                telemetry.addLine("Duck is on the left side");
+            }
+
+            telemetry.update();
             if (isStopRequested()) return;
         }
     }
