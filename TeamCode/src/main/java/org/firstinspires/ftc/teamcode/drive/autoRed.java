@@ -37,9 +37,6 @@ public class autoRed extends LinearOpMode {
     //Creates the integer 'position' that is used for the ducks in openCV
     int position;
 
-    //Will Be used SOON
-    double liftHeight;
-
     //Variable to be used for the lift timing
     double waitTime;
 
@@ -140,7 +137,7 @@ public class autoRed extends LinearOpMode {
             }
         }
 
-        //add duck if telemetry not work
+        //TODO: add duck if telemetry not work
 
         telemetry.addLine("");
         telemetry.addLine("Thank you for using Tim's auto selector! Please give me some time to build your configuration :)");
@@ -153,30 +150,35 @@ public class autoRed extends LinearOpMode {
         //Lets roadRunner understand where the robot is on the field
         d.setPoseEstimate(start);
 
-        //TODO: Come back to comment what the Trajectories do
+        /*On the right side, the robot moves to the shipping hub then places the duck on the correct
+        level based on the configuration of the duck */
         TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
                 .lineToConstantHeading(new Vector2d(-11, -45))
                 .waitSeconds(waitTime)
                 //Lift
                 .build();
 
+        //If the storage unit is chosen, the robot will go to park fully within the storage unit
         TrajectorySequence rightSideStorageUnit = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(-45, -60, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(-60, -35))
                 .build();
 
+        //If warehouse right is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence rightSideWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(60, -48))
                 .lineToConstantHeading(new Vector2d(60, -50))
                 .build();
 
+        //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
         TrajectorySequence rightSideWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(60, -48))
                 .lineToConstantHeading(new Vector2d(60, -35))
                 .build();
 
+        //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
         TrajectorySequence rightSideWarehouseTop = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(60, -48))
@@ -184,6 +186,9 @@ public class autoRed extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(80, -38))
                 .build();
 
+        /*On the left side, the robot will move to the carousel and deliver the duck, then the robot
+        will go through the storage unit to place the block on the level given by the barcode.
+        Then the robot will then move back the way it came and set up for parking*/
         TrajectorySequence leftSide = d.trajectorySequenceBuilder(start)
                 .lineToLinearHeading(new Pose2d(-59.5, -53.5, Math.toRadians(180)))
                 .lineToLinearHeading(new Pose2d(-60, -54, Math.toRadians(180)))
@@ -207,7 +212,14 @@ public class autoRed extends LinearOpMode {
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
-                    } //TODO: get the -1 position done
+                    } else if (position == -1) {
+                        d.leftLiftMotor.setTargetPosition(250);
+                        d.rightLiftMotor.setTargetPosition(250);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(0.8);
+                        d.rightLiftMotor.setPower(0.8);
+                    }
                 })
                 .lineToLinearHeading(new Pose2d(-35, -24, Math.toRadians(180)))
                 .waitSeconds(waitTime)
@@ -215,23 +227,27 @@ public class autoRed extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-56, -55))
                 .build();
 
+        //If the storage unit is chosen, the robot will move back a bit to park fully in the storage unit
         TrajectorySequence leftSideParkStorageUnit = d.trajectorySequenceBuilder(leftSide.end())
                 .lineToConstantHeading(new Vector2d(-58, -37))
                 .build();
 
         //TODO: GET DONE
+        //If the  warehouse left is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence leftSideParkWarehouseRight = d.trajectorySequenceBuilder(leftSide.end())
                 .lineToLinearHeading(new Pose2d(-30, -50, Math.toRadians(180)))
                 .lineToConstantHeading(new Vector2d(60, -37))
                 .lineToConstantHeading(new Vector2d(60, -50))
                 .build();
 
+        //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
         TrajectorySequence leftSideParkWarehouseLeft = d.trajectorySequenceBuilder(leftSide.end())
                 .lineToLinearHeading(new Pose2d(-30, -50, Math.toRadians(180)))
                 .lineToConstantHeading(new Vector2d(60, -37))
                 .lineToConstantHeading(new Vector2d(60, -30))
                 .build();
 
+        //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
         TrajectorySequence leftSideParkWareHouseTop = d.trajectorySequenceBuilder(leftSide.end())
                 .lineToLinearHeading(new Pose2d(10, -37, Math.toRadians(180)))
                 .lineToConstantHeading(new Vector2d(60, -40))
@@ -245,6 +261,7 @@ public class autoRed extends LinearOpMode {
         //When the robot has started, the camera stops streaming
         cam.stopStreaming();
 
+        //The robot will then follow the path as given from the configuration
         if (startingPosition == -1) {
             d.followTrajectorySequence(leftSide);
             if (parkingPosition == -1) {
@@ -287,6 +304,7 @@ public class autoRed extends LinearOpMode {
 
         Mat cropCenter = new Mat();
 
+        //Collects the image from the camera and then processes them
         @Override
         public Mat processFrame(Mat input) {
 
@@ -337,6 +355,18 @@ public class autoRed extends LinearOpMode {
             } else if (finalRightAverage > finalCenterAverage && finalRightAverage > finalCenterAverage) {
                 position = 1;
             }
+
+            //Telemetry that allows the driver to know what is being detected
+            if (position == 0) {
+                telemetry.addLine("Duck is in the center");
+            } else if (position == 1) {
+                telemetry.addLine("Duck is on the right side");
+            } else if (position == -1) {
+                telemetry.addLine("Duck is on the left side");
+            }
+            telemetry.update();
+
+            //Returns the output that can be used
             return outPut;
         }
     }
@@ -408,16 +438,6 @@ public class autoRed extends LinearOpMode {
                 break;
             }
 
-
-            if (position == 0) {
-                telemetry.addLine("Duck is in the center");
-            } else if (position == 1) {
-                telemetry.addLine("Duck is on the right side");
-            } else if (position == -1) {
-                telemetry.addLine("Duck is on the left side");
-            }
-
-            telemetry.update();
             if (isStopRequested()) return;
         }
     }

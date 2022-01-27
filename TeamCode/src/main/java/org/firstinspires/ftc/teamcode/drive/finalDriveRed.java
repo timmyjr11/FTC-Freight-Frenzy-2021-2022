@@ -13,40 +13,52 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp
 public class finalDriveRed extends LinearOpMode {
 
+    //Variable that allows the lift to hold in place
     int rightLiftHeight;
     int leftLiftHeight;
+
+    //Booleans that allow the an action to happen once and not cycle if pressed
     boolean previousA1;
     boolean previousA2 = false;
     boolean previousB = false;
     boolean previousX = false;
     boolean previousY = false;
 
+    //Finite state machine that allows the box to work
     int boxState;
 
+    //Creates SampleMecanumDrive to be used for Roadrunner
     SampleMecanumDrive d;
 
+    //Creates the FtcDashboard that is sued for debugging
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     @Override
     public void runOpMode() throws InterruptedException {
-
+        //Initial state of the box
         boxState = 1;
 
+        //Hardware maps the SampleMecanumDrive
         d = new SampleMecanumDrive(hardwareMap);
 
+        //Allows telemetry to be used on the dashboard
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
+        //Does not allow encoders to directly affect the driving of the robot
         d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        //Set the pose estimate the robot knows what orientation is for field centric driving
         d.setPoseEstimate(PoseStorage.telePower);
 
         waitForStart();
 
+        //After the robot starts, set positions for the start
         d.leftLinkage.setPosition(0);
         d.rightLinkage.setPosition(0);
         d.rightBox.setPosition(0);
         d.leftBox.setPosition(0);
 
+        //The loop that allows the code to keep driving and do actions
         while (opModeIsActive() && !isStopRequested()) {
             driving();
             action();
