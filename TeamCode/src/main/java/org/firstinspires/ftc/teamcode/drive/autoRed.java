@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -189,51 +192,47 @@ public class autoRed extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(60, -38))
                 .build();
 
-
         TrajectorySequence leftSide = d.trajectorySequenceBuilder(start)
-                .lineToConstantHeading(new Vector2d(-58, -58))
-                .waitSeconds(waitTime)
+                .lineToLinearHeading(new Pose2d(-59.5, -53.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-60, -54, Math.toRadians(180)))
+                .waitSeconds(3)
+                .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
+                    d.leftServoWheel.setPower(1);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(5, () -> {
+                    d.leftServoWheel.setPower(0);
+                })
                 //Front wheel
                 .lineToConstantHeading(new Vector2d(-57, -20))
                 .splineToSplineHeading(new Pose2d(-35, -24, Math.toRadians(180)), Math.toRadians(0))
                 .waitSeconds(waitTime)
                 //Lift
-                .lineToLinearHeading(new Pose2d(-61, -24, Math.toRadians(270)))
-                .lineToConstantHeading(new Vector2d(-58, -58))
-                .lineToConstantHeading(new Vector2d(-58, -20))
-                .lineToSplineHeading(new Pose2d(-35, -24, Math.toRadians(180)))
-                .waitSeconds(waitTime)
-                //Lift
-                .lineToConstantHeading(new Vector2d(-58, -24))
+                .lineToLinearHeading(new Pose2d(-57, -23.5, Math.toRadians(270)))
+                .lineToConstantHeading(new Vector2d(-56, -55))
                 .build();
 
         TrajectorySequence leftSideParkStorageUnit = d.trajectorySequenceBuilder(leftSide.end())
                 .lineToConstantHeading(new Vector2d(-58, -37))
                 .build();
 
+        //TODO: GET DONE
         TrajectorySequence leftSideParkWarehouseRight = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(-58, -37))
-                .splineToConstantHeading(new Vector2d(-15, -58), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(10, -48), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(37, -48), Math.toRadians(0))
-                .lineToConstantHeading(new Vector2d(37, -60))
+                .lineToLinearHeading(new Pose2d(-30, -50, Math.toRadians(180)))
+                .lineToConstantHeading(new Vector2d(60, -37))
+                .lineToConstantHeading(new Vector2d(60, -50))
                 .build();
 
         TrajectorySequence leftSideParkWarehouseLeft = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(-58, -37))
-                .splineToConstantHeading(new Vector2d(-15, -58), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(10, -48), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(37, -48), Math.toRadians(0))
-                .lineToConstantHeading(new Vector2d(40, -38))
+                .lineToLinearHeading(new Pose2d(-10, -37, Math.toRadians(180)))
+                .lineToConstantHeading(new Vector2d(60, -37))
+                .lineToConstantHeading(new Vector2d(60, -30))
                 .build();
 
         TrajectorySequence leftSideParkWareHouseTop = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(-58, -37))
-                .splineToConstantHeading(new Vector2d(-15, -58), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(10, -48), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(37, -48), Math.toRadians(0))
-                .lineToConstantHeading(new Vector2d(40, -38))
-                .lineToConstantHeading(new Vector2d(60, -38))
+                .lineToLinearHeading(new Pose2d(10, -37, Math.toRadians(180)))
+                .lineToConstantHeading(new Vector2d(60, -40))
+                .lineToConstantHeading(new Vector2d(60, -30))
+                .lineToConstantHeading(new Vector2d(80, -30))
                 .build();
 
 
@@ -249,7 +248,7 @@ public class autoRed extends LinearOpMode {
             } else if (warehousePosition == 0) {
                 d.followTrajectorySequence(leftSideParkWarehouseLeft);
             } else if (warehousePosition == 1) {
-                d.followTrajectorySequence(leftSideParkWarehouseRight);
+               d.followTrajectorySequence(leftSideParkWarehouseRight);
             } else if (warehousePosition == -1) {
                 d.followTrajectorySequence(leftSideParkWareHouseTop);
             }
