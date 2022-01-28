@@ -35,6 +35,7 @@ public class autoBlue extends LinearOpMode {
     //Creates the integer 'position' that is used for the ducks in openCV
 
     double leftBubLift;
+    double rightBubLift;
 
     int position;
 
@@ -127,10 +128,20 @@ public class autoBlue extends LinearOpMode {
             liftSpeed = 0.6;
         }
 
-        if (position == 1 || position == -1) {
-            leftBubLift = 36;
-        } else if(position == 0) {
-            leftBubLift = 33.5;
+        if (startingPosition == -1) {
+            if (position == 1 || position == -1) {
+                leftBubLift = -36;
+            } else if (position == 0) {
+                leftBubLift = -33.5;
+            }
+        }
+
+        if (startingPosition == 1) {
+            if (position == 1 || position == -1) {
+                rightBubLift = 40;
+            } else if (position == 0) {
+                rightBubLift = 42.5;
+            }
         }
 
         //After configuration is complete, the auto configuration is then read back to drivers to ensure the correct configuration
@@ -203,7 +214,7 @@ public class autoBlue extends LinearOpMode {
                     d.leftBox.setPosition(0.5);
                     d.rightBox.setPosition(0.5);
                 })
-                .lineToConstantHeading(new Vector2d(16, -40))
+                .lineToConstantHeading(new Vector2d(-16, 40))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     d.leftLinkage.setPosition(1);
@@ -246,14 +257,14 @@ public class autoBlue extends LinearOpMode {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
-                .lineToLinearHeading(new Pose2d(56, -45, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(56, -38))
+                .lineToLinearHeading(new Pose2d(-56, 45, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(-56, 38))
 
                 .build();
 
         //If warehouse right is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence rightSideWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(-10, -42, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(10, 42, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
                     if (position == 1) {
                         d.leftLinkage.setPosition(0);
@@ -284,13 +295,13 @@ public class autoBlue extends LinearOpMode {
                     d.rightLiftMotor.setPower(0);
                 })
                 .waitSeconds(0.5)
-                .lineToConstantHeading(new Vector2d(-65, -42))
-                .lineToConstantHeading(new Vector2d(-65, -55))
+                .lineToConstantHeading(new Vector2d(65, 42))
+                .lineToConstantHeading(new Vector2d(65, 55))
                 .build();
 
         //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
         TrajectorySequence rightSideWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(-10, -42, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(10, 42, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
                     if (position == 1) {
                         d.leftLinkage.setPosition(0);
@@ -321,13 +332,13 @@ public class autoBlue extends LinearOpMode {
                     d.rightLiftMotor.setPower(0);
                 })
                 .waitSeconds(0.5)
-                .lineToConstantHeading(new Vector2d(-65, -42))
-                .lineToConstantHeading(new Vector2d(-65, -33))
+                .lineToConstantHeading(new Vector2d(65, 42))
+                .lineToConstantHeading(new Vector2d(65, 33))
                 .build();
 
         //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
         TrajectorySequence rightSideWarehouseTop = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(-10, -42, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(10, 42, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
                     if (position == 1) {
                         d.leftLinkage.setPosition(0);
@@ -358,22 +369,22 @@ public class autoBlue extends LinearOpMode {
                     d.rightLiftMotor.setPower(0);
                 })
                 .waitSeconds(0.5)
-                .lineToConstantHeading(new Vector2d(-65, -42))
-                .lineToConstantHeading(new Vector2d(-65, -33))
-                .lineToConstantHeading(new Vector2d(-85, -33))
+                .lineToConstantHeading(new Vector2d(65, 42))
+                .lineToConstantHeading(new Vector2d(65, 33))
+                .lineToConstantHeading(new Vector2d(85, 33))
                 .build();
 
         /*On the left side, the robot will move to the carousel and deliver the duck, then the robot
         will go through the storage unit to place the block on the level given by the barcode.
         Then the robot will then move back the way it came and set up for parking*/
         TrajectorySequence leftSide = d.trajectorySequenceBuilder(start)
-                .lineToLinearHeading(new Pose2d(59.5, -53.5, Math.toRadians(180)))
-                .lineToLinearHeading(new Pose2d(60, -54, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-59.5, 53.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-60, 54, Math.toRadians(180)))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(-5, () -> d.leftServoWheel.setPower(1))
                 .UNSTABLE_addTemporalMarkerOffset(5, () -> d.leftServoWheel.setPower(0))
                 //Front wheel
-                .lineToConstantHeading(new Vector2d(57, -20))
+                .lineToConstantHeading(new Vector2d(-57, 20))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     if (position == 1) {
                         d.leftLiftMotor.setTargetPosition(1100);
@@ -402,7 +413,7 @@ public class autoBlue extends LinearOpMode {
                     d.leftBox.setPosition(0.5);
                     d.rightBox.setPosition(0.5);
                 })
-                .lineToLinearHeading(new Pose2d(leftBubLift, -23, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(leftBubLift, 23, Math.toRadians(180)))
                 .waitSeconds(2)
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     d.leftLinkage.setPosition(1);
@@ -412,7 +423,7 @@ public class autoBlue extends LinearOpMode {
                     d.leftBox.setPosition(1);
                     d.rightBox.setPosition(1);
                 })
-                .lineToLinearHeading(new Pose2d(57, -21, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-57, 21, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     if (position == 1) {
                         d.leftLinkage.setPosition(0);
@@ -446,32 +457,32 @@ public class autoBlue extends LinearOpMode {
 
         //If the storage unit is chosen, the robot will move back a bit to park fully in the storage unit
         TrajectorySequence leftSideParkStorageUnit = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(58, -32))
+                .lineToConstantHeading(new Vector2d(-58, 32))
                 .build();
 
         //If the  warehouse left is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence leftSideParkWarehouseRight = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(56, -45))
-                .lineToLinearHeading(new Pose2d(-10, -45, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(-70, -45))
-                .lineToConstantHeading(new Vector2d(-70, -58))
+                .lineToConstantHeading(new Vector2d(-56, 45))
+                .lineToLinearHeading(new Pose2d(10, 45, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(70, 45))
+                .lineToConstantHeading(new Vector2d(70, 58))
                 .build();
 
         //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
         TrajectorySequence leftSideParkWarehouseLeft = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(56, -45))
-                .lineToLinearHeading(new Pose2d(-10, -45, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(-70, -45))
-                .lineToConstantHeading(new Vector2d(-70, -37))
+                .lineToConstantHeading(new Vector2d(-56, 45))
+                .lineToLinearHeading(new Pose2d(10, 45, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(70, 45))
+                .lineToConstantHeading(new Vector2d(70, 37))
                 .build();
 
         //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
         TrajectorySequence leftSideParkWareHouseTop = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(56, -45))
-                .lineToLinearHeading(new Pose2d(-10, -45, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(-70, -45))
-                .lineToConstantHeading(new Vector2d(-70, -37))
-                .lineToConstantHeading(new Vector2d(-90, -37))
+                .lineToConstantHeading(new Vector2d(-56, 45))
+                .lineToLinearHeading(new Pose2d(10, 45, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(70, 45))
+                .lineToConstantHeading(new Vector2d(70, 37))
+                .lineToConstantHeading(new Vector2d(90, 37))
                 .build();
 
         waitForStart();
@@ -486,9 +497,9 @@ public class autoBlue extends LinearOpMode {
                 d.followTrajectorySequence(leftSideParkStorageUnit);
             } else if (warehousePosition == 0) {
                 d.followTrajectorySequence(leftSideParkWarehouseLeft);
-            } else if (warehousePosition == 1) {
-                d.followTrajectorySequence(leftSideParkWarehouseRight);
             } else if (warehousePosition == -1) {
+                d.followTrajectorySequence(leftSideParkWarehouseRight);
+            } else if (warehousePosition == 1) {
                 d.followTrajectorySequence(leftSideParkWareHouseTop);
             }
         }
@@ -499,9 +510,9 @@ public class autoBlue extends LinearOpMode {
                 d.followTrajectorySequence(rightSideStorageUnit);
             } else if (warehousePosition == 0) {
                 d.followTrajectorySequence(rightSideWarehouseLeft);
-            } else if (warehousePosition == 1) {
-                d.followTrajectorySequence(rightSideWarehouseRight);
             } else if (warehousePosition == -1) {
+                d.followTrajectorySequence(rightSideWarehouseRight);
+            } else if (warehousePosition == 1) {
                 d.followTrajectorySequence(rightSideWarehouseTop);
             }
         }
@@ -629,9 +640,9 @@ public class autoBlue extends LinearOpMode {
     //A part of the auto selector that determines where to park inside the warehouse if the warehouse is selected
     private void wareHousePosition() {
         telemetry.addLine("Warehouse selected, where would you like to park specifically?");
-        telemetry.addLine("Press Left on D-pad to park on the right side near the wall");
-        telemetry.addLine("Press right on D-pad to park on the left side near the shared hub");
-        telemetry.addLine("Press up on D-pad to park on in the top left closest to the wall and shared hub");
+        telemetry.addLine("Press Left on D-pad to park on the left side near the wall");
+        telemetry.addLine("Press right on D-pad to park on the right side near the shared hub");
+        telemetry.addLine("Press up on D-pad to park on in the top right closest to the wall and shared hub");
         telemetry.update();
         while (true) {
             if (gamepad1.dpad_up) {

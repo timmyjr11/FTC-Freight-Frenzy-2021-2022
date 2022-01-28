@@ -18,7 +18,7 @@ public class finalDriveRed extends LinearOpMode {
     int leftLiftHeight;
 
     //Booleans that allow the an action to happen once and not cycle if pressed
-    boolean previousA1;
+    boolean previousA1 = false;
     boolean previousA2 = false;
     boolean previousB = false;
     boolean previousX = false;

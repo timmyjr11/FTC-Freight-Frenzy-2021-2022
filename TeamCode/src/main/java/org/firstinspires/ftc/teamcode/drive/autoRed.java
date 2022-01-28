@@ -35,6 +35,7 @@ public class autoRed extends LinearOpMode {
     //Creates the integer 'position' that is used for the ducks in openCV
 
     double leftBubLift;
+    double rightBubLift;
 
     int position;
 
@@ -127,10 +128,20 @@ public class autoRed extends LinearOpMode {
             liftSpeed = 0.6;
         }
 
-        if (position == 1 || position == -1) {
-            leftBubLift = -36;
-        } else if(position == 0) {
-            leftBubLift = -33.5;
+        if (startingPosition == -1) {
+            if (position == 1 || position == -1) {
+                leftBubLift = -36;
+            } else if (position == 0) {
+                leftBubLift = -33.5;
+            }
+        }
+
+        if (startingPosition == 1) {
+            if (position == 1 || position == -1) {
+                rightBubLift = -40;
+            } else if (position == 0) {
+                rightBubLift = -37.5;
+            }
         }
 
         //After configuration is complete, the auto configuration is then read back to drivers to ensure the correct configuration
@@ -174,7 +185,7 @@ public class autoRed extends LinearOpMode {
 
         /*On the right side, the robot moves to the shipping hub then places the duck on the correct
         level based on the configuration of the duck */
-        TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
+        @SuppressWarnings("SuspiciousNameCombination") TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     if (position == 1) {
                         d.leftLiftMotor.setTargetPosition(1100);
@@ -203,7 +214,7 @@ public class autoRed extends LinearOpMode {
                     d.leftBox.setPosition(0.5);
                     d.rightBox.setPosition(0.5);
                 })
-                .lineToConstantHeading(new Vector2d(-16, -40))
+                .lineToConstantHeading(new Vector2d(-16, rightBubLift))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     d.leftLinkage.setPosition(1);
