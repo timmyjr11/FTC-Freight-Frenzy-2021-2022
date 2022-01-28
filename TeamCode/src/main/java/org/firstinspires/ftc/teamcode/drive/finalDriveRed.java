@@ -71,15 +71,15 @@ public class finalDriveRed extends LinearOpMode {
             leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
             d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            d.rightLiftMotor.setVelocity(850);
-            d.leftLiftMotor.setVelocity(850);
+            d.rightLiftMotor.setPower(0.8);
+            d.leftLiftMotor.setVelocity(0.8);
         } else if (gamepad2.dpad_down && !gamepad2.dpad_up) {
             rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
             leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
             d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            d.rightLiftMotor.setVelocity(-750);
-            d.leftLiftMotor.setVelocity(-750);
+            d.rightLiftMotor.setPower(0.6);
+            d.leftLiftMotor.setVelocity(0.6);
         } else if (!gamepad2.dpad_up && !gamepad2.dpad_down) {
             d.rightLiftMotor.setTargetPosition(rightLiftHeight);
             d.leftLiftMotor.setTargetPosition(leftLiftHeight);

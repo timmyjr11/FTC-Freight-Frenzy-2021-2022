@@ -26,8 +26,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous
 public class autoRed extends LinearOpMode {
 
-    //TODO: Create a variable that allows proper placement of the duck
-
     //Creates the dashboard that is used for debugging
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -36,9 +34,6 @@ public class autoRed extends LinearOpMode {
 
     //Creates the integer 'position' that is used for the ducks in openCV
     int position;
-
-    //Variable to be used for the lift timing
-    double waitTime = 4;
 
     double liftSpeed;
 
@@ -112,6 +107,8 @@ public class autoRed extends LinearOpMode {
 
         //Creating the auto configuration
         startingPosition();
+        //TODO: Adjust below
+        openCVPlacement();
         sleep(500);
         parkingPosition();
         sleep(500);
@@ -169,9 +166,7 @@ public class autoRed extends LinearOpMode {
         /*On the right side, the robot moves to the shipping hub then places the duck on the correct
         level based on the configuration of the duck */
         TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
-                .lineToConstantHeading(new Vector2d(-11, -45))
-                .waitSeconds(10)
-                .UNSTABLE_addTemporalMarkerOffset(-10.5, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     if (position == 1) {
                         d.leftLiftMotor.setTargetPosition(1100);
                         d.rightLiftMotor.setTargetPosition(1100);
@@ -195,12 +190,25 @@ public class autoRed extends LinearOpMode {
                         d.rightLiftMotor.setPower(0.8);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(-10, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
                     d.leftBox.setPosition(0.5);
                     d.rightBox.setPosition(0.5);
                 })
+                .lineToConstantHeading(new Vector2d(-11, -45))
+                .waitSeconds(3)
+                .UNSTABLE_addTemporalMarkerOffset(-2.8, () -> {
+                    d.leftLinkage.setPosition(1);
+                    d.rightLinkage.setPosition(1);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(-2.3, () -> {
+                    d.leftBox.setPosition(1);
+                    d.rightBox.setPosition(1);
+                })
+                .build();
 
-                .UNSTABLE_addTemporalMarkerOffset(-8, () -> {
+        //If the storage unit is chosen, the robot will go to park fully within the storage unit
+        TrajectorySequence rightSideStorageUnit = d.trajectorySequenceBuilder(rightSide.end())
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
                     if (position == 1) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
@@ -225,21 +233,47 @@ public class autoRed extends LinearOpMode {
                         d.rightLiftMotor.setPower(liftSpeed);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
-                .build();
+                .lineToLinearHeading(new Pose2d(-56, -45, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(-56, -38))
 
-        //If the storage unit is chosen, the robot will go to park fully within the storage unit
-        TrajectorySequence rightSideStorageUnit = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(-45, -60, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(-60, -35))
                 .build();
 
         //If warehouse right is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence rightSideWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
+                    if (position == 1) {
+                        d.leftLinkage.setPosition(0);
+                        d.rightLinkage.setPosition(0);
+                        d.leftBox.setPosition(0);
+                        d.rightBox.setPosition(0);
+                        d.leftLiftMotor.setTargetPosition(10);
+                        d.rightLiftMotor.setTargetPosition(10);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(liftSpeed);
+                        d.rightLiftMotor.setPower(liftSpeed);
+                    } else if (position == -1 || position == 0) {
+                        d.leftLinkage.setPosition(0);
+                        d.rightLinkage.setPosition(0);
+                        d.leftBox.setPosition(0);
+                        d.rightBox.setPosition(0);
+                        d.leftLiftMotor.setTargetPosition(300);
+                        d.rightLiftMotor.setTargetPosition(300);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(liftSpeed);
+                        d.rightLiftMotor.setPower(liftSpeed);
+                    }
+                })
+                .UNSTABLE_addTemporalMarkerOffset(-4.5, () -> {
+                    d.leftLiftMotor.setPower(0);
+                    d.rightLiftMotor.setPower(0);
+                })
                 .lineToConstantHeading(new Vector2d(65, -42))
                 .lineToConstantHeading(new Vector2d(65, -55))
                 .build();
@@ -247,6 +281,35 @@ public class autoRed extends LinearOpMode {
         //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
         TrajectorySequence rightSideWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
+                    if (position == 1) {
+                        d.leftLinkage.setPosition(0);
+                        d.rightLinkage.setPosition(0);
+                        d.leftBox.setPosition(0);
+                        d.rightBox.setPosition(0);
+                        d.leftLiftMotor.setTargetPosition(10);
+                        d.rightLiftMotor.setTargetPosition(10);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(liftSpeed);
+                        d.rightLiftMotor.setPower(liftSpeed);
+                    } else if (position == -1 || position == 0) {
+                        d.leftLinkage.setPosition(0);
+                        d.rightLinkage.setPosition(0);
+                        d.leftBox.setPosition(0);
+                        d.rightBox.setPosition(0);
+                        d.leftLiftMotor.setTargetPosition(300);
+                        d.rightLiftMotor.setTargetPosition(300);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(liftSpeed);
+                        d.rightLiftMotor.setPower(liftSpeed);
+                    }
+                })
+                .UNSTABLE_addTemporalMarkerOffset(-4.5, () -> {
+                    d.leftLiftMotor.setPower(0);
+                    d.rightLiftMotor.setPower(0);
+                })
                 .lineToConstantHeading(new Vector2d(65, -42))
                 .lineToConstantHeading(new Vector2d(65, -33))
                 .build();
@@ -254,6 +317,35 @@ public class autoRed extends LinearOpMode {
         //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
         TrajectorySequence rightSideWarehouseTop = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
+                    if (position == 1) {
+                        d.leftLinkage.setPosition(0);
+                        d.rightLinkage.setPosition(0);
+                        d.leftBox.setPosition(0);
+                        d.rightBox.setPosition(0);
+                        d.leftLiftMotor.setTargetPosition(10);
+                        d.rightLiftMotor.setTargetPosition(10);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(liftSpeed);
+                        d.rightLiftMotor.setPower(liftSpeed);
+                    } else if (position == -1 || position == 0) {
+                        d.leftLinkage.setPosition(0);
+                        d.rightLinkage.setPosition(0);
+                        d.leftBox.setPosition(0);
+                        d.rightBox.setPosition(0);
+                        d.leftLiftMotor.setTargetPosition(300);
+                        d.rightLiftMotor.setTargetPosition(300);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(liftSpeed);
+                        d.rightLiftMotor.setPower(liftSpeed);
+                    }
+                })
+                .UNSTABLE_addTemporalMarkerOffset(-4.5, () -> {
+                    d.leftLiftMotor.setPower(0);
+                    d.rightLiftMotor.setPower(0);
+                })
                 .lineToConstantHeading(new Vector2d(65, -42))
                 .lineToConstantHeading(new Vector2d(65, -33))
                 .lineToConstantHeading(new Vector2d(85, -33))
@@ -545,6 +637,26 @@ public class autoRed extends LinearOpMode {
             }
 
             if (isStopRequested()) return;
+        }
+    }
+    private void openCVPlacement() {
+        if(startingPosition == 1) {
+            rectLeftx = 0;
+            rectLefty = 260;
+            rectLeftWidth = 60;
+            rectLeftHeight = 60;
+
+            //Creates the right rectangle for openCv
+            rectRightx = 482;
+            rectRighty = 255;
+            rectRightWidth = 60;
+            rectRightHeight = 60;
+
+            //Creates the center rectangle for openCV
+            rectCenterx = 255;
+            rectCentery = 255;
+            rectCenterWidth = 60;
+            rectCenterHeight = 60;
         }
     }
 }
