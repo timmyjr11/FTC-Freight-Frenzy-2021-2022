@@ -437,7 +437,6 @@ public class autoRed extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-56, -38))
                 .build();
 
-        //TODO: GET DONE
         //If the  warehouse left is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence leftSideParkWarehouseRight = d.trajectorySequenceBuilder(leftSide.end())
                 .lineToConstantHeading(new Vector2d(-56, -45))
@@ -462,7 +461,6 @@ public class autoRed extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(70, -37))
                 .lineToConstantHeading(new Vector2d(90, -37))
                 .build();
-
 
         waitForStart();
 
@@ -563,7 +561,6 @@ public class autoRed extends LinearOpMode {
             } else if (finalRightAverage > finalCenterAverage && finalRightAverage > finalCenterAverage) {
                 position = 1;
             }
-
             //Returns the output that can be used
             return outPut;
         }
@@ -639,6 +636,7 @@ public class autoRed extends LinearOpMode {
             if (isStopRequested()) return;
         }
     }
+    //TODO: Get this done
     private void openCVPlacement() {
         if(startingPosition == 1) {
             rectLeftx = 0;
