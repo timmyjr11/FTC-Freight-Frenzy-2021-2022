@@ -38,7 +38,9 @@ public class autoRed extends LinearOpMode {
     int position;
 
     //Variable to be used for the lift timing
-    double waitTime;
+    double waitTime = 4;
+
+    double liftSpeed;
 
     //Creates the webcam
     OpenCvWebcam cam;
@@ -52,22 +54,22 @@ public class autoRed extends LinearOpMode {
     int warehousePosition;
 
     //Creates the left rectangle for openCV
-    public static int rectLeftx = 65;
-    public static int rectLefty = 385;
-    public static int rectLeftWidth = 55;
-    public static int rectLeftHeight = 55;
+    public static int rectLeftx = 0;
+    public static int rectLefty = 260;
+    public static int rectLeftWidth = 60;
+    public static int rectLeftHeight = 60;
 
     //Creates the right rectangle for openCv
-    public static int rectRightx = 570;
-    public static int rectRighty = 390;
-    public static int rectRightWidth = 55;
-    public static int rectRightHeight = 55;
+    public static int rectRightx = 482;
+    public static int rectRighty = 255;
+    public static int rectRightWidth = 60;
+    public static int rectRightHeight = 60;
 
     //Creates the center rectangle for openCV
-    public static int rectCenterx = 330;
-    public static int rectCentery = 385;
-    public static int rectCenterWidth = 55;
-    public static int rectCenterHeight = 55;
+    public static int rectCenterx = 255;
+    public static int rectCentery = 255;
+    public static int rectCenterWidth = 60;
+    public static int rectCenterHeight = 60;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -117,6 +119,14 @@ public class autoRed extends LinearOpMode {
             wareHousePosition();
         }
 
+        if (position == 1) {
+            liftSpeed = 0.6;
+        } else if (position == 0) {
+            liftSpeed = 0.2;
+        } else if (position == -1) {
+            liftSpeed = 0.6;
+        }
+
         //After configuration is complete, the auto configuration is then read back to drivers to ensure the correct configuration
         telemetry.addLine("Current configuration:");
         if (startingPosition == -1) {
@@ -137,7 +147,13 @@ public class autoRed extends LinearOpMode {
             }
         }
 
-        //TODO: add duck if telemetry not work
+        if (position == 0) {
+            telemetry.addLine("Duck is in the center");
+        } else if (position == 1) {
+            telemetry.addLine("Duck is on the right side");
+        } else if (position == -1) {
+            telemetry.addLine("Duck is on the left side");
+        }
 
         telemetry.addLine("");
         telemetry.addLine("Thank you for using Tim's auto selector! Please give me some time to build your configuration :)");
@@ -154,8 +170,65 @@ public class autoRed extends LinearOpMode {
         level based on the configuration of the duck */
         TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
                 .lineToConstantHeading(new Vector2d(-11, -45))
-                .waitSeconds(waitTime)
-                //Lift
+                .waitSeconds(10)
+                .UNSTABLE_addTemporalMarkerOffset(-10.5, () -> {
+                    if (position == 1) {
+                        d.leftLiftMotor.setTargetPosition(1100);
+                        d.rightLiftMotor.setTargetPosition(1100);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(0.8);
+                        d.rightLiftMotor.setPower(0.8);
+                    } else if (position == 0) {
+                        d.leftLiftMotor.setTargetPosition(250);
+                        d.rightLiftMotor.setTargetPosition(250);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(0.8);
+                        d.rightLiftMotor.setPower(0.8);
+                    } else if (position == -1) {
+                        d.leftLiftMotor.setTargetPosition(150);
+                        d.rightLiftMotor.setTargetPosition(150);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(0.8);
+                        d.rightLiftMotor.setPower(0.8);
+                    }
+                })
+                .UNSTABLE_addTemporalMarkerOffset(-10, () -> {
+                    d.leftBox.setPosition(0.5);
+                    d.rightBox.setPosition(0.5);
+                })
+
+                .UNSTABLE_addTemporalMarkerOffset(-8, () -> {
+                    if (position == 1) {
+                        d.leftLinkage.setPosition(0);
+                        d.rightLinkage.setPosition(0);
+                        d.leftBox.setPosition(0);
+                        d.rightBox.setPosition(0);
+                        d.leftLiftMotor.setTargetPosition(10);
+                        d.rightLiftMotor.setTargetPosition(10);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(liftSpeed);
+                        d.rightLiftMotor.setPower(liftSpeed);
+                    } else if (position == -1 || position == 0) {
+                        d.leftLinkage.setPosition(0);
+                        d.rightLinkage.setPosition(0);
+                        d.leftBox.setPosition(0);
+                        d.rightBox.setPosition(0);
+                        d.leftLiftMotor.setTargetPosition(300);
+                        d.rightLiftMotor.setTargetPosition(300);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(liftSpeed);
+                        d.rightLiftMotor.setPower(liftSpeed);
+                    }
+                })
+                .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
+                    d.leftLiftMotor.setPower(0);
+                    d.rightLiftMotor.setPower(0);
+                })
                 .build();
 
         //If the storage unit is chosen, the robot will go to park fully within the storage unit
@@ -166,24 +239,24 @@ public class autoRed extends LinearOpMode {
 
         //If warehouse right is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence rightSideWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(60, -48))
-                .lineToConstantHeading(new Vector2d(60, -50))
+                .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(65, -42))
+                .lineToConstantHeading(new Vector2d(65, -55))
                 .build();
 
         //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
         TrajectorySequence rightSideWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(60, -48))
-                .lineToConstantHeading(new Vector2d(60, -35))
+                .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(65, -42))
+                .lineToConstantHeading(new Vector2d(65, -33))
                 .build();
 
         //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
         TrajectorySequence rightSideWarehouseTop = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(10, -48, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(60, -48))
-                .lineToConstantHeading(new Vector2d(60, -35))
-                .lineToConstantHeading(new Vector2d(80, -38))
+                .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(65, -42))
+                .lineToConstantHeading(new Vector2d(65, -33))
+                .lineToConstantHeading(new Vector2d(85, -33))
                 .build();
 
         /*On the left side, the robot will move to the carousel and deliver the duck, then the robot
@@ -197,7 +270,7 @@ public class autoRed extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(5, () -> d.leftServoWheel.setPower(0))
                 //Front wheel
                 .lineToConstantHeading(new Vector2d(-57, -20))
-                .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     if (position == 1) {
                         d.leftLiftMotor.setTargetPosition(1100);
                         d.rightLiftMotor.setTargetPosition(1100);
@@ -206,53 +279,96 @@ public class autoRed extends LinearOpMode {
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
                     } else if (position == 0) {
-                        d.leftLiftMotor.setTargetPosition(450);
-                        d.rightLiftMotor.setTargetPosition(450);
-                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        d.leftLiftMotor.setPower(0.8);
-                        d.rightLiftMotor.setPower(0.8);
-                    } else if (position == -1) {
                         d.leftLiftMotor.setTargetPosition(250);
                         d.rightLiftMotor.setTargetPosition(250);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
+                    } else if (position == -1) {
+                        d.leftLiftMotor.setTargetPosition(150);
+                        d.rightLiftMotor.setTargetPosition(150);
+                        d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        d.leftLiftMotor.setPower(0.8);
+                        d.rightLiftMotor.setPower(0.8);
                     }
                 })
+                .UNSTABLE_addTemporalMarkerOffset(-3.5, () -> {
+                    d.leftBox.setPosition(0.5);
+                    d.rightBox.setPosition(0.5);
+                })
                 .lineToLinearHeading(new Pose2d(-35, -24, Math.toRadians(180)))
-                .waitSeconds(waitTime)
-                .lineToLinearHeading(new Pose2d(-57, -23.5, Math.toRadians(270)))
-                .lineToConstantHeading(new Vector2d(-56, -55))
+                .waitSeconds(2)
+                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
+                    d.leftLinkage.setPosition(1);
+                    d.rightLinkage.setPosition(1);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
+                    d.leftBox.setPosition(1);
+                    d.rightBox.setPosition(1);
+                })
+                .lineToLinearHeading(new Pose2d(-57, -21, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
+                   if (position == 1) {
+                       d.leftLinkage.setPosition(0);
+                       d.rightLinkage.setPosition(0);
+                       d.leftBox.setPosition(0);
+                       d.rightBox.setPosition(0);
+                       d.leftLiftMotor.setTargetPosition(10);
+                       d.rightLiftMotor.setTargetPosition(10);
+                       d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                       d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                       d.leftLiftMotor.setPower(liftSpeed);
+                       d.rightLiftMotor.setPower(liftSpeed);
+                   } else if (position == -1 || position == 0) {
+                       d.leftLinkage.setPosition(0);
+                       d.rightLinkage.setPosition(0);
+                       d.leftBox.setPosition(0);
+                       d.rightBox.setPosition(0);
+                       d.leftLiftMotor.setTargetPosition(300);
+                       d.rightLiftMotor.setTargetPosition(300);
+                       d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                       d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                       d.leftLiftMotor.setPower(liftSpeed);
+                       d.rightLiftMotor.setPower(liftSpeed);
+                   }
+                })
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
+                    d.leftLiftMotor.setPower(0);
+                    d.rightLiftMotor.setPower(0);
+                })
                 .build();
 
         //If the storage unit is chosen, the robot will move back a bit to park fully in the storage unit
         TrajectorySequence leftSideParkStorageUnit = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(-58, -37))
+                .lineToConstantHeading(new Vector2d(-56, -38))
                 .build();
 
         //TODO: GET DONE
         //If the  warehouse left is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence leftSideParkWarehouseRight = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToLinearHeading(new Pose2d(-30, -50, Math.toRadians(180)))
-                .lineToConstantHeading(new Vector2d(60, -37))
-                .lineToConstantHeading(new Vector2d(60, -50))
+                .lineToConstantHeading(new Vector2d(-56, -45))
+                .lineToLinearHeading(new Pose2d(10, -45, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(70, -45))
+                .lineToConstantHeading(new Vector2d(70, -58))
                 .build();
 
         //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
         TrajectorySequence leftSideParkWarehouseLeft = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToLinearHeading(new Pose2d(-30, -50, Math.toRadians(180)))
-                .lineToConstantHeading(new Vector2d(60, -37))
-                .lineToConstantHeading(new Vector2d(60, -30))
+                .lineToConstantHeading(new Vector2d(-56, -45))
+                .lineToLinearHeading(new Pose2d(10, -45, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(70, -45))
+                .lineToConstantHeading(new Vector2d(70, -37))
                 .build();
 
         //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
         TrajectorySequence leftSideParkWareHouseTop = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToLinearHeading(new Pose2d(10, -37, Math.toRadians(180)))
-                .lineToConstantHeading(new Vector2d(60, -40))
-                .lineToConstantHeading(new Vector2d(60, -30))
-                .lineToConstantHeading(new Vector2d(80, -30))
+                .lineToConstantHeading(new Vector2d(-56, -45))
+                .lineToLinearHeading(new Pose2d(10, -45, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(70, -45))
+                .lineToConstantHeading(new Vector2d(70, -37))
+                .lineToConstantHeading(new Vector2d(90, -37))
                 .build();
 
 
@@ -355,16 +471,6 @@ public class autoRed extends LinearOpMode {
             } else if (finalRightAverage > finalCenterAverage && finalRightAverage > finalCenterAverage) {
                 position = 1;
             }
-
-            //Telemetry that allows the driver to know what is being detected
-            if (position == 0) {
-                telemetry.addLine("Duck is in the center");
-            } else if (position == 1) {
-                telemetry.addLine("Duck is on the right side");
-            } else if (position == -1) {
-                telemetry.addLine("Duck is on the left side");
-            }
-            telemetry.update();
 
             //Returns the output that can be used
             return outPut;
