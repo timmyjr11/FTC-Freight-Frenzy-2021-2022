@@ -137,10 +137,12 @@ public class autoBlue extends LinearOpMode {
         }
 
         if (startingPosition == 1) {
-            if (position == 1 || position == -1) {
+            if (position == 1) {
                 rightBubLift = 40;
             } else if (position == 0) {
-                rightBubLift = 42.5;
+                rightBubLift = 39;
+            } else if (position == -1) {
+                rightBubLift = 43;
             }
         }
 
@@ -185,7 +187,7 @@ public class autoBlue extends LinearOpMode {
 
         /*On the right side, the robot moves to the shipping hub then places the duck on the correct
         level based on the configuration of the duck */
-        TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
+        @SuppressWarnings("SuspiciousNameCombination") TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     if (position == 1) {
                         d.leftLiftMotor.setTargetPosition(1100);
@@ -202,8 +204,8 @@ public class autoBlue extends LinearOpMode {
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
                     } else if (position == -1) {
-                        d.leftLiftMotor.setTargetPosition(25);
-                        d.rightLiftMotor.setTargetPosition(25);
+                        d.leftLiftMotor.setTargetPosition(10);
+                        d.rightLiftMotor.setTargetPosition(10);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
@@ -214,7 +216,7 @@ public class autoBlue extends LinearOpMode {
                     d.leftBox.setPosition(0.5);
                     d.rightBox.setPosition(0.5);
                 })
-                .lineToConstantHeading(new Vector2d(-16, 40))
+                .lineToConstantHeading(new Vector2d(-16, rightBubLift))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     d.leftLinkage.setPosition(1);
@@ -253,7 +255,7 @@ public class autoBlue extends LinearOpMode {
                         d.rightLiftMotor.setPower(liftSpeed);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -290,7 +292,7 @@ public class autoBlue extends LinearOpMode {
                         d.rightLiftMotor.setPower(liftSpeed);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -327,7 +329,7 @@ public class autoBlue extends LinearOpMode {
                         d.rightLiftMotor.setPower(liftSpeed);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -364,7 +366,7 @@ public class autoBlue extends LinearOpMode {
                         d.rightLiftMotor.setPower(liftSpeed);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -381,8 +383,8 @@ public class autoBlue extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-59.5, 53.5, Math.toRadians(180)))
                 .lineToLinearHeading(new Pose2d(-60, 54, Math.toRadians(180)))
                 .waitSeconds(3)
-                .UNSTABLE_addTemporalMarkerOffset(-5, () -> d.leftServoWheel.setPower(1))
-                .UNSTABLE_addTemporalMarkerOffset(5, () -> d.leftServoWheel.setPower(0))
+                .UNSTABLE_addTemporalMarkerOffset(-5, () -> d.rightServoWheel.setPower(1))
+                .UNSTABLE_addTemporalMarkerOffset(5, () -> d.rightServoWheel.setPower(0))
                 //Front wheel
                 .lineToConstantHeading(new Vector2d(-57, 20))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -401,15 +403,15 @@ public class autoBlue extends LinearOpMode {
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
                     } else if (position == -1) {
-                        d.leftLiftMotor.setTargetPosition(25);
-                        d.rightLiftMotor.setTargetPosition(25);
+                        d.leftLiftMotor.setTargetPosition(10);
+                        d.rightLiftMotor.setTargetPosition(10);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(3.5, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(-3.5, () -> {
                     d.leftBox.setPosition(0.5);
                     d.rightBox.setPosition(0.5);
                 })
@@ -661,21 +663,21 @@ public class autoBlue extends LinearOpMode {
     }
     //TODO: Get this done
     private void openCVPlacement() {
-        if(startingPosition == -1) {
-            rectLeftx = 0;
-            rectLefty = 260;
+        if(startingPosition == 1) {
+            rectLeftx = 110;
+            rectLefty = 240;
             rectLeftWidth = 60;
             rectLeftHeight = 60;
 
             //Creates the right rectangle for openCv
-            rectRightx = 482;
-            rectRighty = 255;
+            rectRightx = 575;
+            rectRighty = 240;
             rectRightWidth = 60;
             rectRightHeight = 60;
 
             //Creates the center rectangle for openCV
-            rectCenterx = 255;
-            rectCentery = 255;
+            rectCenterx = 360;
+            rectCentery = 240;
             rectCenterWidth = 60;
             rectCenterHeight = 60;
         }

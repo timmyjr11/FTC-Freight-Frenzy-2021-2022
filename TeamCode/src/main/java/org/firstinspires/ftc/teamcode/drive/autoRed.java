@@ -137,10 +137,12 @@ public class autoRed extends LinearOpMode {
         }
 
         if (startingPosition == 1) {
-            if (position == 1 || position == -1) {
+            if (position == 1) {
                 rightBubLift = -40;
             } else if (position == 0) {
-                rightBubLift = -37.5;
+                rightBubLift = -39;
+            } else if (position == -1) {
+                rightBubLift = -43;
             }
         }
 
@@ -202,8 +204,8 @@ public class autoRed extends LinearOpMode {
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
                     } else if (position == -1) {
-                        d.leftLiftMotor.setTargetPosition(25);
-                        d.rightLiftMotor.setTargetPosition(25);
+                        d.leftLiftMotor.setTargetPosition(10);
+                        d.rightLiftMotor.setTargetPosition(10);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
@@ -253,7 +255,7 @@ public class autoRed extends LinearOpMode {
                         d.rightLiftMotor.setPower(liftSpeed);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -290,7 +292,7 @@ public class autoRed extends LinearOpMode {
                         d.rightLiftMotor.setPower(liftSpeed);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -327,7 +329,7 @@ public class autoRed extends LinearOpMode {
                         d.rightLiftMotor.setPower(liftSpeed);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -364,7 +366,7 @@ public class autoRed extends LinearOpMode {
                         d.rightLiftMotor.setPower(liftSpeed);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -401,8 +403,8 @@ public class autoRed extends LinearOpMode {
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
                     } else if (position == -1) {
-                        d.leftLiftMotor.setTargetPosition(25);
-                        d.rightLiftMotor.setTargetPosition(25);
+                        d.leftLiftMotor.setTargetPosition(10);
+                        d.rightLiftMotor.setTargetPosition(10);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
@@ -662,20 +664,20 @@ public class autoRed extends LinearOpMode {
     //TODO: Get this done
     private void openCVPlacement() {
         if(startingPosition == 1) {
-            rectLeftx = 0;
-            rectLefty = 260;
+            rectLeftx = 110;
+            rectLefty = 240;
             rectLeftWidth = 60;
             rectLeftHeight = 60;
 
             //Creates the right rectangle for openCv
-            rectRightx = 482;
-            rectRighty = 255;
+            rectRightx = 575;
+            rectRighty = 240;
             rectRightWidth = 60;
             rectRightHeight = 60;
 
             //Creates the center rectangle for openCV
-            rectCenterx = 255;
-            rectCentery = 255;
+            rectCenterx = 360;
+            rectCentery = 240;
             rectCenterWidth = 60;
             rectCenterHeight = 60;
         }

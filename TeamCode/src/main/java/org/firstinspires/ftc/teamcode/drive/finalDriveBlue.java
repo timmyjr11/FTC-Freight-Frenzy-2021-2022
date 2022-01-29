@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Config
 @TeleOp
-public class finalDriveRed extends LinearOpMode {
+public class finalDriveBlue extends LinearOpMode {
 
     //Variable that allows the lift to hold in place
     int rightLiftHeight;
@@ -124,7 +124,7 @@ public class finalDriveRed extends LinearOpMode {
         }
 
         if(d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200) {
-            if (gamepad2.y && !previousY) {
+            if (gamepad2.x && !previousX) {
                 if (boxState == 1) {
                     d.rightBox.setPosition(0.5);
                     d.leftBox.setPosition(0.5);
