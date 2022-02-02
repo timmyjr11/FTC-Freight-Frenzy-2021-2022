@@ -20,9 +20,11 @@ public class finalDriveRed extends LinearOpMode {
     //Booleans that allow the an action to happen once and not cycle if pressed
     boolean previousA1 = false;
     boolean previousA2 = false;
-    boolean previousB = false;
+    boolean previousRightStick = false;
     boolean previousX = false;
     boolean previousY = false;
+    boolean previousStart = false;
+    boolean previousBack = false;
 
     //Finite state machine that allows the box to work
     int boxState;
@@ -91,7 +93,7 @@ public class finalDriveRed extends LinearOpMode {
             d.rightLiftMotor.setPower(0.25);
         }
 
-        if (gamepad2.a && !previousA2) {
+        if (gamepad2.b && !previousA2) {
             if (d.leftLinkage.getPosition() == 0 && d.rightLinkage.getPosition() == 0) {
                 d.leftLinkage.setPosition(1);
                 d.rightLinkage.setPosition(1);
@@ -99,6 +101,11 @@ public class finalDriveRed extends LinearOpMode {
                 d.leftLinkage.setPosition(0);
                 d.rightLinkage.setPosition(0);
             }
+        }
+
+        if ((gamepad1.start && !previousStart) && (gamepad1.back && !previousBack)) {
+            d.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         if (gamepad1.right_trigger >= 0.5) {
@@ -141,7 +148,7 @@ public class finalDriveRed extends LinearOpMode {
             }
         }
 
-        if (gamepad2.b && !previousB) {
+        if (gamepad2.right_stick_button && !previousRightStick) {
             d.rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             d.leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -155,9 +162,11 @@ public class finalDriveRed extends LinearOpMode {
 
         previousA1 = gamepad1.a;
         previousA2 = gamepad2.a;
-        previousB = gamepad2.b;
+        previousRightStick = gamepad2.right_stick_button;
         previousX = gamepad2.x;
         previousY = gamepad2.y;
+        previousStart = gamepad1.start;
+        previousBack = gamepad1.back;
 
     }
 

@@ -20,7 +20,7 @@ public class finalDriveBlue extends LinearOpMode {
     //Booleans that allow the an action to happen once and not cycle if pressed
     boolean previousA1 = false;
     boolean previousA2 = false;
-    boolean previousB = false;
+    boolean previousRightStick = false;
     boolean previousX = false;
     boolean previousY = false;
 
@@ -48,7 +48,7 @@ public class finalDriveBlue extends LinearOpMode {
         d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Set the pose estimate the robot knows what orientation is for field centric driving
-        d.setPoseEstimate(PoseStorage.telePowerRed);
+        d.setPoseEstimate(PoseStorage.telePowerBlue);
 
         waitForStart();
 
@@ -66,6 +66,7 @@ public class finalDriveBlue extends LinearOpMode {
     }
 
     private void action() {
+
         if (gamepad2.dpad_up && !gamepad2.dpad_down) {
             rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
             leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
@@ -124,7 +125,7 @@ public class finalDriveBlue extends LinearOpMode {
         }
 
         if(d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200) {
-            if (gamepad2.x && !previousX) {
+            if (gamepad2.y && !previousY) {
                 if (boxState == 1) {
                     d.rightBox.setPosition(0.5);
                     d.leftBox.setPosition(0.5);
@@ -141,7 +142,7 @@ public class finalDriveBlue extends LinearOpMode {
             }
         }
 
-        if (gamepad2.b && !previousB) {
+        if (gamepad2.right_stick_button && !previousRightStick) {
             d.rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             d.leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -155,7 +156,7 @@ public class finalDriveBlue extends LinearOpMode {
 
         previousA1 = gamepad1.a;
         previousA2 = gamepad2.a;
-        previousB = gamepad2.b;
+        previousRightStick = gamepad2.right_stick_button;
         previousX = gamepad2.x;
         previousY = gamepad2.y;
 
