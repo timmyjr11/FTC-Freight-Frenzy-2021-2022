@@ -93,7 +93,7 @@ public class finalDriveRed extends LinearOpMode {
             d.rightLiftMotor.setPower(0.25);
         }
 
-        if (gamepad2.b && !previousA2) {
+        if (gamepad2.a && !previousA2) {
             if (d.leftLinkage.getPosition() == 0 && d.rightLinkage.getPosition() == 0) {
                 d.leftLinkage.setPosition(1);
                 d.rightLinkage.setPosition(1);
