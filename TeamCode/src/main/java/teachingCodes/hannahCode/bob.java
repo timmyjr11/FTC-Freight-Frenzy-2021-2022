@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-@Disabled
 public class bob extends LinearOpMode {
     DcMotorEx frontRight;
     DcMotorEx backRight;
@@ -26,6 +25,8 @@ public class bob extends LinearOpMode {
     Servo Gripper;
     Servo stopper;
     Servo tapper;
+
+    boolean previousA;
 
 
 
@@ -72,23 +73,33 @@ public class bob extends LinearOpMode {
         tapper.setPosition(0);
 
         while (opModeIsActive() && !isStopRequested()) {
-            if (gamepad2.a){
-                armPivot.setPosition(0);
+
+            if (gamepad2.a && !previousA){
+                if (armPivot.getPosition() == 1){
+                    armPivot.setPosition(0);
+                }else if (armPivot.getPosition() == 0){
+                        armPivot.setPosition(1);
+
+                }
             }
-            if (gamepad2.y){
-                armPivot.setPosition(1);
-            }
+
             if (gamepad2.left_bumper){
+                if (Gripper.getPosition() == 1){
                     Gripper.setPosition(0);
-            }
-            if (gamepad2.right_bumper){
+                }else if (Gripper.getPosition() == 0){
                     Gripper.setPosition(1);
+            }
+
             }
             if (gamepad2.left_trigger > 0.5){
                 frontShooter.setPower(0.75);
                 backShooter.setPower(0.75);
                 stopper.setPosition(0);
 
+
+            } else{
+                frontShooter.setPower(0);
+                backShooter.setPower(0);
             }
             if (gamepad2.right_trigger > 0.5){
                 tapper.setPosition(1);
@@ -96,7 +107,7 @@ public class bob extends LinearOpMode {
             }
             if (gamepad2.x){
                 tapper.setPosition(0);
-                stopper.setPosition(1);
+                stopper.setPosition(0.7);
             }
             if (gamepad2.dpad_down){
                 rightPivot.setPosition(1);
@@ -113,6 +124,7 @@ public class bob extends LinearOpMode {
             }
 
             setPower(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            previousA = gamepad2.a;
 
         }
 
