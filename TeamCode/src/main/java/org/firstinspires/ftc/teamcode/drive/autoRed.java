@@ -542,6 +542,7 @@ public class autoRed extends LinearOpMode {
         public Mat processFrame(Mat input) {
 
             //Converts the camera color space to HSV for better detection
+            Imgproc.cvtColor(input, HSV, Imgproc.COLOR_RGBA2RGB);
             Imgproc.cvtColor(input, HSV, Imgproc.COLOR_RGB2HSV);
 
             //Copies the input to the output
