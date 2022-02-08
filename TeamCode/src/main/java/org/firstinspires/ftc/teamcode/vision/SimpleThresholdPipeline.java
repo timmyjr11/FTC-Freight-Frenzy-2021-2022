@@ -43,15 +43,15 @@ public class SimpleThresholdPipeline extends OpenCvPipeline {
      * memory leak and causing the app to crash due to an
      * "Out of Memory" error.
      */
-    private Mat ycrcbMat       = new Mat();
-    private Mat binaryMat      = new Mat();
-    private Mat maskedInputMat = new Mat();
+    private final Mat ycrcbMat = new Mat();
+    private final Mat binaryMat  = new Mat();
+    private final Mat maskedInputMat = new Mat();
 
-    private Telemetry telemetry = null;
+    private final Telemetry telemetry;
 
     /**
      * Enum to choose which color space to choose
-     * with the live variable tuner isntead of
+     * with the live variable tuner instead of
      * hardcoding it.
      */
     enum ColorSpace {
@@ -66,7 +66,7 @@ public class SimpleThresholdPipeline extends OpenCvPipeline {
         Lab(Imgproc.COLOR_RGB2Lab);
 
         //store cvtCode in a public var
-        public int cvtCode = 0;
+        public int cvtCode;
 
         //constructor to be used by enum declarations above
         ColorSpace(int cvtCode) {
@@ -124,7 +124,7 @@ public class SimpleThresholdPipeline extends OpenCvPipeline {
          */
         Core.bitwise_and(input, input, maskedInputMat, binaryMat);
 
-        /**
+        /*
          * Add some nice and informative telemetry messages
          */
         telemetry.addData("[>]", "Change these values in tuner menu");
