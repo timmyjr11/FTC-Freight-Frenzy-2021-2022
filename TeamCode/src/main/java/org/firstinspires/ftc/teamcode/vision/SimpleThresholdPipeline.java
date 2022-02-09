@@ -23,15 +23,15 @@ public class SimpleThresholdPipeline extends OpenCvPipeline {
      * min and max values here for now, meaning
      * that all pixels will be shown.
      */
-    public Scalar lower = new Scalar(0, 153, 0);
-    public Scalar upper = new Scalar(255, 255, 94);
+    public Scalar lower = new Scalar(0, 0, 195);
+    public Scalar upper = new Scalar(255, 52, 255);
 
     /**
      * This will allow us to choose the color
      * space we want to use on the live field
      * tuner instead of hardcoding it
      */
-    public ColorSpace colorSpace = ColorSpace.YCrCb;
+    public ColorSpace colorSpace = ColorSpace.HSV;
 
     /*
      * A good practice when typing EOCV pipelines is
