@@ -55,20 +55,20 @@ public class autoRed extends LinearOpMode {
     //Creates the left rectangle for openCV
     public static int rectLeftx = 0;
     public static int rectLefty = 260;
-    public static int rectLeftWidth = 60;
-    public static int rectLeftHeight = 60;
+    public static int rectLeftWidth = 80;
+    public static int rectLeftHeight = 150;
 
     //Creates the right rectangle for openCv
-    public static int rectRightx = 482;
-    public static int rectRighty = 255;
-    public static int rectRightWidth = 60;
-    public static int rectRightHeight = 60;
+    public static int rectRightx = 495;
+    public static int rectRighty = 275;
+    public static int rectRightWidth = 80;
+    public static int rectRightHeight = 155;
 
     //Creates the center rectangle for openCV
-    public static int rectCenterx = 255;
-    public static int rectCentery = 255;
-    public static int rectCenterWidth = 60;
-    public static int rectCenterHeight = 60;
+    public static int rectCenterx = 260;
+    public static int rectCentery = 270;
+    public static int rectCenterWidth = 80;
+    public static int rectCenterHeight = 150;
 
     @Override
     public void runOpMode() throws InterruptedException {

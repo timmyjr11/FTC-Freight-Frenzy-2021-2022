@@ -117,9 +117,18 @@ public class bob extends LinearOpMode {
                 rightPivot.setPosition(0);
                 leftPivot.setPosition(0);
             }
-            if (gamepad2.b){
+            if (gamepad2.right_bumper){
                 intake.setPower(1);
+                convey.setPower(1);
             } else {
+                intake.setPower(0);
+                convey.setPower(0);
+            }
+            if (gamepad2.b){
+                convey.setPower(-1);
+                intake.setPower(-1);
+            } else {
+                convey.setPower(0);
                 intake.setPower(0);
             }
 
@@ -142,5 +151,6 @@ public class bob extends LinearOpMode {
         backLeft.setPower(backLeftPower);
         backRight.setPower(backLRightPower);
     }
+
 }
 
