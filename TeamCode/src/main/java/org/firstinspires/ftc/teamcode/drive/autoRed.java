@@ -79,8 +79,13 @@ public class autoRed extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         //Hardware maps the webcam and create a way to view what the camera sees
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources()
+                .getIdentifier("cameraMonitorViewId", "id",
+                        hardwareMap.appContext.getPackageName());
+
+        cam = OpenCvCameraFactory.getInstance()
+                .createWebcam(hardwareMap.get
+                        (WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         //Opens the camera and sets the openCV code to the webcam
         cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
