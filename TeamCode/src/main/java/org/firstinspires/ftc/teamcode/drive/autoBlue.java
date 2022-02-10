@@ -151,41 +151,11 @@ public class autoBlue extends LinearOpMode {
             }
         }
 
-        //After configuration is complete, the auto configuration is then read back to drivers to ensure the correct configuration
-        telemetry.addLine("Current configuration:");
-        if (startingPosition == -1) {
-            telemetry.addLine("Left side");
-        } else if (startingPosition == 1) {
-            telemetry.addLine("Right side");
-        }
-
-        if (parkingPosition == -1) {
-            telemetry.addLine("Park in storage unit");
-        } else if (parkingPosition == 1) {
-            if (warehousePosition == 0) {
-                telemetry.addLine("Park in the warehouse on left side near the shared hub");
-            } else if (warehousePosition == 1) {
-                telemetry.addLine("Park in the warehouse right side near the wall");
-            } else if (warehousePosition == -1) {
-                telemetry.addLine("Park in the warehouse top left closest to the wall and shared hub");
-            }
-        }
-
-        if (position == 0) {
-            telemetry.addLine("Duck is in the center");
-        } else if (position == 1) {
-            telemetry.addLine("Duck is on the right side");
-        } else if (position == -1) {
-            telemetry.addLine("Duck is on the left side");
-        }
-
-        telemetry.addLine("");
-        telemetry.addLine("Thank you for using Tim's auto selector! Please give me some time to build your configuration :)");
-        telemetry.addLine("Something wrong with the configuration? Just restart from the beginning!");
+        telemetry.addLine("Building your configuration, please wait...");
+        telemetry.addLine("*Jeopardy theme plays* (Not really lol)");
         telemetry.update();
 
         if (isStopRequested()) return;
-
 
         //Lets roadRunner understand where the robot is on the field
         d.setPoseEstimate(start);
@@ -492,7 +462,47 @@ public class autoBlue extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(90, 42))
                 .build();
 
-        waitForStart();
+
+        while (!isStarted()) {
+            //After configuration is complete, the auto configuration is then read back to drivers to ensure the correct configuration
+            telemetry.addLine("Current configuration:");
+            if (startingPosition == -1) {
+                telemetry.addLine("Left side");
+            } else if (startingPosition == 1) {
+                telemetry.addLine("Right side");
+            }
+
+            if (parkingPosition == -1) {
+                telemetry.addLine("Park in storage unit");
+            } else if (parkingPosition == 1) {
+                if (warehousePosition == 0) {
+                    telemetry.addLine("Park in the warehouse on left side near the shared hub");
+                } else if (warehousePosition == 1) {
+                    telemetry.addLine("Park in the warehouse right side near the wall");
+                } else if (warehousePosition == -1) {
+                    telemetry.addLine("Park in the warehouse top left closest to the wall and shared hub");
+                }
+            }
+
+            if (position == 0) {
+                telemetry.addLine("Duck is in the center");
+            } else if (position == 1) {
+                telemetry.addLine("Duck is on the right side");
+            } else if (position == -1) {
+                telemetry.addLine("Duck is on the left side");
+            }
+
+            telemetry.addLine("");
+            telemetry.addLine("Thank you for using Tim's auto selector! Please give me some time to build your configuration :)");
+            telemetry.addLine("Something wrong with the configuration? Just restart from the beginning!");
+            telemetry.update();
+
+            if (isStopRequested()) return;
+
+            if (isStarted()) {
+                break;
+            }
+        }
 
         //When the robot has started, the camera stops streaming
         cam.stopStreaming();
