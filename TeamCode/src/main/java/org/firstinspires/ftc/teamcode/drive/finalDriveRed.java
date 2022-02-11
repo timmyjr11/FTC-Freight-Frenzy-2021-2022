@@ -73,15 +73,15 @@ public class finalDriveRed extends LinearOpMode {
             leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
             d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            d.rightLiftMotor.setVelocity(1000);
-            d.leftLiftMotor.setVelocity(1000);
+            d.rightLiftMotor.setPower(0.8);
+            d.leftLiftMotor.setPower(0.8);
         } else if (gamepad2.dpad_down && !gamepad2.dpad_up) {
             rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
             leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
             d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            d.rightLiftMotor.setVelocity(-900);
-            d.leftLiftMotor.setVelocity(-900);
+            d.rightLiftMotor.setPower(-0.6);
+            d.leftLiftMotor.setPower(-0.6);
         } else if (!gamepad2.dpad_up && !gamepad2.dpad_down) {
             d.rightLiftMotor.setTargetPosition(rightLiftHeight);
             d.leftLiftMotor.setTargetPosition(leftLiftHeight);
@@ -121,9 +121,9 @@ public class finalDriveRed extends LinearOpMode {
         }
 
         if (gamepad2.right_trigger >= 0.1) {
-            d.intake.setPower(gamepad2.right_trigger);
+            d.intake.setPower(gamepad2.right_trigger * 0.8);
         } else if (gamepad2.left_trigger >= 0.1) {
-            d.intake.setPower(-gamepad2.left_trigger);
+            d.intake.setPower(-gamepad2.left_trigger * 0.9);
         }
 
         if (gamepad2.right_trigger < 0.1 && gamepad2.left_trigger < 0.1) {
@@ -131,6 +131,19 @@ public class finalDriveRed extends LinearOpMode {
         }
 
         if(d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200) {
+            if (gamepad2.dpad_up) {
+                d.rightBox.setPosition(0.5);
+                d.leftBox.setPosition(0.5);
+                boxState = 2;
+            }
+
+            if((gamepad2.a && !previousA2) && boxState == 3 && (d.leftLinkage.getPosition() == 1 && d.rightLinkage.getPosition() == 1)) {
+                d.leftLinkage.setPosition(0);
+                d.rightLinkage.setPosition(0);
+                d.rightBox.setPosition(0);
+                d.leftBox.setPosition(0);
+                boxState = 1;
+            }
             if (gamepad2.y && !previousY) {
                 if (boxState == 1) {
                     d.rightBox.setPosition(0.5);

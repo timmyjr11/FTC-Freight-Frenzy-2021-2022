@@ -53,20 +53,20 @@ public class autoRed extends LinearOpMode {
     int warehousePosition;
 
     //Creates the left rectangle for openCV
-    public static int rectLeftx = 0;
-    public static int rectLefty = 260;
+    public static int rectLeftx = 8;
+    public static int rectLefty = 250;
     public static int rectLeftWidth = 80;
     public static int rectLeftHeight = 150;
 
     //Creates the right rectangle for openCv
-    public static int rectRightx = 495;
-    public static int rectRighty = 275;
+    public static int rectRightx = 530;
+    public static int rectRighty = 255;
     public static int rectRightWidth = 80;
     public static int rectRightHeight = 155;
 
     //Creates the center rectangle for openCV
     public static int rectCenterx = 260;
-    public static int rectCentery = 270;
+    public static int rectCentery = 255;
     public static int rectCenterWidth = 80;
     public static int rectCenterHeight = 150;
 
@@ -436,7 +436,7 @@ public class autoRed extends LinearOpMode {
 
         //If the storage unit is chosen, the robot will move back a bit to park fully in the storage unit
         TrajectorySequence leftSideParkStorageUnit = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(-58, -32))
+                .lineToConstantHeading(new Vector2d(-60, -32))
                 .build();
 
         //If the  warehouse left is chosen, the robot will go into the warehouse and shift to the right side
@@ -682,38 +682,38 @@ public class autoRed extends LinearOpMode {
     //TODO: Get this done
     private void openCVPlacement() {
         if(startingPosition == 1) {
-            rectLeftx = 115;
-            rectLefty = 265;
-            rectLeftWidth = 80;
-            rectLeftHeight = 150;
-
-            //Creates the right rectangle for openCv
-            rectRightx = 580;
-            rectRighty = 270;
-            rectRightWidth = 60;
-            rectRightHeight = 150;
-
-            //Creates the center rectangle for openCV
-            rectCenterx = 345;
-            rectCentery = 270;
-            rectCenterWidth = 80;
-            rectCenterHeight = 150;
-        } else if (startingPosition == -1) {
-            //Creates the left rectangle for openCV
-            rectLeftx = 0;
+            rectLeftx = 70;
             rectLefty = 260;
             rectLeftWidth = 80;
             rectLeftHeight = 150;
 
             //Creates the right rectangle for openCv
-            rectRightx = 495;
-            rectRighty = 275;
+            rectRightx = 580;
+            rectRighty = 265;
+            rectRightWidth = 60;
+            rectRightHeight = 150;
+
+            //Creates the center rectangle for openCV
+            rectCenterx = 342;
+            rectCentery = 265;
+            rectCenterWidth = 80;
+            rectCenterHeight = 150;
+        } else if (startingPosition == -1) {
+            //Creates the left rectangle for openCV
+            rectLeftx = 8;
+            rectLefty = 250;
+            rectLeftWidth = 80;
+            rectLeftHeight = 150;
+
+            //Creates the right rectangle for openCv
+            rectRightx = 530;
+            rectRighty = 255;
             rectRightWidth = 80;
             rectRightHeight = 155;
 
             //Creates the center rectangle for openCV
             rectCenterx = 260;
-            rectCentery = 270;
+            rectCentery = 255;
             rectCenterWidth = 80;
             rectCenterHeight = 150;
         }

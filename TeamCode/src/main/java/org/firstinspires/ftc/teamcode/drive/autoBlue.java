@@ -613,11 +613,11 @@ public class autoBlue extends LinearOpMode {
         telemetry.update();
         while (true) {
             if (gamepad1.dpad_left) {
-                startingPosition = 1;
+                startingPosition = -1;
                 break;
 
             } else if (gamepad1.dpad_right) {
-                startingPosition = -1;
+                startingPosition = 1;
                 break;
             }
             if (isStopRequested()) return;
@@ -679,38 +679,38 @@ public class autoBlue extends LinearOpMode {
     //TODO: Get this done
     private void openCVPlacement() {
         if(startingPosition == 1) {
-            rectLeftx = 110;
-            rectLefty = 240;
-            rectLeftWidth = 60;
-            rectLeftHeight = 60;
-
-            //Creates the right rectangle for openCv
-            rectRightx = 575;
-            rectRighty = 240;
-            rectRightWidth = 60;
-            rectRightHeight = 60;
-
-            //Creates the center rectangle for openCV
-            rectCenterx = 360;
-            rectCentery = 240;
-            rectCenterWidth = 60;
-            rectCenterHeight = 60;
-        } else if (startingPosition == -1) {
-            //Creates the left rectangle for openCV
-            rectLeftx = 10;
-            rectLefty = 244;
+            rectLeftx = 1;
+            rectLefty = 246;
             rectLeftWidth = 80;
             rectLeftHeight = 150;
 
             //Creates the right rectangle for openCv
-            rectRightx = 555;
+            rectRightx = 543;
             rectRighty = 255;
             rectRightWidth = 80;
             rectRightHeight = 150;
 
             //Creates the center rectangle for openCV
-            rectCenterx = 275;
-            rectCentery = 250;
+            rectCenterx = 274;
+            rectCentery = 255;
+            rectCenterWidth = 80;
+            rectCenterHeight = 150;
+        } else if (startingPosition == -1) {
+            //Creates the left rectangle for openCV
+            rectLeftx = 40;
+            rectLefty = 235;
+            rectLeftWidth = 80;
+            rectLeftHeight = 150;
+
+            //Creates the right rectangle for openCv
+            rectRightx = 550;
+            rectRighty = 240;
+            rectRightWidth = 80;
+            rectRightHeight = 150;
+
+            //Creates the center rectangle for openCV
+            rectCenterx = 273;
+            rectCentery = 240;
             rectCenterWidth = 80;
             rectCenterHeight = 150;
         }
