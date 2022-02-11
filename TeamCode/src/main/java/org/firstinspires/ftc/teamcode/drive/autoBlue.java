@@ -695,6 +695,24 @@ public class autoBlue extends LinearOpMode {
             rectCentery = 240;
             rectCenterWidth = 60;
             rectCenterHeight = 60;
+        } else if (startingPosition == -1) {
+            //Creates the left rectangle for openCV
+            rectLeftx = 10;
+            rectLefty = 244;
+            rectLeftWidth = 80;
+            rectLeftHeight = 150;
+
+            //Creates the right rectangle for openCv
+            rectRightx = 555;
+            rectRighty = 255;
+            rectRightWidth = 80;
+            rectRightHeight = 150;
+
+            //Creates the center rectangle for openCV
+            rectCenterx = 275;
+            rectCentery = 250;
+            rectCenterWidth = 80;
+            rectCenterHeight = 150;
         }
     }
 }

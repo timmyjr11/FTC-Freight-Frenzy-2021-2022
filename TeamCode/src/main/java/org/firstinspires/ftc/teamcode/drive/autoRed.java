@@ -682,22 +682,40 @@ public class autoRed extends LinearOpMode {
     //TODO: Get this done
     private void openCVPlacement() {
         if(startingPosition == 1) {
-            rectLeftx = 110;
-            rectLefty = 240;
-            rectLeftWidth = 60;
-            rectLeftHeight = 60;
+            rectLeftx = 115;
+            rectLefty = 265;
+            rectLeftWidth = 80;
+            rectLeftHeight = 150;
 
             //Creates the right rectangle for openCv
-            rectRightx = 575;
-            rectRighty = 240;
+            rectRightx = 580;
+            rectRighty = 270;
             rectRightWidth = 60;
-            rectRightHeight = 60;
+            rectRightHeight = 150;
 
             //Creates the center rectangle for openCV
-            rectCenterx = 360;
-            rectCentery = 240;
-            rectCenterWidth = 60;
-            rectCenterHeight = 60;
+            rectCenterx = 345;
+            rectCentery = 270;
+            rectCenterWidth = 80;
+            rectCenterHeight = 150;
+        } else if (startingPosition == -1) {
+            //Creates the left rectangle for openCV
+            rectLeftx = 0;
+            rectLefty = 260;
+            rectLeftWidth = 80;
+            rectLeftHeight = 150;
+
+            //Creates the right rectangle for openCv
+            rectRightx = 495;
+            rectRighty = 275;
+            rectRightWidth = 80;
+            rectRightHeight = 155;
+
+            //Creates the center rectangle for openCV
+            rectCenterx = 260;
+            rectCentery = 270;
+            rectCenterWidth = 80;
+            rectCenterHeight = 150;
         }
     }
 }
