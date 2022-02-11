@@ -254,7 +254,6 @@ public class finalDriveRed extends LinearOpMode {
                         -gamepad1.right_stick_x * 0.25
                 )
         );
-
         d.update();
     }
 }
