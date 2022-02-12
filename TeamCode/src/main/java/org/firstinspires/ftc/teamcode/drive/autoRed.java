@@ -32,13 +32,9 @@ public class autoRed extends LinearOpMode {
     //Creates SampleMecanumDrive which allows the use of roadRunner
     SampleMecanumDrive d;
 
-    //Creates the integer 'position' that is used for the ducks in openCV
-
+    //Creates doubles to be used for the lift
     double leftBubLift;
     double rightBubLift;
-
-    int position;
-
     double liftSpeed;
 
     //Creates the webcam
@@ -47,10 +43,11 @@ public class autoRed extends LinearOpMode {
     //The starting Pose for roadRunner
     Pose2d start;
 
-    //Creates integers that will be used for the auto configuration selector.
-    int startingPosition;
-    int parkingPosition;
-    int warehousePosition;
+    //Creates ConfigurationStorage that will be used for the auto configuration selector.
+    ConfigurationStorage.capStonePosition position = ConfigurationStorage.capStonePosition.toBeDetermined;
+    ConfigurationStorage.sideStart startingPosition = ConfigurationStorage.sideStart.toBeDetermined;
+    ConfigurationStorage.parking parkingPosition = ConfigurationStorage.parking.toBeDetermined;
+    ConfigurationStorage.warehouseParking warehousePosition = ConfigurationStorage.warehouseParking.toBeDetermined;
 
     //Creates the left rectangle for openCV
     public static int rectLeftx = 8;
@@ -116,45 +113,47 @@ public class autoRed extends LinearOpMode {
 
         //Creating the auto configuration
         startingPosition();
-        //TODO: Adjust below
         openCVPlacement();
         sleep(500);
         parkingPosition();
         sleep(500);
-        if (parkingPosition == 1) {
+        if (parkingPosition == ConfigurationStorage.parking.warehouse) {
             wareHousePosition();
         }
 
-        if (position == 1) {
+        if (position == ConfigurationStorage.capStonePosition.right) {
             liftSpeed = 0.6;
-        } else if (position == 0) {
+        } else if (position == ConfigurationStorage.capStonePosition.center) {
             liftSpeed = 0.2;
-        } else if (position == -1) {
+        } else if (position == ConfigurationStorage.capStonePosition.left) {
             liftSpeed = 0.6;
         }
 
-        if (startingPosition == -1) {
-            if (position == 1) {
+        if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
+            if (position == ConfigurationStorage.capStonePosition.right) {
                 leftBubLift = -36;
-            } else if (position == 0) {
+            } else if (position == ConfigurationStorage.capStonePosition.center) {
                 leftBubLift = -33;
-            } else if (position == -1) {
+            } else if (position == ConfigurationStorage.capStonePosition.left) {
                 leftBubLift = -32;
             }
         }
 
-        if (startingPosition == 1) {
-            if (position == 1) {
+        if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
+            if (position == ConfigurationStorage.capStonePosition.right) {
                 rightBubLift = -40;
-            } else if (position == 0) {
+            } else if (position == ConfigurationStorage.capStonePosition.center) {
                 rightBubLift = -39;
-            } else if (position == -1) {
+            } else if (position == ConfigurationStorage.capStonePosition.left) {
                 rightBubLift = -43;
             }
         }
 
         telemetry.addLine("Building your configuration, please wait...");
-        telemetry.addLine("*Jeopardy theme plays* (Not really lol)");
+        telemetry.addLine("");
+        telemetry.addLine("According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to" +
+                "get its fat little body off the ground. The bee of course, flies anyway, because bees don't care what humans think is impossible");
+        telemetry.addLine("- Abraham Lincoln");
         telemetry.update();
 
         if (isStopRequested()) return;
@@ -166,21 +165,21 @@ public class autoRed extends LinearOpMode {
         level based on the configuration of the duck */
         @SuppressWarnings("SuspiciousNameCombination") TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    if (position == 1) {
+                    if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLiftMotor.setTargetPosition(1100);
                         d.rightLiftMotor.setTargetPosition(1100);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
-                    } else if (position == 0) {
+                    } else if (position == ConfigurationStorage.capStonePosition.center) {
                         d.leftLiftMotor.setTargetPosition(250);
                         d.rightLiftMotor.setTargetPosition(250);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
-                    } else if (position == -1) {
+                    } else if (position == ConfigurationStorage.capStonePosition.left) {
                         d.leftLiftMotor.setTargetPosition(10);
                         d.rightLiftMotor.setTargetPosition(10);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -208,7 +207,7 @@ public class autoRed extends LinearOpMode {
         //If the storage unit is chosen, the robot will go to park fully within the storage unit
         TrajectorySequence rightSideStorageUnit = d.trajectorySequenceBuilder(rightSide.end())
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                    if (position == 1) {
+                    if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
                         d.leftBox.setPosition(0);
@@ -219,7 +218,7 @@ public class autoRed extends LinearOpMode {
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(liftSpeed);
                         d.rightLiftMotor.setPower(liftSpeed);
-                    } else if (position == -1 || position == 0) {
+                    } else if (position == ConfigurationStorage.capStonePosition.left || position == ConfigurationStorage.capStonePosition.center) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
                         d.leftBox.setPosition(0);
@@ -245,7 +244,7 @@ public class autoRed extends LinearOpMode {
         TrajectorySequence rightSideWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
-                    if (position == 1) {
+                    if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
                         d.leftBox.setPosition(0);
@@ -256,7 +255,7 @@ public class autoRed extends LinearOpMode {
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(liftSpeed);
                         d.rightLiftMotor.setPower(liftSpeed);
-                    } else if (position == -1 || position == 0) {
+                    } else if (position == ConfigurationStorage.capStonePosition.left || position == ConfigurationStorage.capStonePosition.center) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
                         d.leftBox.setPosition(0);
@@ -282,7 +281,7 @@ public class autoRed extends LinearOpMode {
         TrajectorySequence rightSideWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
-                    if (position == 1) {
+                    if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
                         d.leftBox.setPosition(0);
@@ -293,7 +292,7 @@ public class autoRed extends LinearOpMode {
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(liftSpeed);
                         d.rightLiftMotor.setPower(liftSpeed);
-                    } else if (position == -1 || position == 0) {
+                    } else if (position == ConfigurationStorage.capStonePosition.left || position == ConfigurationStorage.capStonePosition.center) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
                         d.leftBox.setPosition(0);
@@ -319,7 +318,7 @@ public class autoRed extends LinearOpMode {
         TrajectorySequence rightSideWarehouseTop = d.trajectorySequenceBuilder(rightSide.end())
                 .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
-                    if (position == 1) {
+                    if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
                         d.leftBox.setPosition(0);
@@ -330,7 +329,7 @@ public class autoRed extends LinearOpMode {
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(liftSpeed);
                         d.rightLiftMotor.setPower(liftSpeed);
-                    } else if (position == -1 || position == 0) {
+                    } else if (position == ConfigurationStorage.capStonePosition.left || position == ConfigurationStorage.capStonePosition.center) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
                         d.leftBox.setPosition(0);
@@ -365,21 +364,21 @@ public class autoRed extends LinearOpMode {
                 //Front wheel
                 .lineToConstantHeading(new Vector2d(-57, -20))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    if (position == 1) {
+                    if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLiftMotor.setTargetPosition(1100);
                         d.rightLiftMotor.setTargetPosition(1100);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
-                    } else if (position == 0) {
+                    } else if (position == ConfigurationStorage.capStonePosition.center) {
                         d.leftLiftMotor.setTargetPosition(250);
                         d.rightLiftMotor.setTargetPosition(250);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
-                    } else if (position == -1) {
+                    } else if (position == ConfigurationStorage.capStonePosition.left) {
                         d.leftLiftMotor.setTargetPosition(10);
                         d.rightLiftMotor.setTargetPosition(10);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -404,7 +403,7 @@ public class autoRed extends LinearOpMode {
                 })
                 .lineToLinearHeading(new Pose2d(-57, -21, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                   if (position == 1) {
+                   if (position == ConfigurationStorage.capStonePosition.right) {
                        d.leftLinkage.setPosition(0);
                        d.rightLinkage.setPosition(0);
                        d.leftBox.setPosition(0);
@@ -415,7 +414,7 @@ public class autoRed extends LinearOpMode {
                        d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                        d.leftLiftMotor.setPower(liftSpeed);
                        d.rightLiftMotor.setPower(liftSpeed);
-                   } else if (position == -1 || position == 0) {
+                   } else if (position == ConfigurationStorage.capStonePosition.left || position == ConfigurationStorage.capStonePosition.center) {
                        d.leftLinkage.setPosition(0);
                        d.rightLinkage.setPosition(0);
                        d.leftBox.setPosition(0);
@@ -468,29 +467,29 @@ public class autoRed extends LinearOpMode {
         while (!isStarted()) {
             //After configuration is complete, the auto configuration is then read back to drivers to ensure the correct configuration
             telemetry.addLine("Current configuration:");
-            if (startingPosition == -1) {
+            if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
                 telemetry.addLine("Left side");
-            } else if (startingPosition == 1) {
+            } else if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
                 telemetry.addLine("Right side");
             }
 
-            if (parkingPosition == -1) {
+            if (parkingPosition == ConfigurationStorage.parking.storageUnit) {
                 telemetry.addLine("Park in storage unit");
-            } else if (parkingPosition == 1) {
-                if (warehousePosition == 0) {
+            } else if (parkingPosition == ConfigurationStorage.parking.warehouse) {
+                if (warehousePosition == ConfigurationStorage.warehouseParking.left) {
                     telemetry.addLine("Park in the warehouse on left side near the shared hub");
-                } else if (warehousePosition == 1) {
+                } else if (warehousePosition == ConfigurationStorage.warehouseParking.right) {
                     telemetry.addLine("Park in the warehouse right side near the wall");
-                } else if (warehousePosition == -1) {
+                } else if (warehousePosition == ConfigurationStorage.warehouseParking.top) {
                     telemetry.addLine("Park in the warehouse top left closest to the wall and shared hub");
                 }
             }
 
-            if (position == 0) {
+            if (position == ConfigurationStorage.capStonePosition.center) {
                 telemetry.addLine("Duck is in the center");
-            } else if (position == 1) {
+            } else if (position == ConfigurationStorage.capStonePosition.right) {
                 telemetry.addLine("Duck is on the right side");
-            } else if (position == -1) {
+            } else if (position == ConfigurationStorage.capStonePosition.left) {
                 telemetry.addLine("Duck is on the left side");
             }
 
@@ -510,28 +509,28 @@ public class autoRed extends LinearOpMode {
         cam.stopStreaming();
 
         //The robot will then follow the path as given from the configuration
-        if (startingPosition == -1) {
+        if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
             d.followTrajectorySequence(leftSide);
-            if (parkingPosition == -1) {
+            if (parkingPosition == ConfigurationStorage.parking.storageUnit ) {
                 d.followTrajectorySequence(leftSideParkStorageUnit);
-            } else if (warehousePosition == 0) {
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.left) {
                 d.followTrajectorySequence(leftSideParkWarehouseLeft);
-            } else if (warehousePosition == 1) {
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.right) {
                d.followTrajectorySequence(leftSideParkWarehouseRight);
-            } else if (warehousePosition == -1) {
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.top) {
                 d.followTrajectorySequence(leftSideParkWareHouseTop);
             }
         }
 
-        if (startingPosition == 1) {
+        if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
             d.followTrajectorySequence(rightSide);
-            if (parkingPosition == -1) {
+            if (parkingPosition == ConfigurationStorage.parking.storageUnit) {
                 d.followTrajectorySequence(rightSideStorageUnit);
-            } else if (warehousePosition == 0) {
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.left) {
                 d.followTrajectorySequence(rightSideWarehouseLeft);
-            } else if (warehousePosition == 1) {
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.right) {
                 d.followTrajectorySequence(rightSideWarehouseRight);
-            } else if (warehousePosition == -1) {
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.top) {
                 d.followTrajectorySequence(rightSideWarehouseTop);
             }
         }
@@ -598,11 +597,14 @@ public class autoRed extends LinearOpMode {
 
             //If a certain rectangle has a higher value than the other two rectangles then duck is in that certain rectangle
             if (finalCenterAverage > finalRightAverage && finalCenterAverage > finalLeftAverage) {
-                position = 0;
+                //Center is 0
+                position = ConfigurationStorage.capStonePosition.center;
             } else if (finalLeftAverage > finalCenterAverage && finalLeftAverage > finalRightAverage) {
-                position = -1;
+                //Left is -1
+                position = ConfigurationStorage.capStonePosition.left;
             } else if (finalRightAverage > finalCenterAverage && finalRightAverage > finalCenterAverage) {
-                position = 1;
+                //Right is 1
+                position = ConfigurationStorage.capStonePosition.right;
             }
             //Returns the output that can be used
             return outPut;
@@ -616,17 +618,19 @@ public class autoRed extends LinearOpMode {
         telemetry.update();
         while (true) {
             if (gamepad1.dpad_left) {
-                startingPosition = -1;
+                //Left side is -1
+                startingPosition = ConfigurationStorage.sideStart.leftSide;
                 break;
 
             } else if (gamepad1.dpad_right) {
-                startingPosition = 1;
+                //Right side is 1
+                startingPosition = ConfigurationStorage.sideStart.rightSide;
                 break;
             }
             if (isStopRequested()) return;
         }
 
-        if (startingPosition == 1) {
+        if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
             start = PoseStorage.rightAutoRed;
         } else {
             start = PoseStorage.leftAutoRed;
@@ -635,11 +639,11 @@ public class autoRed extends LinearOpMode {
 
     //A part of the auto selector that determines where to park
     private void parkingPosition() {
-        if (startingPosition == -1) {
+        if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
             telemetry.addLine("Left side selected, where would you like to park?");
             telemetry.addLine("Press left on D-pad to park in the storage unit");
             telemetry.addLine("Press right on D-pad to park inside the warehouse");
-        } else if (startingPosition == 1) {
+        } else if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
             telemetry.addLine("Right side selected, where would you like to park?");
             telemetry.addLine("Press left on D-pad to park in the storage unit");
             telemetry.addLine("Press right on D-pad to park inside the warehouse");
@@ -647,10 +651,12 @@ public class autoRed extends LinearOpMode {
         telemetry.update();
         while (true) {
             if (gamepad1.dpad_left) {
-                parkingPosition = -1;
+                //Storage unit is -1
+                parkingPosition = ConfigurationStorage.parking.storageUnit;
                 break;
             } else if (gamepad1.dpad_right) {
-                parkingPosition = 1;
+                //Warehouse is 1
+                parkingPosition = ConfigurationStorage.parking.warehouse;
                 break;
             }
             if (isStopRequested()) return;
@@ -666,22 +672,25 @@ public class autoRed extends LinearOpMode {
         telemetry.update();
         while (true) {
             if (gamepad1.dpad_up) {
-                warehousePosition = -1;
+                //-1 is top
+                warehousePosition = ConfigurationStorage.warehouseParking.top;
                 break;
             } else if (gamepad1.dpad_right) {
-                warehousePosition = 1;
+                //1 is right
+                warehousePosition = ConfigurationStorage.warehouseParking.right;
                 break;
             } else if (gamepad1.dpad_left) {
-                warehousePosition = 0;
+                //0 is left
+                warehousePosition = ConfigurationStorage.warehouseParking.left;
                 break;
             }
 
             if (isStopRequested()) return;
         }
     }
-    //TODO: Get this done
+
     private void openCVPlacement() {
-        if(startingPosition == 1) {
+        if(startingPosition == ConfigurationStorage.sideStart.rightSide) {
             rectLeftx = 70;
             rectLefty = 260;
             rectLeftWidth = 80;
@@ -698,7 +707,7 @@ public class autoRed extends LinearOpMode {
             rectCentery = 265;
             rectCenterWidth = 80;
             rectCenterHeight = 150;
-        } else if (startingPosition == -1) {
+        } else if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
             //Creates the left rectangle for openCV
             rectLeftx = 8;
             rectLefty = 250;
