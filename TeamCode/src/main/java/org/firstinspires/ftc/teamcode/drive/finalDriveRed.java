@@ -52,6 +52,9 @@ public class finalDriveRed extends LinearOpMode {
         //Set the pose estimate the robot knows what orientation is for field centric driving
         d.setPoseEstimate(PoseStorage.telePowerRed);
 
+        d.leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        d.rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         waitForStart();
 
         //After the robot starts, set positions for the start
