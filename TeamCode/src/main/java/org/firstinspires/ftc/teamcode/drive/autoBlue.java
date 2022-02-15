@@ -141,10 +141,14 @@ public class autoBlue extends LinearOpMode {
         }
 
         if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
-            if (position == ConfigurationStorage.capStonePosition.right || position == ConfigurationStorage.capStonePosition.left) {
+            if (position == ConfigurationStorage.capStonePosition.right) {
+                //37.5 for left
                 leftBubLift = -36;
-            } else if (position == ConfigurationStorage.capStonePosition.center) {
-                leftBubLift = -37.5;
+            } else if (position == ConfigurationStorage.capStonePosition.left) {
+                leftBubLift = -38;
+            }
+            else if (position == ConfigurationStorage.capStonePosition.center) {
+                leftBubLift = -36;
             }
         }
 
@@ -183,8 +187,8 @@ public class autoBlue extends LinearOpMode {
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
                     } else if (position == ConfigurationStorage.capStonePosition.left) {
-                        d.leftLiftMotor.setTargetPosition(0);
-                        d.rightLiftMotor.setTargetPosition(0);
+                        d.leftLiftMotor.setTargetPosition(250);
+                        d.rightLiftMotor.setTargetPosition(250);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.5);
@@ -367,13 +371,13 @@ public class autoBlue extends LinearOpMode {
         will go through the storage unit to place the block on the level given by the barcode.
         Then the robot will then move back the way it came and set up for parking*/
         TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
-                .lineToLinearHeading(new Pose2d(-59.5, 58.5, Math.toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-60, 59, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-51.5, 60, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-52, 60.5, Math.toRadians(180)))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(-5, () -> d.rightServoWheel.setPower(1))
                 .UNSTABLE_addTemporalMarkerOffset(5, () -> d.rightServoWheel.setPower(0))
                 //Front wheel
-                .lineToConstantHeading(new Vector2d(-57, 25))
+                .lineToConstantHeading(new Vector2d(-59, 28))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLiftMotor.setTargetPosition(1100);
@@ -390,8 +394,8 @@ public class autoBlue extends LinearOpMode {
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
                     } else if (position == ConfigurationStorage.capStonePosition.left) {
-                        d.leftLiftMotor.setTargetPosition(10);
-                        d.rightLiftMotor.setTargetPosition(10);
+                        d.leftLiftMotor.setTargetPosition(250);
+                        d.rightLiftMotor.setTargetPosition(250);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
@@ -412,7 +416,7 @@ public class autoBlue extends LinearOpMode {
                     d.leftBox.setPosition(1);
                     d.rightBox.setPosition(1);
                 })
-                .lineToLinearHeading(new Pose2d(-57, 26, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-57, 25, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
@@ -446,32 +450,32 @@ public class autoBlue extends LinearOpMode {
 
         //If the storage unit is chosen, the robot will move back a bit to park fully in the storage unit
         TrajectorySequence rightSideParkStorageUnit = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToConstantHeading(new Vector2d(-58, 42))
+                .lineToConstantHeading(new Vector2d(-60, 40))
                 .build();
 
         //If the  warehouse left is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence rightSideParkWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToConstantHeading(new Vector2d(56, 50))
-                .lineToLinearHeading(new Pose2d(10, 50, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(70, 50))
-                .lineToConstantHeading(new Vector2d(70, 63))
+                .lineToConstantHeading(new Vector2d(-58, 52))
+                .lineToLinearHeading(new Pose2d(10, 52, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(85, 52))
+                .lineToConstantHeading(new Vector2d(85, 63))
                 .build();
 
         //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
         TrajectorySequence rightSideParkWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToConstantHeading(new Vector2d(-56, 50))
-                .lineToLinearHeading(new Pose2d(10, 50, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(70, 50))
-                .lineToConstantHeading(new Vector2d(70, 42))
+                .lineToConstantHeading(new Vector2d(-56, 52))
+                .lineToLinearHeading(new Pose2d(10, 52, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(85, 52))
+                .lineToConstantHeading(new Vector2d(85, 37))
                 .build();
 
         //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
         TrajectorySequence rightSideParkWareHouseTop = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToConstantHeading(new Vector2d(-56, 50))
-                .lineToLinearHeading(new Pose2d(10, 50, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(70, 50))
-                .lineToConstantHeading(new Vector2d(70, 42))
-                .lineToConstantHeading(new Vector2d(90, 42))
+                .lineToConstantHeading(new Vector2d(-56, 52))
+                .lineToLinearHeading(new Pose2d(10, 52, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(85, 52))
+                .lineToConstantHeading(new Vector2d(84, 37))
+                .lineToConstantHeading(new Vector2d(95, 37))
                 .build();
 
 
