@@ -474,7 +474,7 @@ public class autoBlue extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-56, 52))
                 .lineToLinearHeading(new Pose2d(10, 52, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(85, 52))
-                .lineToConstantHeading(new Vector2d(84, 37))
+                .lineToConstantHeading(new Vector2d(85, 37))
                 .lineToConstantHeading(new Vector2d(95, 37))
                 .build();
 
