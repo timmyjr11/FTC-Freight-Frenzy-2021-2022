@@ -146,7 +146,7 @@ public class autoRed extends LinearOpMode {
             if (position == ConfigurationStorage.capStonePosition.right) {
                 rightBubLift = -42;
             } else if (position == ConfigurationStorage.capStonePosition.center) {
-                rightBubLift = -41;
+                rightBubLift = -42.8;
             } else if (position == ConfigurationStorage.capStonePosition.left) {
                 rightBubLift = -45.5;
             }
@@ -183,8 +183,8 @@ public class autoRed extends LinearOpMode {
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
                     } else if (position == ConfigurationStorage.capStonePosition.left) {
-                        d.leftLiftMotor.setTargetPosition(8);
-                        d.rightLiftMotor.setTargetPosition(8);
+                        d.leftLiftMotor.setTargetPosition(250);
+                        d.rightLiftMotor.setTargetPosition(250);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.5);
