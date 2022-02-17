@@ -37,6 +37,9 @@ public class autoRed extends LinearOpMode {
     double rightBubLift;
     double liftSpeed;
 
+    //Creates a integer that will be used for the park timer offset
+    int waitTime = 0;
+
     //Creates the webcam
     OpenCvWebcam cam;
 
@@ -123,6 +126,8 @@ public class autoRed extends LinearOpMode {
         if (parkingPosition == ConfigurationStorage.parking.warehouse) {
             wareHousePosition();
         }
+        sleep(750);
+        waiting();
 
         if (position == ConfigurationStorage.capStonePosition.right) {
             liftSpeed = 0.6;
@@ -154,9 +159,8 @@ public class autoRed extends LinearOpMode {
 
         telemetry.addLine("Building your configuration, please wait...");
         telemetry.addLine("");
-        telemetry.addLine("According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to" +
-                "get its fat little body off the ground. The bee of course, flies anyway, because bees don't care what humans think is impossible");
-        telemetry.addLine("- Abraham Lincoln");
+        telemetry.addLine("Kaden: SCOTLAND! FOREVER!");
+        telemetry.addLine("*INTENSE BAGPIPE SCOTLAND NOISES*");
         telemetry.update();
 
         if (isStopRequested()) return;
@@ -209,7 +213,8 @@ public class autoRed extends LinearOpMode {
 
         //If the storage unit is chosen, the robot will go to park fully within the storage unit
         TrajectorySequence rightSideStorageUnit = d.trajectorySequenceBuilder(rightSide.end())
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                .waitSeconds(waitTime)
+                .UNSTABLE_addTemporalMarkerOffset(-waitTime, () -> {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
@@ -231,12 +236,12 @@ public class autoRed extends LinearOpMode {
                     }
                 })
 
-                .UNSTABLE_addTemporalMarkerOffset(-4.5, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(4.5 - waitTime, () -> {
                     d.leftBox.setPosition(0);
                     d.rightBox.setPosition(0);
                 })
 
-                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2 - waitTime, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -247,8 +252,9 @@ public class autoRed extends LinearOpMode {
 
         //If warehouse right is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence rightSideWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
+                .waitSeconds(waitTime)
                 .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(-5 - waitTime, () -> {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
@@ -270,11 +276,11 @@ public class autoRed extends LinearOpMode {
                     }
                 })
 
-                .UNSTABLE_addTemporalMarkerOffset(-4.5, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(-4.5 - waitTime, () -> {
                     d.leftBox.setPosition(0);
                     d.rightBox.setPosition(0);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2 - waitTime, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -285,8 +291,9 @@ public class autoRed extends LinearOpMode {
 
         //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
         TrajectorySequence rightSideWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
+                .waitSeconds(waitTime)
                 .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(-5 - waitTime, () -> {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
@@ -308,12 +315,12 @@ public class autoRed extends LinearOpMode {
                     }
                 })
 
-                .UNSTABLE_addTemporalMarkerOffset(-4.5, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(-4.5 - waitTime, () -> {
                     d.leftBox.setPosition(0);
                     d.rightBox.setPosition(0);
                 })
 
-                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2 - waitTime, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -324,8 +331,9 @@ public class autoRed extends LinearOpMode {
 
         //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
         TrajectorySequence rightSideWarehouseTop = d.trajectorySequenceBuilder(rightSide.end())
+                .waitSeconds(waitTime)
                 .lineToLinearHeading(new Pose2d(10, -42, Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(-5, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(-5 - waitTime, () -> {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
@@ -347,12 +355,12 @@ public class autoRed extends LinearOpMode {
                     }
                 })
 
-                .UNSTABLE_addTemporalMarkerOffset(-4.5, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(-4.5 - waitTime, () -> {
                     d.leftBox.setPosition(0);
                     d.rightBox.setPosition(0);
                 })
 
-                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(2 - waitTime, () -> {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
@@ -445,11 +453,13 @@ public class autoRed extends LinearOpMode {
 
         //If the storage unit is chosen, the robot will move back a bit to park fully in the storage unit
         TrajectorySequence leftSideParkStorageUnit = d.trajectorySequenceBuilder(leftSide.end())
+                .waitSeconds(waitTime)
                 .lineToConstantHeading(new Vector2d(-60, -33))
                 .build();
 
         //If the  warehouse left is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence leftSideParkWarehouseRight = d.trajectorySequenceBuilder(leftSide.end())
+                .waitSeconds(waitTime)
                 .lineToConstantHeading(new Vector2d(-56, -45))
                 .lineToLinearHeading(new Pose2d(10, -45, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(80, -45))
@@ -458,6 +468,7 @@ public class autoRed extends LinearOpMode {
 
         //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
         TrajectorySequence leftSideParkWarehouseLeft = d.trajectorySequenceBuilder(leftSide.end())
+                .waitSeconds(waitTime)
                 .lineToConstantHeading(new Vector2d(-56, -45))
                 .lineToLinearHeading(new Pose2d(10, -45, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(80, -45))
@@ -466,6 +477,7 @@ public class autoRed extends LinearOpMode {
 
         //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
         TrajectorySequence leftSideParkWareHouseTop = d.trajectorySequenceBuilder(leftSide.end())
+                .waitSeconds(waitTime)
                 .lineToConstantHeading(new Vector2d(-56, -45))
                 .lineToLinearHeading(new Pose2d(10, -45, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(80, -45))
@@ -494,6 +506,8 @@ public class autoRed extends LinearOpMode {
                     telemetry.addLine("Park in the warehouse top left closest to the wall and shared hub");
                 }
             }
+
+            telemetry.addLine("Split Personality will wait: " + waitTime + " seconds");
 
             if (position == ConfigurationStorage.capStonePosition.center) {
                 telemetry.addLine("Duck is in the center");
@@ -735,6 +749,176 @@ public class autoRed extends LinearOpMode {
             rectCentery = 255;
             rectCenterWidth = 80;
             rectCenterHeight = 150;
+        }
+    }
+
+    private void waiting() {
+        if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
+            if (parkingPosition == ConfigurationStorage.parking.storageUnit) {
+                do {
+                    telemetry.addLine("Storage Unit Selected, how long should Split Personality wait in order" +
+                            "to go to park?");
+                    telemetry.addLine("Press up on d-Pad to add a second");
+                    telemetry.addLine("Press down on d-pad to remove a second");
+                    telemetry.addLine("Press a to confirm the amount of time");
+                    telemetry.addLine("");
+                    telemetry.addLine("Time to wait: " + waitTime + " seconds");
+                    telemetry.addLine("");
+                    telemetry.addLine("NOTE: The time MUST NOT be a negative number, you may" +
+                            "use zero");
+                    telemetry.update();
+                    if (gamepad1.dpad_up) {
+                        waitTime = waitTime++;
+                    } else if (gamepad1.dpad_down) {
+                        waitTime = waitTime--;
+                    }
+                    if (isStopRequested()) return;
+                } while (!gamepad1.a);
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.left) {
+                do {
+                    telemetry.addLine("Left Warehouse Selected, how long should Split Personality wait in order" +
+                            "to go to park?");
+                    telemetry.addLine("Press up on d-Pad to add a second");
+                    telemetry.addLine("Press down on d-pad to remove a second");
+                    telemetry.addLine("Press a to confirm the amount of time");
+                    telemetry.addLine("");
+                    telemetry.addLine("Time to wait: " + waitTime + " seconds");
+                    telemetry.addLine("");
+                    telemetry.addLine("NOTE: The time MUST NOT be a negative number, you may" +
+                            "use zero");
+                    telemetry.update();
+                    if (gamepad1.dpad_up) {
+                        waitTime = waitTime++;
+                    } else if (gamepad1.dpad_down) {
+                        waitTime = waitTime--;
+                    }
+                    if (isStopRequested()) return;
+                } while (!gamepad1.a);
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.right) {
+                do {
+                    telemetry.addLine("Right Warehouse Selected, how long should Split Personality wait in order" +
+                            "to go to park?");
+                    telemetry.addLine("Press up on d-Pad to add a second");
+                    telemetry.addLine("Press down on d-pad to remove a second");
+                    telemetry.addLine("Press a to confirm the amount of time");
+                    telemetry.addLine("");
+                    telemetry.addLine("Time to wait: " + waitTime + " seconds");
+                    telemetry.addLine("");
+                    telemetry.addLine("NOTE: The time MUST NOT be a negative number, you may" +
+                            "use zero");
+                    telemetry.update();
+                    if (gamepad1.dpad_up) {
+                        waitTime = waitTime++;
+                    } else if (gamepad1.dpad_down) {
+                        waitTime = waitTime--;
+                    }
+                    if (isStopRequested()) return;
+                } while (!gamepad1.a);
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.top) {
+                do {
+                    telemetry.addLine("Top Warehouse Selected, how long should Split Personality wait in order" +
+                            "to go to park?");
+                    telemetry.addLine("Press up on d-Pad to add a second");
+                    telemetry.addLine("Press down on d-pad to remove a second");
+                    telemetry.addLine("Press a to confirm the amount of time");
+                    telemetry.addLine("");
+                    telemetry.addLine("Time to wait: " + waitTime + " seconds");
+                    telemetry.addLine("");
+                    telemetry.addLine("NOTE: The time MUST NOT be a negative number, you may" +
+                            "use zero");
+                    telemetry.update();
+                    if (gamepad1.dpad_up) {
+                        waitTime = waitTime++;
+                    } else if (gamepad1.dpad_down) {
+                        waitTime = waitTime--;
+                    }
+                    if (isStopRequested()) return;
+                } while (!gamepad1.a);
+            }
+        }
+
+        if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
+            if (parkingPosition == ConfigurationStorage.parking.storageUnit) {
+                do {
+                    telemetry.addLine("Storage Unit Selected, how long should Split Personality wait in order" +
+                            "to go to park?");
+                    telemetry.addLine("Press up on d-Pad to add a second");
+                    telemetry.addLine("Press down on d-pad to remove a second");
+                    telemetry.addLine("Press a to confirm the amount of time");
+                    telemetry.addLine("");
+                    telemetry.addLine("Time to wait: " + waitTime + " seconds");
+                    telemetry.addLine("");
+                    telemetry.addLine("NOTE: The time MUST NOT be a negative number, you may" +
+                            "use zero");
+                    telemetry.update();
+                    if (gamepad1.dpad_up) {
+                        waitTime = waitTime++;
+                    } else if (gamepad1.dpad_down) {
+                        waitTime = waitTime--;
+                    }
+                    if (isStopRequested()) return;
+                } while (!gamepad1.a);
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.left) {
+                do {
+                    telemetry.addLine("Left Warehouse Selected, how long should Split Personality wait in order" +
+                            "to go to park?");
+                    telemetry.addLine("Press up on d-Pad to add a second");
+                    telemetry.addLine("Press down on d-pad to remove a second");
+                    telemetry.addLine("Press a to confirm the amount of time");
+                    telemetry.addLine("");
+                    telemetry.addLine("Time to wait: " + waitTime + " seconds");
+                    telemetry.addLine("");
+                    telemetry.addLine("NOTE: The time MUST NOT be a negative number, you may" +
+                            "use zero");
+                    telemetry.update();
+                    if (gamepad1.dpad_up) {
+                        waitTime = waitTime++;
+                    } else if (gamepad1.dpad_down) {
+                        waitTime = waitTime--;
+                    }
+                    if (isStopRequested()) return;
+                } while (!gamepad1.a);
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.right) {
+                do {
+                    telemetry.addLine("Right Warehouse Selected, how long should Split Personality wait in order" +
+                            "to go to park?");
+                    telemetry.addLine("Press up on d-Pad to add a second");
+                    telemetry.addLine("Press down on d-pad to remove a second");
+                    telemetry.addLine("Press a to confirm the amount of time");
+                    telemetry.addLine("");
+                    telemetry.addLine("Time to wait: " + waitTime + " seconds");
+                    telemetry.addLine("");
+                    telemetry.addLine("NOTE: The time MUST NOT be a negative number, you may" +
+                            "use zero");
+                    telemetry.update();
+                    if (gamepad1.dpad_up) {
+                        waitTime = waitTime++;
+                    } else if (gamepad1.dpad_down) {
+                        waitTime = waitTime--;
+                    }
+                    if (isStopRequested()) return;
+                } while (!gamepad1.a);
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.top) {
+                do {
+                    telemetry.addLine("Top Warehouse Selected, how long should Split Personality wait in order" +
+                            "to go to park?");
+                    telemetry.addLine("Press up on d-Pad to add a second");
+                    telemetry.addLine("Press down on d-pad to remove a second");
+                    telemetry.addLine("Press a to confirm the amount of time");
+                    telemetry.addLine("");
+                    telemetry.addLine("Time to wait: " + waitTime + " seconds");
+                    telemetry.addLine("");
+                    telemetry.addLine("NOTE: The time MUST NOT be a negative number, you may" +
+                            "use zero");
+                    telemetry.update();
+                    if (gamepad1.dpad_up) {
+                        waitTime = waitTime++;
+                    } else if (gamepad1.dpad_down) {
+                        waitTime = waitTime--;
+                    }
+                    if (isStopRequested()) return;
+                } while (!gamepad1.a);
+            }
         }
     }
 }
