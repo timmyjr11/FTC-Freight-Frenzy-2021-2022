@@ -145,7 +145,7 @@ public class autoBlue extends LinearOpMode {
                 //37.5 for left
                 leftBubLift = -36;
             } else if (position == ConfigurationStorage.capStonePosition.left) {
-                leftBubLift = -38;
+                leftBubLift = -38.5;
             }
             else if (position == ConfigurationStorage.capStonePosition.center) {
                 leftBubLift = -36;
@@ -174,9 +174,9 @@ public class autoBlue extends LinearOpMode {
                 rightBubLift = 45;
             } else if (position == ConfigurationStorage.capStonePosition.center) {
                 //43
-                rightBubLift = 53;
+                rightBubLift = 47;
             } else if (position == ConfigurationStorage.capStonePosition.left) {
-                rightBubLift = 55;
+                rightBubLift = 50;
             }
         }
 
@@ -275,8 +275,8 @@ public class autoBlue extends LinearOpMode {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
-                        d.leftLiftMotor.setTargetPosition(250);
-                        d.rightLiftMotor.setTargetPosition(250);
+                        d.leftLiftMotor.setTargetPosition(100);
+                        d.rightLiftMotor.setTargetPosition(100);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(liftSpeed);
@@ -284,8 +284,8 @@ public class autoBlue extends LinearOpMode {
                     } else if (position == ConfigurationStorage.capStonePosition.left || position == ConfigurationStorage.capStonePosition.center) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
-                        d.leftLiftMotor.setTargetPosition(250);
-                        d.rightLiftMotor.setTargetPosition(250);
+                        d.leftLiftMotor.setTargetPosition(100);
+                        d.rightLiftMotor.setTargetPosition(100);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(liftSpeed);
@@ -315,8 +315,8 @@ public class autoBlue extends LinearOpMode {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
-                        d.leftLiftMotor.setTargetPosition(250);
-                        d.rightLiftMotor.setTargetPosition(250);
+                        d.leftLiftMotor.setTargetPosition(100);
+                        d.rightLiftMotor.setTargetPosition(100);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(liftSpeed);
@@ -324,8 +324,8 @@ public class autoBlue extends LinearOpMode {
                     } else if (position == ConfigurationStorage.capStonePosition.left || position == ConfigurationStorage.capStonePosition.center) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
-                        d.leftLiftMotor.setTargetPosition(250);
-                        d.rightLiftMotor.setTargetPosition(250);
+                        d.leftLiftMotor.setTargetPosition(100);
+                        d.rightLiftMotor.setTargetPosition(100);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(liftSpeed);
@@ -355,8 +355,8 @@ public class autoBlue extends LinearOpMode {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);
-                        d.leftLiftMotor.setTargetPosition(300);
-                        d.rightLiftMotor.setTargetPosition(300);
+                        d.leftLiftMotor.setTargetPosition(100);
+                        d.rightLiftMotor.setTargetPosition(100);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(liftSpeed);
@@ -364,8 +364,8 @@ public class autoBlue extends LinearOpMode {
                     } else if (position == ConfigurationStorage.capStonePosition.left || position == ConfigurationStorage.capStonePosition.center) {
                         d.leftLinkage.setPosition(0);
                         d.rightLinkage.setPosition(0);;
-                        d.leftLiftMotor.setTargetPosition(300);
-                        d.rightLiftMotor.setTargetPosition(300);
+                        d.leftLiftMotor.setTargetPosition(100);
+                        d.rightLiftMotor.setTargetPosition(100);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(liftSpeed);

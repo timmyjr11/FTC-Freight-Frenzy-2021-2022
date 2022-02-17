@@ -138,7 +138,7 @@ public class autoRed extends LinearOpMode {
             } else if (position == ConfigurationStorage.capStonePosition.center) {
                 leftBubLift = -34;
             } else if (position == ConfigurationStorage.capStonePosition.left) {
-                leftBubLift = -34.5;
+                leftBubLift = -36;
             }
         }
 
@@ -146,9 +146,9 @@ public class autoRed extends LinearOpMode {
             if (position == ConfigurationStorage.capStonePosition.right) {
                 rightBubLift = -42;
             } else if (position == ConfigurationStorage.capStonePosition.center) {
-                rightBubLift = -42.8;
+                rightBubLift = -42.5;
             } else if (position == ConfigurationStorage.capStonePosition.left) {
-                rightBubLift = -45.5;
+                rightBubLift = -47;
             }
         }
 
@@ -367,7 +367,7 @@ public class autoRed extends LinearOpMode {
         Then the robot will then move back the way it came and set up for parking*/
         TrajectorySequence leftSide = d.trajectorySequenceBuilder(start)
                 .lineToLinearHeading(new Pose2d(-59.5, -53.5, Math.toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-60, -54, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-60.5, -54.5, Math.toRadians(180)))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(-5, () -> d.leftServoWheel.setPower(1))
                 .UNSTABLE_addTemporalMarkerOffset(5, () -> d.leftServoWheel.setPower(0))
@@ -389,8 +389,8 @@ public class autoRed extends LinearOpMode {
                         d.leftLiftMotor.setPower(0.8);
                         d.rightLiftMotor.setPower(0.8);
                     } else if (position == ConfigurationStorage.capStonePosition.left) {
-                        d.leftLiftMotor.setTargetPosition(10);
-                        d.rightLiftMotor.setTargetPosition(10);
+                        d.leftLiftMotor.setTargetPosition(250);
+                        d.rightLiftMotor.setTargetPosition(250);
                         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         d.leftLiftMotor.setPower(0.8);
