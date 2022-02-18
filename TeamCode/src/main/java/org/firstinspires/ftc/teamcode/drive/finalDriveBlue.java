@@ -140,13 +140,6 @@ public class finalDriveBlue extends LinearOpMode {
                 boxState = 2;
             }
 
-            if((gamepad2.a && !previousA2) && boxState == 3 && (d.leftLinkage.getPosition() == 1 && d.rightLinkage.getPosition() == 1)) {
-                d.leftLinkage.setPosition(0);
-                d.rightLinkage.setPosition(0);
-                d.rightBox.setPosition(0);
-                d.leftBox.setPosition(0);
-                boxState = 1;
-            }
             if (gamepad2.y && !previousY) {
                 if (boxState == 1) {
                     d.rightBox.setPosition(0.5);
