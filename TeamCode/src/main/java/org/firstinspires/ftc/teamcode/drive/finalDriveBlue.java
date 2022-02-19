@@ -126,7 +126,7 @@ public class finalDriveBlue extends LinearOpMode {
         if (gamepad2.right_trigger >= 0.1) {
             d.intake.setPower(gamepad2.right_trigger * 0.8);
         } else if (gamepad2.left_trigger >= 0.1) {
-            d.intake.setPower(-gamepad2.left_trigger * 0.9);
+            d.intake.setPower(-gamepad2.left_trigger * 0.95);
         }
 
         if (gamepad2.right_trigger < 0.1 && gamepad2.left_trigger < 0.1) {
