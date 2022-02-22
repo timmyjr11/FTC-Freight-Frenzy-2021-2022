@@ -1,4 +1,4 @@
-package testCodes.cameras;
+package testCodes.cameras.OpenCV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
