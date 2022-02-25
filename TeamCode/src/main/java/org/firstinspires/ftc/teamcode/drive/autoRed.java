@@ -136,8 +136,10 @@ public class autoRed extends LinearOpMode {
             if (position == ConfigurationStorage.capStonePosition.right) {
                 leftBubLift = -36;
             } else if (position == ConfigurationStorage.capStonePosition.center) {
-                leftBubLift = -34;
+                leftBubLift = -33.5;
             } else if (position == ConfigurationStorage.capStonePosition.left) {
+                leftBubLift = -36;
+            } else {
                 leftBubLift = -36;
             }
         }
@@ -149,6 +151,8 @@ public class autoRed extends LinearOpMode {
                 rightBubLift = -42.5;
             } else if (position == ConfigurationStorage.capStonePosition.left) {
                 rightBubLift = -47;
+            } else {
+                rightBubLift = -42.5;
             }
         }
 
@@ -241,7 +245,7 @@ public class autoRed extends LinearOpMode {
                     d.rightLiftMotor.setPower(0);
                 })
                 .lineToLinearHeading(new Pose2d(-56, -40, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(-75, -23))
+                .lineToConstantHeading(new Vector2d(-75, -25))
 
                 .build();
 

@@ -108,6 +108,7 @@ public class finalDriveBlue extends LinearOpMode {
 
         if ((gamepad1.start && !previousStart) && (gamepad1.back && !previousBack)) {
             d.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            d.setPoseEstimate(PoseStorage.telePowerBlue);
             d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
