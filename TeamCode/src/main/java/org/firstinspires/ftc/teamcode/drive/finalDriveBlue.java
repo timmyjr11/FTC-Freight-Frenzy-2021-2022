@@ -74,15 +74,15 @@ public class finalDriveBlue extends LinearOpMode {
         if (gamepad2.dpad_up && !gamepad2.dpad_down) {
             rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
             leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
-            d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             d.rightLiftMotor.setPower(0.8);
             d.leftLiftMotor.setPower(0.8);
         } else if (gamepad2.dpad_down && !gamepad2.dpad_up) {
             rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
             leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
-            d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             d.rightLiftMotor.setPower(-0.6);
             d.leftLiftMotor.setPower(-0.6);
         } else if (!gamepad2.dpad_up && !gamepad2.dpad_down) {
@@ -162,8 +162,8 @@ public class finalDriveBlue extends LinearOpMode {
             d.rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             d.leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         if(gamepad1.a && !previousA1) {
