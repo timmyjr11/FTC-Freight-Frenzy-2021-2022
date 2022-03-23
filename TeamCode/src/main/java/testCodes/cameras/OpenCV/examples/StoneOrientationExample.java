@@ -1,4 +1,5 @@
 package testCodes.cameras.OpenCV.examples;
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -28,10 +29,11 @@ import java.util.List;
  * of multiple stones, switching the viewport output, and communicating the results
  * of the vision processing to usercode.
  */
-@Disabled
+
 @TeleOp
 public class StoneOrientationExample extends LinearOpMode
 {
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
     OpenCvInternalCamera2 phoneCam;
     StoneOrientationAnalysisPipeline pipeline;
 
@@ -69,6 +71,9 @@ public class StoneOrientationExample extends LinearOpMode
                  */
             }
         });
+
+        FtcDashboard.getInstance().startCameraStream(phoneCam, 30);
+
 
         // Tell telemetry to update faster than the default 250ms period :)
         telemetry.setMsTransmissionInterval(20);
