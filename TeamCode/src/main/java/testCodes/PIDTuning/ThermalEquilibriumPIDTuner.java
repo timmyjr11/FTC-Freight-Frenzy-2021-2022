@@ -1,34 +1,59 @@
 package testCodes.PIDTuning;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+@Config
 @Autonomous
 public class ThermalEquilibriumPIDTuner extends LinearOpMode {
 
-    DcMotorEx testMotor;
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
+
+    DcMotorEx rightLiftMotor;
+    DcMotorEx leftLiftMotor;
 
     double integralSum = 0;
-    double Kp = 0;
-    double Ki = 0;
-    double Kd = 0;
+   public static double Kp = 0;
+   public static double Ki = 0;
+   public static double Kd = 0;
 
-    ElapsedTime timer = new ElapsedTime();
+   public static int reference = 300;
+
+   ElapsedTime timer = new ElapsedTime();
 
     private double lastError = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        testMotor = hardwareMap.get(DcMotorEx.class, "testMotor");
-        testMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
+        rightLiftMotor = hardwareMap.get(DcMotorEx.class, "rightLiftMotor");
+        leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
+
+        rightLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+        rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
         while (opModeIsActive()) {
-            double power = PIDControl(100, testMotor.getCurrentPosition());
-            testMotor.setPower(power);
+            double powerRight = PIDControl(300, rightLiftMotor.getCurrentPosition());
+            double powerLeft = PIDControl(300, leftLiftMotor.getCurrentPosition());
+            rightLiftMotor.setPower(powerRight);
+            leftLiftMotor.setPower(powerLeft);
+            telemetry.addData("right position", rightLiftMotor.getCurrentPosition());
+            telemetry.addData("left position", leftLiftMotor.getCurrentPosition());
+            telemetry.addData("reference", reference);
+            telemetry.update();
         }
     }
 

@@ -136,15 +136,15 @@ public class finalDriveRed extends LinearOpMode {
 
         if(d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200) {
             if (gamepad2.dpad_up) {
-                d.rightBox.setPosition(0.5);
-                d.leftBox.setPosition(0.5);
+                d.rightBox.setPosition(0.3);
+                d.leftBox.setPosition(0.3);
                 boxState = 2;
             }
 
             if (gamepad2.y && !previousY) {
                 if (boxState == 1) {
-                    d.rightBox.setPosition(0.5);
-                    d.leftBox.setPosition(0.5);
+                    d.rightBox.setPosition(0.3);
+                    d.leftBox.setPosition(0.3);
                     boxState = 2;
                 } else if (boxState == 2) {
                     d.rightBox.setPosition(1);

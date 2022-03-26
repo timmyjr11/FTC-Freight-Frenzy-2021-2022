@@ -27,6 +27,7 @@ public class bob extends LinearOpMode {
     Servo tapper;
 
     boolean previousA;
+    boolean previousLeftBumper;
 
 
 
@@ -83,7 +84,7 @@ public class bob extends LinearOpMode {
                 }
             }
 
-            if (gamepad2.left_bumper){
+            if (gamepad2.left_bumper && !previousLeftBumper){
                 if (Gripper.getPosition() == 1){
                     Gripper.setPosition(0);
                 }else if (Gripper.getPosition() == 0){
@@ -134,6 +135,7 @@ public class bob extends LinearOpMode {
 
             setPower(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             previousA = gamepad2.a;
+            previousLeftBumper = gamepad2.left_bumper;
 
         }
 
