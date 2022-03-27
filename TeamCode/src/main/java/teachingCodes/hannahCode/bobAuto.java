@@ -1,11 +1,12 @@
 package teachingCodes.hannahCode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
+@Autonomous
 public class bobAuto extends LinearOpMode {
     DcMotorEx frontRight;
     DcMotorEx backRight;
@@ -25,21 +26,7 @@ public class bobAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        DcMotorEx frontRight;
-        DcMotorEx backRight;
-        DcMotorEx frontLeft;
-        DcMotorEx backLeft;
-        DcMotorEx backShooter;
-        DcMotorEx frontShooter;
-        DcMotorEx convey;
-        DcMotorEx intake;
 
-        Servo rightPivot;
-        Servo leftPivot;
-        Servo armPivot;
-        Servo Gripper;
-        Servo stopper;
-        Servo tapper;
 
             frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
             backRight = hardwareMap.get(DcMotorEx.class, "backRight");
@@ -80,6 +67,23 @@ public class bobAuto extends LinearOpMode {
         tapper.setPosition(0);
 
         waitForStart();
+
+        frontLeft.setTargetPosition(5000);
+        frontRight.setTargetPosition(5000);
+        backLeft.setTargetPosition(5000);
+        backRight.setTargetPosition(5000);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setPower(0.5);
+        frontRight.setPower(0.5);
+        backLeft.setPower(0.5);
+        backRight.setPower(0.5);
+
+
 
 
     }

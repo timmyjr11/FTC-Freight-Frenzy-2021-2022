@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
 @TeleOp
@@ -28,6 +29,8 @@ public class finalDriveRed extends LinearOpMode {
 
     //Finite state machine that allows the box to work
     int boxState;
+
+    ElapsedTime time = new ElapsedTime(0);
 
     //Creates SampleMecanumDrive to be used for Roadrunner
     SampleMecanumDrive d;
@@ -92,15 +95,23 @@ public class finalDriveRed extends LinearOpMode {
             d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            d.leftLiftMotor.setPower(0.25);
-            d.rightLiftMotor.setPower(0.25);
+            d.leftLiftMotor.setPower(0.1);
+            d.rightLiftMotor.setPower(0.1);
         }
 
-        if (gamepad2.a && !previousA2) {
+        if (gamepad2.a && !previousA2 && d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200){
             if (d.leftLinkage.getPosition() == 0 && d.rightLinkage.getPosition() == 0) {
                 d.leftLinkage.setPosition(1);
                 d.rightLinkage.setPosition(1);
-            } else if (d.leftLinkage.getPosition() == 1 && d.rightLinkage.getPosition() == 1) {
+            } else if ((d.leftLinkage.getPosition() == 1 && d.rightLinkage.getPosition() == 1) || (d.leftLinkage.getPosition() == 0.5 && d.rightLinkage.getPosition() == 0.5)) {
+                d.leftLinkage.setPosition(0);
+                d.rightLinkage.setPosition(0);
+            }
+        } else if (gamepad2.a && !previousA2 && d.rightLiftMotor.getCurrentPosition() < 200 && d.leftLiftMotor.getCurrentPosition() < 200) {
+            if (d.leftLinkage.getPosition() == 0 && d.rightLinkage.getPosition() == 0) {
+                d.leftLinkage.setPosition(0.5);
+                d.rightLinkage.setPosition(0.5);
+            } else if (d.leftLinkage.getPosition() == 0.5 && d.rightLinkage.getPosition() == 0.5) {
                 d.leftLinkage.setPosition(0);
                 d.rightLinkage.setPosition(0);
             }
@@ -141,7 +152,7 @@ public class finalDriveRed extends LinearOpMode {
                 boxState = 2;
             }
 
-            if (gamepad2.y && !previousY) {
+            if ((gamepad2.y && !previousY && d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200) || (gamepad2.y && !previousY && d.leftLinkage.getPosition() == 0.5 && d.rightLinkage.getPosition() == 0.5)) {
                 if (boxState == 1) {
                     d.rightBox.setPosition(0.3);
                     d.leftBox.setPosition(0.3);

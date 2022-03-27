@@ -20,6 +20,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -89,6 +90,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     CRServo rightServoWheel;
     CRServo leftServoWheel;
 
+    ColorSensor colors;
+
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
@@ -129,6 +132,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         rightServoWheel = hardwareMap.get(CRServo.class, "rightServoWheel");
         leftServoWheel = hardwareMap.get(CRServo.class, "leftServoWheel");
+
+        colors = hardwareMap.get(ColorSensor.class, "colors");
+
 
         motors = Arrays.asList(frontLeft, backLeft, backRight, frontRight);
 
