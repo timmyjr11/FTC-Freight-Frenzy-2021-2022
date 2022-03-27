@@ -2,6 +2,7 @@ package testCodes.cameras.OpenCV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -30,7 +31,7 @@ public class contourTesting extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        /**
+        /*
          * NOTE: Many comments have been omitted from this sample for the
          * sake of conciseness. If you're just starting out with EasyOpenCv,
          * you should take a look at {@link InternalCamera2Example} or its
@@ -60,6 +61,8 @@ public class contourTesting extends LinearOpMode {
         });
 
         FtcDashboard.getInstance().startCameraStream(phoneCam, 30);
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
 
 
         // Tell telemetry to update faster than the default 250ms period :)
@@ -76,12 +79,10 @@ public class contourTesting extends LinearOpMode {
 
     static class contourPipe extends OpenCvPipeline {
         static final int CB_CHAN_MASK_THRESHOLD = 80;
-        static final double DENSITY_UPRIGHT_THRESHOLD = 0.03;
-
         static final Scalar TEAL = new Scalar(3, 148, 252);
         static final Scalar PURPLE = new Scalar(158, 52, 235);
-        static final Scalar RED = new Scalar(255, 0, 0);
-        static final Scalar GREEN = new Scalar(0, 255, 0);
+        //static final Scalar RED = new Scalar(255, 0, 0);
+        //static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar BLUE = new Scalar(0, 0, 255);
 
         static final int CONTOUR_LINE_THICKNESS = 2;
@@ -140,16 +141,20 @@ public class contourTesting extends LinearOpMode {
 
         void analyzeContour(MatOfPoint contour, Mat input){
             // Transform the contour to a different format
-            Point[] points = contour.toArray();
+            //Point[] points = contour.toArray();
             MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
 
             // Do a rect fit to the contour, and draw it on the screen
             RotatedRect rotatedRectFitToContour = Imgproc.minAreaRect(contour2f);
             drawRotatedRect(rotatedRectFitToContour, input);
+
+            Point center = rotatedRectFitToContour.center;
+
+
+            drawTagText(rotatedRectFitToContour, String.valueOf(center), input );
         }
 
-        static void drawRotatedRect(RotatedRect rect, Mat drawOn)
-        {
+        static void drawRotatedRect(RotatedRect rect, Mat drawOn){
             /*
              * Draws a rotated rect by drawing each of the 4 lines individually
              */
@@ -159,8 +164,20 @@ public class contourTesting extends LinearOpMode {
 
             for(int i = 0; i < 4; ++i)
             {
-                Imgproc.line(drawOn, points[i], points[(i+1)%4], RED, 2);
+                Imgproc.line(drawOn, points[i], points[(i+1)%4], PURPLE, 2);
             }
+        }
+        static void drawTagText(RotatedRect rect, String text, Mat mat) {
+            Imgproc.putText(
+                    mat, // The buffer we're drawing on
+                    text, // The text we're drawing
+                    new Point( // The anchor point for the text
+                            rect.center.x-50,  // x anchor point
+                            rect.center.y+25), // y anchor point
+                    Imgproc.FONT_HERSHEY_PLAIN, // Font
+                    1, // Font size
+                    TEAL, // Font color
+                    1); // Font thickness
         }
     }
 }

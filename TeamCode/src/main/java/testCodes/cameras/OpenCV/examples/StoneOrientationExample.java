@@ -366,7 +366,6 @@ public class StoneOrientationExample extends LinearOpMode
 
                 // "Tag" the stone with text stating its absolute angle
                 drawTagText(rotatedRectFitToContour, Integer.toString((int) Math.round(angle))+" deg", input);
-
                 AnalyzedStone analyzedStone = new AnalyzedStone();
                 analyzedStone.angle = angle;
                 analyzedStone.orientation = StoneOrientation.NOT_UPRIGHT;
