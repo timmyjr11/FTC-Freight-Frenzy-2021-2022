@@ -1,11 +1,12 @@
-package testCodes.cameras.OpenCV;
+package testCodes.robotTests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -18,71 +19,75 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera2;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
-@TeleOp
-@Config
-public class contourTesting extends LinearOpMode {
+
+@Autonomous
+public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
+
+    public static double centerOfCam = 360;
+
+    SampleMecanumDrive d;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
-    OpenCvInternalCamera2 phoneCam;
+
     contourPipe pipeline;
 
+
+
+    OpenCvWebcam cam;
+
     @Override
-    public void runOpMode() {
-        /*
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera2Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
-         */
+    public void runOpMode() throws InterruptedException {
+        d = new SampleMecanumDrive(hardwareMap);
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        // Create camera instance
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources()
+                .getIdentifier("cameraMonitorViewId", "id",
+                        hardwareMap.appContext.getPackageName());
 
-        // Open async and start streaming inside opened callback
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        cam = OpenCvCameraFactory.getInstance()
+                .createWebcam(hardwareMap.get
+                        (WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+
+        //Opens the camera and sets the openCV code to the webcam
+        cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-
-                pipeline = new contourPipe();
-                phoneCam.setPipeline(pipeline);
+                cam.setPipeline(pipeline);
+                cam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
+            //Runs if the camera fails to open
             @Override
             public void onError(int errorCode) {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
+                cam.closeCameraDevice();
+                telemetry.addData("errorCode:", errorCode);
+                telemetry.update();
             }
         });
 
-        FtcDashboard.getInstance().startCameraStream(phoneCam, 30);
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        //Allows the dashboard to see what the camera sees
+        FtcDashboard.getInstance().startCameraStream(cam, 30);
 
-
-
-        // Tell telemetry to update faster than the default 250ms period :)
         telemetry.setMsTransmissionInterval(20);
+
 
         waitForStart();
 
-        while (opModeIsActive()) {
-            sleep(20);
-
-            telemetry.update();
+        while (opModeIsActive() && !isStopRequested()) {
+            // Follow that duck code
         }
+
+
     }
+
 
     static class contourPipe extends OpenCvPipeline {
         static final int CB_CHAN_MASK_THRESHOLD = 80;
         static final Scalar TEAL = new Scalar(3, 148, 252);
         static final Scalar PURPLE = new Scalar(158, 52, 235);
-        //static final Scalar RED = new Scalar(255, 0, 0);
-        //static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar BLUE = new Scalar(0, 0, 255);
 
         static final int CONTOUR_LINE_THICKNESS = 2;
@@ -103,6 +108,8 @@ public class contourTesting extends LinearOpMode {
                 analyzeContour(contour, input);
             }
             return input;
+
+
         }
 
         ArrayList<MatOfPoint> findContours(Mat input) {
@@ -131,7 +138,6 @@ public class contourTesting extends LinearOpMode {
             /*
              * Apply some erosion and dilation for noise reduction
              */
-
             Imgproc.erode(input, output, erodeElement);
             Imgproc.erode(output, output, erodeElement);
 
@@ -152,7 +158,10 @@ public class contourTesting extends LinearOpMode {
 
             drawTagTextX(rotatedRectFitToContour, "X: " + Math.round(center.x), input);
             drawTagTextY(rotatedRectFitToContour, "Y: " + Math.round(center.y), input);
+
         }
+
+
 
         static void drawRotatedRect(RotatedRect rect, Mat drawOn){
             /*
@@ -193,4 +202,5 @@ public class contourTesting extends LinearOpMode {
                     1);
         }
     }
+
 }
