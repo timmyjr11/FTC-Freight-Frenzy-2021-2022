@@ -14,12 +14,14 @@ import java.util.ArrayList;
 @TeleOp
 public class finalDriveRedButtonUpgrade extends LinearOpMode {
 
-    //Variable that allows the lift to hold in place
-    int rightLiftHeight;
-    int leftLiftHeight;
+    //Variables that allows the lift to hold in place
+    ArrayList<Integer> IntArray = new ArrayList<>();
+    int rightLiftHeight = 0;
+    int leftLiftHeight = 0;
+    int lastRightLiftHeight = 0;
+    int lastLeftLiftHeight = 0;
     int topHeight = 1100;
-
-    int intakeIncrementer = 0;
+    int liftIncrementer = 0;
 
     //Booleans that allow the an action to happen once and not cycle if pressed
     ArrayList<Boolean> booleanArray = new ArrayList<>();
@@ -82,43 +84,23 @@ public class finalDriveRedButtonUpgrade extends LinearOpMode {
             action();
             colorSensor();
 
-            if (d.colors.alpha() > 400 && intakeIncrementer == 0) {
-                outtakeTime.reset();
-                intakeMode = ConfigurationStorage.intakeMode.objectDetected;
-
-                while(outtakeTime.milliseconds() < 1000) {
-                    driving();
-                    action();
-                    d.intake.setPower(-0.95);
-                }
-
-                intakeMode = ConfigurationStorage.intakeMode.manual;
-
-                intakeIncrementer = 1;
-            }
-
-
         }
     }
 
     private void action() {
         if (gamepad2.dpad_up && !gamepad2.dpad_down && (d.rightLiftMotor.getCurrentPosition() < 1100 && d.leftLiftMotor.getCurrentPosition() < 1100) && liftMode == ConfigurationStorage.liftMode.manual) {
-            rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
-            leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
-            d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             d.rightLiftMotor.setPower(0.8);
             d.leftLiftMotor.setPower(0.8);
-        } else if (gamepad2.dpad_down && !gamepad2.dpad_up && liftMode == ConfigurationStorage.liftMode.manual) {
             rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
             leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
-            d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        } else if (gamepad2.dpad_down && !gamepad2.dpad_up && liftMode == ConfigurationStorage.liftMode.manual) {
             d.rightLiftMotor.setPower(-0.6);
             d.leftLiftMotor.setPower(-0.6);
+            rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
+            leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
         } else if (!gamepad2.dpad_up && !gamepad2.dpad_down && liftMode == ConfigurationStorage.liftMode.manual) {
-            d.rightLiftMotor.setTargetPosition(rightLiftHeight);
-            d.leftLiftMotor.setTargetPosition(leftLiftHeight);
+            d.rightLiftMotor.setTargetPosition(lastRightLiftHeight);
+            d.leftLiftMotor.setTargetPosition(lastLeftLiftHeight);
 
             d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -126,8 +108,6 @@ public class finalDriveRedButtonUpgrade extends LinearOpMode {
             d.leftLiftMotor.setPower(0.1);
             d.rightLiftMotor.setPower(0.1);
         }
-
-
 
         if (a2Pressed && d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200){
             if (d.leftLinkage.getPosition() == 0 && d.rightLinkage.getPosition() == 0) {
@@ -216,6 +196,8 @@ public class finalDriveRedButtonUpgrade extends LinearOpMode {
         r3_2Pressed = ifPressed(gamepad2.right_stick_button);
         leftDpad2Pressed = ifPressed(gamepad2.dpad_left);
         booleanIncrementer = 0;
+        lastRightLiftHeight = rightLiftHeight;
+        lastLeftLiftHeight = leftLiftHeight;
     }
 
     private void driving(){
