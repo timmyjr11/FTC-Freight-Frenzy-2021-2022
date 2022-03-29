@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -49,6 +50,9 @@ public class holdPosLiftTest extends LinearOpMode {
 
         rightLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         leftLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         rightLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBox.setDirection(Servo.Direction.REVERSE);

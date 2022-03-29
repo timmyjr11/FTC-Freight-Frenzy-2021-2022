@@ -68,20 +68,23 @@ public class bobAuto extends LinearOpMode {
 
         waitForStart();
 
-        frontLeft.setTargetPosition(5000);
-        frontRight.setTargetPosition(5000);
-        backLeft.setTargetPosition(5000);
-        backRight.setTargetPosition(5000);
+        while(opModeIsActive()) {
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontLeft.setTargetPosition(5000);
+            frontRight.setTargetPosition(5000);
+            backLeft.setTargetPosition(5000);
+            backRight.setTargetPosition(5000);
 
-        frontLeft.setPower(0.5);
-        frontRight.setPower(0.5);
-        backLeft.setPower(0.5);
-        backRight.setPower(0.5);
+            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            frontLeft.setPower(0.5);
+            frontRight.setPower(0.5);
+            backLeft.setPower(0.5);
+            backRight.setPower(0.5);
+        }
 
 
 

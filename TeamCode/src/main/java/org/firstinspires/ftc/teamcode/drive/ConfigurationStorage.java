@@ -23,4 +23,19 @@ public class ConfigurationStorage {
         left,
         top
     }
+
+    public enum intakeMode {
+        manual,
+        objectDetected
+    }
+
+    public enum runOuttake {
+        openToRun,
+        doNotRunAgain
+    }
+
+    public enum liftMode {
+        manual,
+        runToTop
+    }
 }
