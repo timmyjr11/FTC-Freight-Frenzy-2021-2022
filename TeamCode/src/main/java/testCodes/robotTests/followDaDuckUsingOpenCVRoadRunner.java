@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
@@ -28,6 +29,10 @@ import java.util.ArrayList;
 public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
 
     public static double centerOfCam = 360;
+
+
+
+    public static Point center;
 
     SampleMecanumDrive d;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -77,7 +82,18 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            // Follow that duck code
+            sleep(20);
+            ArrayList<contourPipe.analyzedDuck> ducks = pipeline.getDuckCords();
+
+            if (ducks.isEmpty()) {
+                telemetry.addLine("so sad, no ducks :(");
+            } else {
+                for (contourPipe.analyzedDuck duck : ducks) {
+                    telemetry.addLine(String.format("Duck: X=%f, Y=%f", duck.cordX, duck.cordY));
+                }
+            }
+
+            telemetry.update();
         }
 
 
@@ -93,6 +109,14 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         static final int CONTOUR_LINE_THICKNESS = 2;
         static final int CB_IDX = 2;
 
+        static class analyzedDuck {
+            double cordX;
+            double cordY;
+        }
+
+        ArrayList<analyzedDuck> internalDuckList = new ArrayList<>();
+        volatile ArrayList<analyzedDuck> clientDuckList = new ArrayList<>();
+
         Mat cbMat = new Mat();
         Mat thresholdMat = new Mat();
         Mat morphedThreshold = new Mat();
@@ -104,13 +128,17 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         @Override
         public Mat processFrame(Mat input) {
 
+            internalDuckList.clear();
+
             for(MatOfPoint contour : findContours(input)) {
                 analyzeContour(contour, input);
             }
+
+            clientDuckList = new ArrayList<>(internalDuckList);
             return input;
-
-
         }
+
+        public ArrayList<analyzedDuck> getDuckCords() {return clientDuckList;}
 
         ArrayList<MatOfPoint> findContours(Mat input) {
             // A list we'll be using to store the contours we find
@@ -154,11 +182,15 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
             RotatedRect rotatedRectFitToContour = Imgproc.minAreaRect(contour2f);
             drawRotatedRect(rotatedRectFitToContour, input);
 
-            Point center = rotatedRectFitToContour.center;
+            center = rotatedRectFitToContour.center;
 
             drawTagTextX(rotatedRectFitToContour, "X: " + Math.round(center.x), input);
             drawTagTextY(rotatedRectFitToContour, "Y: " + Math.round(center.y), input);
 
+            analyzedDuck analyzedDuck = new analyzedDuck();
+            analyzedDuck.cordX = center.x;
+            analyzedDuck.cordY = center.y;
+            internalDuckList.add(analyzedDuck);
         }
 
 

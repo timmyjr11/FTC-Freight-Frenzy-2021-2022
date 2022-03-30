@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -20,13 +21,15 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera2;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 @TeleOp
 @Config
 public class contourTesting extends LinearOpMode {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
-    OpenCvInternalCamera2 phoneCam;
+    //OpenCvInternalCamera2 phoneCam;
+    OpenCvWebcam phoneCam;
     contourPipe pipeline;
 
     @Override
@@ -40,13 +43,18 @@ public class contourTesting extends LinearOpMode {
 
         // Create camera instance
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
+        //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
+
+        phoneCam = OpenCvCameraFactory.getInstance()
+                .createWebcam(hardwareMap.get
+                        (WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         // Open async and start streaming inside opened callback
         phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                //phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
                 pipeline = new contourPipe();
                 phoneCam.setPipeline(pipeline);

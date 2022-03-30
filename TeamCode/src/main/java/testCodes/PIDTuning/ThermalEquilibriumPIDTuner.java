@@ -23,6 +23,7 @@ public class ThermalEquilibriumPIDTuner extends LinearOpMode {
    public static double Kp = 0;
    public static double Ki = 0;
    public static double Kd = 0;
+   public static double Kf = 0;
 
    public static int reference = 300;
 
@@ -64,7 +65,7 @@ public class ThermalEquilibriumPIDTuner extends LinearOpMode {
         lastError = error;
         timer.reset();
 
-        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki) + (reference * Kf);
         return output;
     }
 }
