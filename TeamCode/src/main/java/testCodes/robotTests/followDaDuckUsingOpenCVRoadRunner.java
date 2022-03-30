@@ -20,6 +20,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera2;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
@@ -28,40 +29,40 @@ import java.util.ArrayList;
 @Autonomous
 public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
 
-    public static double centerOfCam = 360;
+    public static double centerOfCam = 120;
 
 
-
-    public static Point center;
-
-    SampleMecanumDrive d;
+    //SampleMecanumDrive d;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     contourPipe pipeline;
 
-
-
-    OpenCvWebcam cam;
+    OpenCvInternalCamera2 cam;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        d = new SampleMecanumDrive(hardwareMap);
+        //d = new SampleMecanumDrive(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources()
                 .getIdentifier("cameraMonitorViewId", "id",
                         hardwareMap.appContext.getPackageName());
 
-        cam = OpenCvCameraFactory.getInstance()
+        /*cam = OpenCvCameraFactory.getInstance()
                 .createWebcam(hardwareMap.get
                         (WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        */
+        cam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
+
 
         //Opens the camera and sets the openCV code to the webcam
         cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
                 cam.setPipeline(pipeline);
-                cam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                cam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
+                //cam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
             //Runs if the camera fails to open
@@ -110,8 +111,8 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         static final int CB_IDX = 2;
 
         static class analyzedDuck {
-            double cordX;
-            double cordY;
+            double cordX = 0;
+            double cordY = 0;
         }
 
         ArrayList<analyzedDuck> internalDuckList = new ArrayList<>();
@@ -182,7 +183,7 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
             RotatedRect rotatedRectFitToContour = Imgproc.minAreaRect(contour2f);
             drawRotatedRect(rotatedRectFitToContour, input);
 
-            center = rotatedRectFitToContour.center;
+            Point center = rotatedRectFitToContour.center;
 
             drawTagTextX(rotatedRectFitToContour, "X: " + Math.round(center.x), input);
             drawTagTextY(rotatedRectFitToContour, "Y: " + Math.round(center.y), input);
