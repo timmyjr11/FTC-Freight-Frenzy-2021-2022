@@ -246,5 +246,4 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
                     1);
         }
     }
-
 }
