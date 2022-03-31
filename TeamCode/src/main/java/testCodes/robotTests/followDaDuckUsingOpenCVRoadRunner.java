@@ -1,5 +1,7 @@
 package testCodes.robotTests;
 
+import android.os.strictmode.ImplicitDirectBootViolation;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -13,6 +15,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -86,9 +89,6 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
             sleep(20);
             ArrayList<contourPipe.analyzedDuck> ducks = pipeline.getDuckCords();
 
-
-
-
             if (ducks.isEmpty()) {
                 telemetry.addLine("so sad, no ducks :(");
             } else {
@@ -104,8 +104,6 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
             }
             telemetry.update();
         }
-
-
     }
 
 
@@ -121,6 +119,7 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         static class analyzedDuck {
             double cordX;
             double cordY;
+            Rect bounding;
         }
 
         ArrayList<analyzedDuck> internalDuckList = new ArrayList<>();
@@ -202,10 +201,9 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
             analyzedDuck analyzedDuck = new analyzedDuck();
             analyzedDuck.cordX = centerX;
             analyzedDuck.cordY = centerY;
+            analyzedDuck.bounding = rotatedRectFitToContour.boundingRect();
             internalDuckList.add(analyzedDuck);
         }
-
-
 
         static void drawRotatedRect(RotatedRect rect, Mat drawOn){
             /*
@@ -218,8 +216,10 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
             for(int i = 0; i < 4; ++i)
             {
                 Imgproc.line(drawOn, points[i], points[(i+1)%4], PURPLE, 2);
+
             }
         }
+
         static void drawTagTextX(RotatedRect rect, String text, Mat mat) {
             Imgproc.putText(
                     mat, // The buffer we're drawing on

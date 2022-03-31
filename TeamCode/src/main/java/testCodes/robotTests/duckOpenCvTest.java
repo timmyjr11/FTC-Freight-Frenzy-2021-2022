@@ -5,12 +5,12 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.checkerframework.checker.units.qual.A;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -31,6 +31,8 @@ public class duckOpenCvTest extends LinearOpMode {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     contourPipe pipeline;
+
+    static double bounding;
 
     OpenCvInternalCamera2 cam;
 
@@ -81,19 +83,20 @@ public class duckOpenCvTest extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             sleep(20);
             ArrayList<contourPipe.analyzedDuck> ducks = pipeline.getDuckCords();
-            contourPipe.analyzedDuck duck = new contourPipe.analyzedDuck();
 
             if (ducks.isEmpty()) {
-                telemetry.addLine("big sad no duckies");
+                telemetry.addLine("so sad, no ducks :(");
             } else {
-                telemetry.addData("X", ducks.get(0));
+                for (contourPipe.analyzedDuck duck : ducks) {
+                    telemetry.addLine(String.format("Size: =%f", bounding));
+                }
             }
 
 
             /* if (ducks.isEmpty()) {
                 telemetry.addLine("so sad, no ducks :(");
             } else {
-                for (contourPipe.analyzedDuck duckg : ducks) {
+                for (contourPipe.analyzedDuck duck : ducks) {
                     telemetry.addData("single Duck", ducks.get(0));
 
                     telemetry.addLine(String.format("Duck: X=%f, Y=%f", duck.cordX, duck.cordY));
@@ -103,13 +106,11 @@ public class duckOpenCvTest extends LinearOpMode {
             */
             telemetry.update();
         }
-
-
     }
 
-
     static class contourPipe extends OpenCvPipeline {
-        static final int CB_CHAN_MASK_THRESHOLD = 80;
+        // Default is 80
+        static final int CB_CHAN_MASK_THRESHOLD = 70;
         static final Scalar TEAL = new Scalar(3, 148, 252);
         static final Scalar PURPLE = new Scalar(158, 52, 235);
         static final Scalar BLUE = new Scalar(0, 0, 255);
@@ -125,9 +126,6 @@ public class duckOpenCvTest extends LinearOpMode {
         ArrayList<analyzedDuck> internalDuckList = new ArrayList<>();
         volatile ArrayList<analyzedDuck> clientDuckList = new ArrayList<>();
 
-
-
-
         Mat cbMat = new Mat();
         Mat thresholdMat = new Mat();
         Mat morphedThreshold = new Mat();
@@ -141,13 +139,14 @@ public class duckOpenCvTest extends LinearOpMode {
 
             internalDuckList.clear();
 
+            ArrayList<MatOfPoint> contours = findContours(input);
 
-            for(MatOfPoint contour : findContours(input)) {
-                analyzeContour(contour, input);
+            for (int i = 0; i < contours.size(); i++) {
+                Rect boundingRect = Imgproc.boundingRect(new MatOfPoint(contours.get(i).toArray()));
+                analyzeContour(contours.get(i), input);
+                 bounding = boundingRect.size().area();
             }
-
             clientDuckList = new ArrayList<>(internalDuckList);
-
 
             return input;
         }
@@ -215,7 +214,6 @@ public class duckOpenCvTest extends LinearOpMode {
             /*
              * Draws a rotated rect by drawing each of the 4 lines individually
              */
-
             Point[] points = new Point[4];
             rect.points(points);
 
@@ -251,5 +249,4 @@ public class duckOpenCvTest extends LinearOpMode {
                     1);
         }
     }
-
 }
