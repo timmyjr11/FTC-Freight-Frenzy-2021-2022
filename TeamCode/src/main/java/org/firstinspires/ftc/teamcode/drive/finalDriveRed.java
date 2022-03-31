@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@TeleOp
+@TeleOp(group = "Main")
 public class finalDriveRed extends LinearOpMode {
 
     //Variable that allows the lift to hold in place

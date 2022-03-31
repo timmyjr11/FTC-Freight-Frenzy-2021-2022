@@ -29,7 +29,7 @@ import java.util.List;
  * of multiple stones, switching the viewport output, and communicating the results
  * of the vision processing to usercode.
  */
-
+@Disabled
 @TeleOp
 public class StoneOrientationExample extends LinearOpMode
 {

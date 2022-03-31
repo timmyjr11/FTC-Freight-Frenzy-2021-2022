@@ -59,9 +59,9 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                cam.setPipeline(pipeline);
                 cam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-
+                pipeline = new contourPipe();
+                cam.setPipeline(pipeline);
                 //cam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -140,9 +140,7 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
             return input;
         }
 
-        public ArrayList<analyzedDuck> getDuckCords() {
-
-            return clientDuckList; }
+        public ArrayList<analyzedDuck> getDuckCords() { return clientDuckList; }
 
         ArrayList<MatOfPoint> findContours(Mat input) {
             // A list we'll be using to store the contours we find

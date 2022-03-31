@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Config
-@TeleOp
+@TeleOp(group = "Main")
 public class finalDriveBlue extends LinearOpMode {
 
     //Variable that allows the lift to hold in place

@@ -1,8 +1,10 @@
 package testCodes.robotTests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+@Disabled
 @Autonomous
 public class colorBoi extends LinearOpMode {
     ColorSensor colors;

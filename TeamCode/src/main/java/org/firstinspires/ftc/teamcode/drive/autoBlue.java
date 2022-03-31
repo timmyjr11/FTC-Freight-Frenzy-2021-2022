@@ -23,7 +23,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
-@Autonomous
+@Autonomous(group = "Main")
 public class autoBlue extends LinearOpMode {
 
     //Creates the dashboard that is used for debugging

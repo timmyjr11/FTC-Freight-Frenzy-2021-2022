@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
 @Config
-@TeleOp
+@TeleOp(group = "Main")
 public class finalDriveRedButtonUpgrade extends LinearOpMode {
 
     //Variables that allows the lift to hold in place
