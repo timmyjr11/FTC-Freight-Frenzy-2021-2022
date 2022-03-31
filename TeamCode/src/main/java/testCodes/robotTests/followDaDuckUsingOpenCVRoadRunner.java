@@ -111,8 +111,8 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         static final int CB_IDX = 2;
 
         static class analyzedDuck {
-            double cordX = 0;
-            double cordY = 0;
+            double cordX;
+            double cordY;
         }
 
         ArrayList<analyzedDuck> internalDuckList = new ArrayList<>();
@@ -136,10 +136,13 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
             }
 
             clientDuckList = new ArrayList<>(internalDuckList);
+
             return input;
         }
 
-        public ArrayList<analyzedDuck> getDuckCords() {return clientDuckList;}
+        public ArrayList<analyzedDuck> getDuckCords() {
+
+            return clientDuckList; }
 
         ArrayList<MatOfPoint> findContours(Mat input) {
             // A list we'll be using to store the contours we find
@@ -184,13 +187,15 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
             drawRotatedRect(rotatedRectFitToContour, input);
 
             Point center = rotatedRectFitToContour.center;
+            double centerX = rotatedRectFitToContour.center.x;
+            double centerY = rotatedRectFitToContour.center.y;
 
-            drawTagTextX(rotatedRectFitToContour, "X: " + Math.round(center.x), input);
-            drawTagTextY(rotatedRectFitToContour, "Y: " + Math.round(center.y), input);
+            drawTagTextX(rotatedRectFitToContour, "X: " + Double.toString(Math.round(center.x)), input);
+            drawTagTextY(rotatedRectFitToContour, "Y: " + Double.toString(Math.round(center.y)), input);
 
             analyzedDuck analyzedDuck = new analyzedDuck();
-            analyzedDuck.cordX = center.x;
-            analyzedDuck.cordY = center.y;
+            analyzedDuck.cordX = centerX;
+            analyzedDuck.cordY = centerY;
             internalDuckList.add(analyzedDuck);
         }
 
