@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+// Class used to keep states in both Tele-op and autonomous
 public class ConfigurationStorage {
     public enum capStonePosition {
         toBeDetermined,
@@ -22,6 +23,12 @@ public class ConfigurationStorage {
         right,
         left,
         top
+    }
+
+    public enum boxState {
+        inside,
+        halfway,
+        outside
     }
 
     public enum intakeMode {

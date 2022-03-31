@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@TeleOp(group = "Main")
+@TeleOp(group = "Sub Mode")
 public class finalDriveRed extends LinearOpMode {
 
     //Variable that allows the lift to hold in place
@@ -30,6 +30,7 @@ public class finalDriveRed extends LinearOpMode {
     //Finite state machine that allows the box to work
     int boxState;
 
+    //Elapsed timer used for the automatic outtake
     ElapsedTime time = new ElapsedTime(0);
 
     //Creates SampleMecanumDrive to be used for Roadrunner
