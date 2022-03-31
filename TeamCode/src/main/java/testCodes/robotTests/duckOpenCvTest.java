@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.checkerframework.checker.units.qual.A;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -22,17 +20,14 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera2;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 
 @Autonomous
-public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
-
-    public static double centerOfCam = 120;
+public class duckOpenCvTest extends LinearOpMode {
 
 
-    SampleMecanumDrive d;
+    //SampleMecanumDrive d;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     contourPipe pipeline;
@@ -41,7 +36,7 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        d = new SampleMecanumDrive(hardwareMap);
+        //d = new SampleMecanumDrive(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources()
@@ -59,9 +54,10 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                cam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 pipeline = new contourPipe();
                 cam.setPipeline(pipeline);
+                cam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
                 //cam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -85,23 +81,26 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             sleep(20);
             ArrayList<contourPipe.analyzedDuck> ducks = pipeline.getDuckCords();
-
-
-
+            contourPipe.analyzedDuck duck = new contourPipe.analyzedDuck();
 
             if (ducks.isEmpty()) {
+                telemetry.addLine("big sad no duckies");
+            } else {
+                telemetry.addData("X", ducks.get(0));
+            }
+
+
+            /* if (ducks.isEmpty()) {
                 telemetry.addLine("so sad, no ducks :(");
             } else {
-                for (contourPipe.analyzedDuck duck : ducks) {
+                for (contourPipe.analyzedDuck duckg : ducks) {
+                    telemetry.addData("single Duck", ducks.get(0));
+
                     telemetry.addLine(String.format("Duck: X=%f, Y=%f", duck.cordX, duck.cordY));
 
-                    double error = duck.cordX - centerOfCam;
-                    if (error < 3) {
-                        d.turn(error);
-                        d.update();
-                    }
                 }
             }
+            */
             telemetry.update();
         }
 
@@ -126,6 +125,9 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         ArrayList<analyzedDuck> internalDuckList = new ArrayList<>();
         volatile ArrayList<analyzedDuck> clientDuckList = new ArrayList<>();
 
+
+
+
         Mat cbMat = new Mat();
         Mat thresholdMat = new Mat();
         Mat morphedThreshold = new Mat();
@@ -139,11 +141,13 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
 
             internalDuckList.clear();
 
+
             for(MatOfPoint contour : findContours(input)) {
                 analyzeContour(contour, input);
             }
 
             clientDuckList = new ArrayList<>(internalDuckList);
+
 
             return input;
         }
@@ -220,6 +224,7 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
                 Imgproc.line(drawOn, points[i], points[(i+1)%4], PURPLE, 2);
             }
         }
+
         static void drawTagTextX(RotatedRect rect, String text, Mat mat) {
             Imgproc.putText(
                     mat, // The buffer we're drawing on
