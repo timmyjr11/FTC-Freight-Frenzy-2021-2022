@@ -33,9 +33,4 @@ public class ConfigurationStorage {
         openToRun,
         doNotRunAgain
     }
-
-    public enum liftMode {
-        manual,
-        runToTop
-    }
 }

@@ -15,11 +15,9 @@ import java.util.ArrayList;
 public class finalDriveRedButtonUpgrade extends LinearOpMode {
 
     //Variables that allows the lift to hold in place
-    ArrayList<Integer> IntArray = new ArrayList<>();
     int rightLiftHeight = 0;
     int leftLiftHeight = 0;
     int topHeight = 1100;
-    int liftIncrementer = 0;
 
     //Booleans that allow the an action to happen once and not cycle if pressed
     ArrayList<Boolean> booleanArray = new ArrayList<>();
@@ -39,7 +37,6 @@ public class finalDriveRedButtonUpgrade extends LinearOpMode {
 
     ConfigurationStorage.intakeMode intakeMode = ConfigurationStorage.intakeMode.manual;
     ConfigurationStorage.runOuttake runOuttake = ConfigurationStorage.runOuttake.openToRun;
-    ConfigurationStorage.liftMode liftMode = ConfigurationStorage.liftMode.manual;
 
     //Creates SampleMecanumDrive to be used for Roadrunner
     SampleMecanumDrive d;
@@ -85,7 +82,7 @@ public class finalDriveRedButtonUpgrade extends LinearOpMode {
     }
 
     private void action() {
-        if (gamepad2.dpad_up && !gamepad2.dpad_down && (d.rightLiftMotor.getCurrentPosition() < 1100 && d.leftLiftMotor.getCurrentPosition() < 1100)) {            rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
+        if (gamepad2.dpad_up && !gamepad2.dpad_down && (d.rightLiftMotor.getCurrentPosition() < topHeight && d.leftLiftMotor.getCurrentPosition() < topHeight)) {            rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
             leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
             d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
