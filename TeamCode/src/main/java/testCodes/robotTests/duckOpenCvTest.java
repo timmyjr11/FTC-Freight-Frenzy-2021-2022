@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -67,7 +68,7 @@ public class duckOpenCvTest extends LinearOpMode {
             @Override
             public void onError(int errorCode) {
                 cam.closeCameraDevice();
-                telemetry.addData("errorCode:", errorCode);
+                telemetry.addData("errorCode: ", errorCode);
                 telemetry.update();
             }
         });
@@ -110,6 +111,7 @@ public class duckOpenCvTest extends LinearOpMode {
 
     static class contourPipe extends OpenCvPipeline {
         // Default is 80
+
         static final int CB_CHAN_MASK_THRESHOLD = 70;
         static final Scalar TEAL = new Scalar(3, 148, 252);
         static final Scalar PURPLE = new Scalar(158, 52, 235);
@@ -144,7 +146,7 @@ public class duckOpenCvTest extends LinearOpMode {
             for (int i = 0; i < contours.size(); i++) {
                 Rect boundingRect = Imgproc.boundingRect(new MatOfPoint(contours.get(i).toArray()));
                 analyzeContour(contours.get(i), input);
-                 bounding = boundingRect.size().area();
+                bounding = boundingRect.size().area();
             }
             clientDuckList = new ArrayList<>(internalDuckList);
 
