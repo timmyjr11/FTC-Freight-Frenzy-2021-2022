@@ -30,7 +30,7 @@ import java.util.List;
  * of multiple stones, switching the viewport output, and communicating the results
  * of the vision processing to usercode.
  */
-@Disabled
+
 @TeleOp
 public class contourOpenCvOrientationVersion extends LinearOpMode {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -70,6 +70,7 @@ public class contourOpenCvOrientationVersion extends LinearOpMode {
 
         FtcDashboard.getInstance().startCameraStream(phoneCam, 30);
 
+        StoneOrientationAnalysisPipeline pipeline = new StoneOrientationAnalysisPipeline();
 
         // Tell telemetry to update faster than the default 250ms period :)
         telemetry.setMsTransmissionInterval(20);
@@ -81,7 +82,7 @@ public class contourOpenCvOrientationVersion extends LinearOpMode {
             // we're not doing anything else
             sleep(20);
 
-            if ()
+            //telemetry.addData("X: ", pipeline.getDetectedCordsX());
 
             // Figure out which stones the pipeline detected, and print them to telemetry
 
@@ -94,7 +95,7 @@ public class contourOpenCvOrientationVersion extends LinearOpMode {
         /*
          * Threshold values
          */
-        static final int CB_CHAN_MASK_THRESHOLD = 80;/*
+        static final int CB_CHAN_MASK_THRESHOLD = 70;/*
          * Colors
          */
         static final Scalar TEAL = new Scalar(3, 148, 252);
@@ -142,6 +143,7 @@ public class contourOpenCvOrientationVersion extends LinearOpMode {
             Point[] points = new Point[4];
             rect.points(points);
 
+
             for (int i = 0; i < 4; ++i) {
                 Imgproc.line(drawOn, points[i], points[(i + 1) % 4], RED, 2);
             }
@@ -150,6 +152,8 @@ public class contourOpenCvOrientationVersion extends LinearOpMode {
         @Override
         public Mat processFrame(Mat input) {
 
+
+
             /*
              * Run the image processing
              */
@@ -157,12 +161,19 @@ public class contourOpenCvOrientationVersion extends LinearOpMode {
                 analyzeContour(contour, input);
             }
 
+
             return input;
         }
 
-        public double getDetectedCords() {
+        public double getDetectedCordsX(Mat input) {
+
+            for (MatOfPoint contour : findContours(input)) {
+                analyzeContour(contour, input);
+            }
             return cordX;
         }
+
+        public double getDetectedCordY() { return cordY; }
 
         ArrayList<MatOfPoint> findContours(Mat input) {
             // A list we'll be using to store the contours we find

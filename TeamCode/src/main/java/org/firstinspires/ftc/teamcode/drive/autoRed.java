@@ -370,14 +370,14 @@ public class autoRed extends LinearOpMode {
         will go through the storage unit to place the block on the level given by the barcode.
         Then the robot will then move back the way it came and set up for parking*/
         TrajectorySequence leftSide = d.trajectorySequenceBuilder(start)
-                .lineToLinearHeading(new Pose2d(-59.5, -53.5, Math.toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-60.5, -54.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-42.5, -57.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-43, -58.5, Math.toRadians(180)))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(-5, () -> d.leftServoWheel.setPower(1))
                 .UNSTABLE_addTemporalMarkerOffset(5, () -> d.leftServoWheel.setPower(0))
                 //Front wheel
-                .lineToConstantHeading(new Vector2d(-57, -20))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                .lineToConstantHeading(new Vector2d(-44, -20))
+                .UNSTABLE_addTemporalMarkerOffset(-4.0, () -> {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLiftMotor.setTargetPosition(1100);
                         d.rightLiftMotor.setTargetPosition(1100);

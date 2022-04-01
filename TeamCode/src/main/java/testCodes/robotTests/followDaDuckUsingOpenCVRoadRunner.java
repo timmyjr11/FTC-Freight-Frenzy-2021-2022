@@ -1,23 +1,14 @@
 package testCodes.robotTests;
 
-import android.os.strictmode.ImplicitDirectBootViolation;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.checkerframework.checker.units.qual.A;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -26,10 +17,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera2;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Autonomous
 public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
@@ -114,6 +103,9 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
 
         private Size frameSize = new Size();
 
+        ArrayList<Integer> cordXList = new ArrayList<>();
+
+
 
         Mat cbMat = new Mat();
         Mat thresholdMat = new Mat();
@@ -133,7 +125,6 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         public Mat processFrame(Mat input) {
             frameSize = input.size();
             ArrayList<MatOfPoint> contoursList = new ArrayList<>();
-
             // Convert the input image to YCrCb color space, then extract the Cb channel
             Imgproc.cvtColor(input, cbMat, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(cbMat, cbMat, CB_IDX);
@@ -159,10 +150,12 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
                 }
             }
             Rect boundingBox = Imgproc.boundingRect(new MatOfPoint(contoursList.get(maxSizeIndex).toArray()));
-            centerX = (boundingBox.x + boundingBox.x + boundingBox.width) / 2;
-            centerY = (boundingBox.y + boundingBox.y + boundingBox.height) / 2;
+            centerX = boundingBox.x / 2;
+            centerY = boundingBox.y / 2;
             position = boundingBox.x;
             size = boundingBox.size();
+
+            cordXList.add(centerX);
 
             Imgproc.drawContours(input, contoursList, maxSizeIndex, BLUE, CONTOUR_LINE_THICKNESS, 8);
             Imgproc.rectangle(input, boundingBox, PURPLE);
@@ -171,8 +164,8 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
             return input;
         }
 
-        public int getPosition() {
-            return (int) (position - (frameSize.width / 2));
+        public ArrayList<Integer> getPosition() {
+            return cordXList;
         }
 
         void morphMask(Mat input, Mat output) {
