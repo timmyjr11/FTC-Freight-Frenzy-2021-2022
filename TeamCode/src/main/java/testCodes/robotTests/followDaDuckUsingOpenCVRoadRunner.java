@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.checkerframework.checker.units.qual.A;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
@@ -35,40 +36,40 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
 
     public static double centerOfCam = 120;
 
-    SampleMecanumDrive d;
+    //SampleMecanumDrive d;
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     contourPipe pipeline;
 
-    OpenCvWebcam cam;
+    OpenCvInternalCamera2 cam;
 
     static double bounding;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        d = new SampleMecanumDrive(hardwareMap);
+        //d = new SampleMecanumDrive(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources()
                 .getIdentifier("cameraMonitorViewId", "id",
                         hardwareMap.appContext.getPackageName());
 
-        cam = OpenCvCameraFactory.getInstance()
+        /*cam = OpenCvCameraFactory.getInstance()
                 .createWebcam(hardwareMap.get
                         (WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-
-        //cam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
+           */
+        cam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
 
 
         //Opens the camera and sets the openCV code to the webcam
         cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                //cam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                cam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 pipeline = new contourPipe();
                 cam.setPipeline(pipeline);
-                cam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                ///cam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
             }
 
@@ -100,7 +101,6 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
 
 
     static class contourPipe extends OpenCvPipeline {
-
         // Default is 80
 
         final int CB_CHAN_MASK_THRESHOLD = 70;
@@ -126,6 +126,7 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         private volatile int position = 0;
         int centerX;
         int centerY;
+        Size size;
 
 
         @Override
@@ -149,11 +150,11 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
                 return input;
             }
 
-            int maxSize = 0;
+            double maxSize = 0;
             int maxSizeIndex = 0;
             for (int i = 0; i < contoursList.size(); i++) {
                 if (contoursList.get(i).size().width * contoursList.get(i).size().height > maxSize) {
-                    maxSize = (int) (contoursList.get(i).size().width * contoursList.get(i).size().height);
+                    maxSize = (contoursList.get(i).size().width * contoursList.get(i).size().height);
                     maxSizeIndex = i;
                 }
             }
@@ -161,6 +162,7 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
             centerX = (boundingBox.x + boundingBox.x + boundingBox.width) / 2;
             centerY = (boundingBox.y + boundingBox.y + boundingBox.height) / 2;
             position = boundingBox.x;
+            size = boundingBox.size();
 
             Imgproc.drawContours(input, contoursList, maxSizeIndex, BLUE, CONTOUR_LINE_THICKNESS, 8);
             Imgproc.rectangle(input, boundingBox, PURPLE);
@@ -170,7 +172,7 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         }
 
         public int getPosition() {
-            return centerX;
+            return (int) (position - (frameSize.width / 2));
         }
 
         void morphMask(Mat input, Mat output) {
@@ -182,19 +184,6 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
 
             Imgproc.dilate(output, output, dilateElement);
             Imgproc.dilate(output, output, dilateElement);
-        }
-
-        void drawRotatedRect(RotatedRect rect, Mat drawOn){
-            /*
-             * Draws a rotated rect by drawing each of the 4 lines individually
-             */
-            Point[] points = new Point[4];
-            rect.points(points);
-
-            for(int i = 0; i < 4; ++i)
-            {
-                Imgproc.line(drawOn, points[i], points[(i+1)%4], PURPLE, 2);
-            }
         }
     }
 }
