@@ -1,4 +1,4 @@
-package testCodes.robotTests;
+package testCodes.robotTests.contours;
 
 import java.util.ArrayList;
 import java.util.List;

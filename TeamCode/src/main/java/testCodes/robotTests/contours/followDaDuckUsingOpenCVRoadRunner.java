@@ -1,4 +1,4 @@
-package testCodes.robotTests;
+package testCodes.robotTests.contours;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;

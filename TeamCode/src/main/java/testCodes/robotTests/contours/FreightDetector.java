@@ -1,4 +1,4 @@
-package testCodes.robotTests;
+package testCodes.robotTests.contours;
 
 import androidx.core.math.MathUtils;
 
@@ -7,6 +7,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
+
+import testCodes.robotTests.contours.FreightPipeline;
 
 public class FreightDetector {
 
