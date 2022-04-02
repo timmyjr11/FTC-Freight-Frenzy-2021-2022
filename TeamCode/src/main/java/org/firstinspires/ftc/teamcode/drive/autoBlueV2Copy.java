@@ -24,7 +24,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
 @Autonomous(group = "Main")
-public class autoRed extends LinearOpMode {
+public class autoBlueV2Copy extends LinearOpMode {
 
     //Creates the dashboard that is used for debugging
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -132,27 +132,27 @@ public class autoRed extends LinearOpMode {
             liftSpeed = 0.6;
         }
 
-        if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
+        if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
             if (position == ConfigurationStorage.capStonePosition.right) {
-                leftBubLift = -36;
+                leftBubLift = -28;
             } else if (position == ConfigurationStorage.capStonePosition.center) {
-                leftBubLift = -33.5;
+                leftBubLift = -25.5;
             } else if (position == ConfigurationStorage.capStonePosition.left) {
-                leftBubLift = -36;
+                leftBubLift = -28;
             } else {
                 leftBubLift = -36;
             }
         }
 
-        if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
+        if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
             if (position == ConfigurationStorage.capStonePosition.right) {
-                rightBubLift = -45;
+                rightBubLift = 45;
             } else if (position == ConfigurationStorage.capStonePosition.center) {
-                rightBubLift = -43;
+                rightBubLift = 43;
             } else if (position == ConfigurationStorage.capStonePosition.left) {
-                rightBubLift = -43;
+                rightBubLift = 43;
             } else {
-                rightBubLift = -45;
+                rightBubLift = 45;
             }
         }
 
@@ -170,7 +170,7 @@ public class autoRed extends LinearOpMode {
 
         /*On the right side, the robot moves to the shipping hub then places the duck on the correct
         level based on the configuration of the duck */
-        @SuppressWarnings("SuspiciousNameCombination") TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
+        @SuppressWarnings("SuspiciousNameCombination") TrajectorySequence leftSide = d.trajectorySequenceBuilder(start)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftBox.setPosition(0.4);
@@ -220,7 +220,7 @@ public class autoRed extends LinearOpMode {
                 .build();
 
         //If the storage unit is chosen, the robot will go to park fully within the storage unit
-        TrajectorySequence rightSideStorageUnit = d.trajectorySequenceBuilder(rightSide.end())
+        TrajectorySequence leftSideStorageUnit = d.trajectorySequenceBuilder(leftSide.end())
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     d.leftLinkage.setPosition(0);
                     d.rightLinkage.setPosition(0);
@@ -241,14 +241,14 @@ public class autoRed extends LinearOpMode {
                     d.rightLiftMotor.setPower(0);
                 })
 
-                .lineToLinearHeading(new Pose2d(-91, -38, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(-91, -18))
+                .lineToLinearHeading(new Pose2d(-91, 38, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(-91, 18))
 
                 .build();
 
         //If warehouse right is chosen, the robot will go into the warehouse and shift to the right side
-        TrajectorySequence rightSideWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(10, -40, Math.toRadians(0)))
+        TrajectorySequence leftSideWarehouseRight = d.trajectorySequenceBuilder(leftSide.end())
+                .lineToLinearHeading(new Pose2d(10, 40, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
                     d.leftLinkage.setPosition(0);
                     d.rightLinkage.setPosition(0);
@@ -268,13 +268,13 @@ public class autoRed extends LinearOpMode {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
-                .lineToConstantHeading(new Vector2d(60, -42))
-                .lineToConstantHeading(new Vector2d(60, -58))
+                .lineToConstantHeading(new Vector2d(60, 42))
+                .lineToConstantHeading(new Vector2d(60, 58))
                 .build();
 
         //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
-        TrajectorySequence rightSideWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(10, -40, Math.toRadians(0)))
+        TrajectorySequence leftSideWarehouseLeft = d.trajectorySequenceBuilder(leftSide.end())
+                .lineToLinearHeading(new Pose2d(10, 40, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     d.leftLinkage.setPosition(0);
                     d.rightLinkage.setPosition(0);
@@ -294,13 +294,13 @@ public class autoRed extends LinearOpMode {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
-                .lineToConstantHeading(new Vector2d(60, -42))
-                .lineToConstantHeading(new Vector2d(60, -33))
+                .lineToConstantHeading(new Vector2d(60, 42))
+                .lineToConstantHeading(new Vector2d(60, 33))
                 .build();
 
         //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
-        TrajectorySequence rightSideWarehouseTop = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToLinearHeading(new Pose2d(10, -40, Math.toRadians(0)))
+        TrajectorySequence leftSideWarehouseTop = d.trajectorySequenceBuilder(leftSide.end())
+                .lineToLinearHeading(new Pose2d(10, 39, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     d.leftLinkage.setPosition(0);
                     d.rightLinkage.setPosition(0);
@@ -330,23 +330,23 @@ public class autoRed extends LinearOpMode {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
-                .lineToConstantHeading(new Vector2d(60, -42))
-                .lineToConstantHeading(new Vector2d(60, -33))
-                .lineToConstantHeading(new Vector2d(100, -33))
+                .lineToConstantHeading(new Vector2d(60, 42))
+                .lineToConstantHeading(new Vector2d(60, 31))
+                .lineToConstantHeading(new Vector2d(100, 31))
                 .build();
 
         /*On the left side, the robot will move to the carousel and deliver the duck, then the robot
         will go through the storage unit to place the block on the level given by the barcode.
         Then the robot will then move back the way it came and set up for parking*/
-        TrajectorySequence leftSide = d.trajectorySequenceBuilder(start)
+        TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
                 .back(5)
-                .lineToLinearHeading(new Pose2d(-70, -45, Math.toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-70, -52.25, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-60, 43, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-60, 50.75, Math.toRadians(180)))
                 .waitSeconds(3)
-                .UNSTABLE_addTemporalMarkerOffset(-3.5, () -> d.leftServoWheel.setPower(1))
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> d.leftServoWheel.setPower(0))
+                .UNSTABLE_addTemporalMarkerOffset(-3.5, () -> d.rightServoWheel.setPower(1))
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> d.rightServoWheel.setPower(0))
                 //Front wheel
-                .lineToConstantHeading(new Vector2d(-68, -18))
+                .lineToConstantHeading(new Vector2d(-60, 15))
                 .UNSTABLE_addTemporalMarkerOffset(-4.0, () -> {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLiftMotor.setTargetPosition(1100);
@@ -370,7 +370,7 @@ public class autoRed extends LinearOpMode {
                         d.rightBox.setPosition(0.4);
                     }
                 })
-                .lineToLinearHeading(new Pose2d(leftBubLift, -18, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(leftBubLift, 15, Math.toRadians(180)))
                 .waitSeconds(2)
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     d.leftBox.setPosition(0.4);
@@ -382,7 +382,7 @@ public class autoRed extends LinearOpMode {
                     d.leftBox.setPosition(1);
                     d.rightBox.setPosition(1);
                 })
-                .lineToLinearHeading(new Pose2d(-57, -21, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-55, 21, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(-2.5, () -> {
                     d.leftLinkage.setPosition(0);
                     d.rightLinkage.setPosition(0);
@@ -413,33 +413,33 @@ public class autoRed extends LinearOpMode {
                 .build();
 
         //If the storage unit is chosen, the robot will move back a bit to park fully in the storage unit
-        TrajectorySequence leftSideParkStorageUnit = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(-69, -32))
+        TrajectorySequence rightSideParkStorageUnit = d.trajectorySequenceBuilder(rightSide.end())
+                .lineToConstantHeading(new Vector2d(-58, 31))
                 .build();
 
         //If the  warehouse left is chosen, the robot will go into the warehouse and shift to the right side
-        TrajectorySequence leftSideParkWarehouseRight = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(-56, -45))
+        TrajectorySequence rightSideParkWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
+                .lineToConstantHeading(new Vector2d(-56, 45))
                 .lineToLinearHeading(new Pose2d(10, -45, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(100, -45))
-                .lineToConstantHeading(new Vector2d(100, -58))
+                .lineToConstantHeading(new Vector2d(110, 45))
+                .lineToConstantHeading(new Vector2d(110, 58))
                 .build();
 
         //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
-        TrajectorySequence leftSideParkWarehouseLeft = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(-56, -45))
-                .lineToLinearHeading(new Pose2d(10, -45, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(100, -45))
-                .lineToConstantHeading(new Vector2d(100, -40))
+        TrajectorySequence rightSideParkWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
+                .lineToConstantHeading(new Vector2d(-56, 45))
+                .lineToLinearHeading(new Pose2d(10, 45, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(110, 45))
+                .lineToConstantHeading(new Vector2d(110, 33))
                 .build();
 
         //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
-        TrajectorySequence leftSideParkWareHouseTop = d.trajectorySequenceBuilder(leftSide.end())
-                .lineToConstantHeading(new Vector2d(-56, -45))
-                .lineToLinearHeading(new Pose2d(10, -45, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(100, -45))
-                .lineToConstantHeading(new Vector2d(100, -37))
-                .lineToConstantHeading(new Vector2d(130, -37))
+        TrajectorySequence rightSideParkWareHouseTop = d.trajectorySequenceBuilder(rightSide.end())
+                .lineToConstantHeading(new Vector2d(-56, 45))
+                .lineToLinearHeading(new Pose2d(10, 45, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(110, 45))
+                .lineToConstantHeading(new Vector2d(110, 31))
+                .lineToConstantHeading(new Vector2d(140, 31))
                 .build();
 
 
@@ -491,26 +491,26 @@ public class autoRed extends LinearOpMode {
         if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
             d.followTrajectorySequence(leftSide);
             if (parkingPosition == ConfigurationStorage.parking.storageUnit) {
-                d.followTrajectorySequence(leftSideParkStorageUnit);
-            } else if (warehousePosition == ConfigurationStorage.warehouseParking.left) {
-                d.followTrajectorySequence(leftSideParkWarehouseLeft);
+                d.followTrajectorySequence(leftSideStorageUnit);
             } else if (warehousePosition == ConfigurationStorage.warehouseParking.right) {
-                d.followTrajectorySequence(leftSideParkWarehouseRight);
+                d.followTrajectorySequence(leftSideWarehouseLeft);
+            } else if (warehousePosition == ConfigurationStorage.warehouseParking.left) {
+                d.followTrajectorySequence(leftSideWarehouseRight);
             } else if (warehousePosition == ConfigurationStorage.warehouseParking.top) {
-                d.followTrajectorySequence(leftSideParkWareHouseTop);
+                d.followTrajectorySequence(leftSideWarehouseTop);
             }
         }
 
         if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
             d.followTrajectorySequence(rightSide);
             if (parkingPosition == ConfigurationStorage.parking.storageUnit) {
-                d.followTrajectorySequence(rightSideStorageUnit);
+                d.followTrajectorySequence(rightSideParkStorageUnit);
             } else if (warehousePosition == ConfigurationStorage.warehouseParking.left) {
-                d.followTrajectorySequence(rightSideWarehouseLeft);
+                d.followTrajectorySequence(rightSideParkWarehouseLeft);
             } else if (warehousePosition == ConfigurationStorage.warehouseParking.right) {
-                d.followTrajectorySequence(rightSideWarehouseRight);
+                d.followTrajectorySequence(rightSideParkWarehouseRight);
             } else if (warehousePosition == ConfigurationStorage.warehouseParking.top) {
-                d.followTrajectorySequence(rightSideWarehouseTop);
+                d.followTrajectorySequence(rightSideParkWareHouseTop);
             }
         }
     }
@@ -610,32 +610,32 @@ public class autoRed extends LinearOpMode {
         }
 
         if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
-            start = PoseStorage.rightAutoRed;
+            start = PoseStorage.rightAutoBlue;
         } else {
-            start = PoseStorage.leftAutoRed;
+            start = PoseStorage.leftAutoBlue;
         }
     }
 
     //A part of the auto selector that determines where to park
     private void parkingPosition() {
         if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
-            telemetry.addLine("Left side selected, where would you like to park?");
-            telemetry.addLine("Press left on D-pad to park in the storage unit");
-            telemetry.addLine("Press right on D-pad to park inside the warehouse");
-        } else if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
-            telemetry.addLine("Right side selected, where would you like to park?");
-            telemetry.addLine("Press left on D-pad to park in the storage unit");
-            telemetry.addLine("Press right on D-pad to park inside the warehouse");
-        }
+        telemetry.addLine("Left side selected, where would you like to park?");
+        telemetry.addLine("Press right on D-pad to park in the storage unit");
+        telemetry.addLine("Press left on D-pad to park inside the warehouse");
+    } else if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
+        telemetry.addLine("Right side selected, where would you like to park?");
+        telemetry.addLine("Press right on D-pad to park in the storage unit");
+        telemetry.addLine("Press left on D-pad to park inside the warehouse");
+    }
         telemetry.update();
         while (true) {
             if (gamepad1.dpad_left) {
                 //Storage unit is -1
-                parkingPosition = ConfigurationStorage.parking.storageUnit;
+                parkingPosition = ConfigurationStorage.parking.warehouse;
                 break;
             } else if (gamepad1.dpad_right) {
                 //Warehouse is 1
-                parkingPosition = ConfigurationStorage.parking.warehouse;
+                parkingPosition = ConfigurationStorage.parking.storageUnit;
                 break;
             }
             if (isStopRequested()) return;
@@ -645,9 +645,9 @@ public class autoRed extends LinearOpMode {
     //A part of the auto selector that determines where to park inside the warehouse if the warehouse is selected
     private void wareHousePosition() {
         telemetry.addLine("Warehouse selected, where would you like to park specifically?");
-        telemetry.addLine("Press right on D-pad to park on the right side near the wall");
-        telemetry.addLine("Press left on D-pad to park on the left side near the shared hub");
-        telemetry.addLine("Press up on D-pad to park on in the top left closest to the wall and shared hub");
+        telemetry.addLine("Press Left on D-pad to park on the left side near the wall");
+        telemetry.addLine("Press right on D-pad to park on the right side near the shared hub");
+        telemetry.addLine("Press up on D-pad to park on in the top right closest to the wall and shared hub");
         telemetry.update();
         while (true) {
             if (gamepad1.dpad_up) {
@@ -669,39 +669,39 @@ public class autoRed extends LinearOpMode {
     }
 
     private void openCVPlacement() {
-        if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
-            rectLeftx = 70;
-            rectLefty = 260;
+        if(startingPosition == ConfigurationStorage.sideStart.leftSide) {
+            rectLeftx = 40;
+            rectLefty = 246;
             rectLeftWidth = 80;
             rectLeftHeight = 150;
 
             //Creates the right rectangle for openCv
-            rectRightx = 580;
-            rectRighty = 265;
-            rectRightWidth = 60;
+            rectRightx = 543;
+            rectRighty = 255;
+            rectRightWidth = 80;
             rectRightHeight = 150;
 
             //Creates the center rectangle for openCV
-            rectCenterx = 342;
-            rectCentery = 265;
+            rectCenterx = 274;
+            rectCentery = 255;
             rectCenterWidth = 80;
             rectCenterHeight = 150;
-        } else if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
+        } else if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
             //Creates the left rectangle for openCV
-            rectLeftx = 8;
-            rectLefty = 250;
+            rectLeftx = 40;
+            rectLefty = 235;
             rectLeftWidth = 80;
             rectLeftHeight = 150;
 
             //Creates the right rectangle for openCv
-            rectRightx = 530;
-            rectRighty = 255;
+            rectRightx = 550;
+            rectRighty = 240;
             rectRightWidth = 80;
-            rectRightHeight = 155;
+            rectRightHeight = 150;
 
             //Creates the center rectangle for openCV
-            rectCenterx = 260;
-            rectCentery = 255;
+            rectCenterx = 273;
+            rectCentery = 240;
             rectCenterWidth = 80;
             rectCenterHeight = 150;
         }

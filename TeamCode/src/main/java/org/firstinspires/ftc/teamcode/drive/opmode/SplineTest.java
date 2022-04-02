@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 /*
  * This is an example of a more complex path to really test the tuning.
  */
-@Disabled
+
 @Autonomous(group = "drive")
 public class SplineTest extends LinearOpMode {
     @Override
@@ -23,7 +23,7 @@ public class SplineTest extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(), true)
+        Trajectory traj = drive.trajectoryBuilder(new Pose2d())
                 .splineToSplineHeading(new Pose2d(30, 30, Math.toRadians(180)), 0)
                 .build();
 
