@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
 @Config
 @TeleOp(group = "Main")
-public class finalDriveBlueV2 extends LinearOpMode {
+public class finalDriveBlueWorlds extends LinearOpMode {
 
     //Variables that allows the lift to hold in place
     int rightLiftHeight = 0;

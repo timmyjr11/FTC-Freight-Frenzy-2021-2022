@@ -1,13 +1,13 @@
-package testCodes.cameras.OpenCV;
+package testCodes.robotTests.contours;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -25,85 +25,98 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
-@Disabled
-@TeleOp
-@Config
-public class contourTesting extends LinearOpMode {
+
+@Autonomous
+public class reversedVersionOfOpenCV extends LinearOpMode {
+
+    public static double centerOfCam = 120;
+
+
+    //SampleMecanumDrive d;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
-    //OpenCvInternalCamera2 phoneCam;
-    OpenCvWebcam phoneCam;
+
     contourPipe pipeline;
 
-    public double cordX;
-    public double cordy;
+    OpenCvInternalCamera2 cam;
 
     @Override
-    public void runOpMode() {
-        /*
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera2Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
-         */
+    public void runOpMode() throws InterruptedException {
+        //d = new SampleMecanumDrive(hardwareMap);
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        // Create camera instance
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources()
+                .getIdentifier("cameraMonitorViewId", "id",
+                        hardwareMap.appContext.getPackageName());
 
-        phoneCam = OpenCvCameraFactory.getInstance()
+        /*cam = OpenCvCameraFactory.getInstance()
                 .createWebcam(hardwareMap.get
                         (WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        */
+        cam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
 
-        // Open async and start streaming inside opened callback
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+
+        //Opens the camera and sets the openCV code to the webcam
+        cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                //phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-
+                cam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 pipeline = new contourPipe();
-                phoneCam.setPipeline(pipeline);
+                cam.setPipeline(pipeline);
+                //cam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
+            //Runs if the camera fails to open
             @Override
             public void onError(int errorCode) {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
+                cam.closeCameraDevice();
+                telemetry.addData("errorCode:", errorCode);
+                telemetry.update();
             }
         });
 
-        FtcDashboard.getInstance().startCameraStream(phoneCam, 30);
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        //Allows the dashboard to see what the camera sees
+        FtcDashboard.getInstance().startCameraStream(cam, 30);
 
-
-
-        // Tell telemetry to update faster than the default 250ms period :)
         telemetry.setMsTransmissionInterval(20);
+
 
         waitForStart();
 
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             sleep(20);
+            ArrayList<contourPipe.analyzedDuck> ducks = pipeline.getDuckCords();
+
+            if (ducks.isEmpty()) {
+                telemetry.addLine("so sad, no ducks :(");
+            } else {
+                for (contourPipe.analyzedDuck duck : ducks) {
+                    telemetry.addLine(String.format("Duck: X=%f, Y=%f", duck.cordX, duck.cordY));
+                }
+            }
 
             telemetry.update();
         }
+
+
     }
+
 
     static class contourPipe extends OpenCvPipeline {
         static final int CB_CHAN_MASK_THRESHOLD = 80;
         static final Scalar TEAL = new Scalar(3, 148, 252);
         static final Scalar PURPLE = new Scalar(158, 52, 235);
-        //static final Scalar RED = new Scalar(255, 0, 0);
-        //static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar BLUE = new Scalar(0, 0, 255);
 
         static final int CONTOUR_LINE_THICKNESS = 2;
         static final int CB_IDX = 2;
 
+        static class analyzedDuck {
+            double cordX;
+            double cordY;
+        }
 
-        public double cordX;
-        public double cordy;
+        ArrayList<analyzedDuck> internalDuckList = new ArrayList<>();
+        volatile ArrayList<analyzedDuck> clientDuckList = new ArrayList<>();
 
         Mat cbMat = new Mat();
         Mat thresholdMat = new Mat();
@@ -116,11 +129,18 @@ public class contourTesting extends LinearOpMode {
         @Override
         public Mat processFrame(Mat input) {
 
+            internalDuckList.clear();
+
             for(MatOfPoint contour : findContours(input)) {
                 analyzeContour(contour, input);
             }
+
+            clientDuckList = new ArrayList<>(internalDuckList);
+
             return input;
         }
+
+        public ArrayList<analyzedDuck> getDuckCords() { return clientDuckList; }
 
         ArrayList<MatOfPoint> findContours(Mat input) {
             // A list we'll be using to store the contours we find
@@ -148,7 +168,6 @@ public class contourTesting extends LinearOpMode {
             /*
              * Apply some erosion and dilation for noise reduction
              */
-
             Imgproc.erode(input, output, erodeElement);
             Imgproc.erode(output, output, erodeElement);
 
@@ -166,14 +185,19 @@ public class contourTesting extends LinearOpMode {
             drawRotatedRect(rotatedRectFitToContour, input);
 
             Point center = rotatedRectFitToContour.center;
+            double centerX = rotatedRectFitToContour.center.x;
+            double centerY = rotatedRectFitToContour.center.y;
 
-            drawTagTextX(rotatedRectFitToContour, "X: " + Math.round(center.x), input);
-            drawTagTextY(rotatedRectFitToContour, "Y: " + Math.round(center.y), input);
-            cordX = center.x;
-            cordy = center.y;
+            drawTagTextX(rotatedRectFitToContour, "X: " + Double.toString(Math.round(center.x)), input);
+            drawTagTextY(rotatedRectFitToContour, "Y: " + Double.toString(Math.round(center.y)), input);
 
-
+            analyzedDuck analyzedDuck = new analyzedDuck();
+            analyzedDuck.cordX = centerX;
+            analyzedDuck.cordY = centerY;
+            internalDuckList.add(analyzedDuck);
         }
+
+
 
         static void drawRotatedRect(RotatedRect rect, Mat drawOn){
             /*
@@ -214,4 +238,5 @@ public class contourTesting extends LinearOpMode {
                     1);
         }
     }
+
 }

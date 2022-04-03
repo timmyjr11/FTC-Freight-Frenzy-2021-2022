@@ -15,12 +15,9 @@ public class intakePositionTest extends LinearOpMode {
 
     int intakePosition;
 
+    double halfWayPosition = 192.25;
+
     double error;
-
-    double degreeCount = 360/384.5;
-
-    double currentDegree;
-
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
 
@@ -38,8 +35,6 @@ public class intakePositionTest extends LinearOpMode {
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         intakePosition = intake.getCurrentPosition();
-        currentDegree =  intakePosition * degreeCount;
-
 
         waitForStart();
 
@@ -49,21 +44,22 @@ public class intakePositionTest extends LinearOpMode {
             } else if (gamepad2.left_trigger >= 0.5) {
                 intake.setPower(-gamepad2.left_trigger * 0.95);
             } else {
-                if (currentDegree % 180 == 0) {
+                if (intakePosition % halfWayPosition == 0) {
                     intake.setPower(0);
                 } else {
-                    error = currentDegree - 180;
+                    // If this does not work, create an enum that makes the error only update once
+                    error = intakePosition - halfWayPosition;
 
                     intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                    intake.setTargetPosition((int) Math.round((currentDegree - error)));
+                    intake.setTargetPosition((int) Math.round((intakePosition - error)));
 
                     intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                     intake.setPower(0.5);
                 }
             }
-            telemetry.addData("degrees", currentDegree);
+            telemetry.addData("error", error);
             telemetry.addData("position", intakePosition);
             telemetry.update();
         }

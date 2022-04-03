@@ -2,6 +2,8 @@ package testCodes.robotTests.contours;
 
 import androidx.core.math.MathUtils;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -9,7 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import testCodes.robotTests.contours.FreightPipeline;
-
+@Disabled
 public class FreightDetector {
 
     private OpenCvWebcam webcam;

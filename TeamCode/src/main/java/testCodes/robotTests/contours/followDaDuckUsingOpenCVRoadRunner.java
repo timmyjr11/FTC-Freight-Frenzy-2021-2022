@@ -3,6 +3,7 @@ package testCodes.robotTests.contours;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.opencv.core.Core;
@@ -19,7 +20,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera2;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-
+@Disabled
 @Autonomous
 public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
 
@@ -81,7 +82,6 @@ public class followDaDuckUsingOpenCVRoadRunner extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            sleep(20);
             telemetry.addData("yes", pipeline.getPosition());
             telemetry.update();
 
