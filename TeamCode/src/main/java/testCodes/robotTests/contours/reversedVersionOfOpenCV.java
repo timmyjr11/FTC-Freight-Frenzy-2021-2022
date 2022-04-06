@@ -98,9 +98,10 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
                 telemetry.addData("Y cords of Max Size: ", pipeline.getCordsY());
                 telemetry.addData("Max Size", pipeline.getSize());
                 if (pipeline.getCordsX() > centerOfCam) {
-                    d.turn((pipeline.getCordsX() - centerOfCam) - 1e-6);
+                    //Turn until it works rather than a determined angle
+                    d.turn(Math.toRadians(-5) - 1e-6);
                 } else if (pipeline.getCordsX() < centerOfCam) {
-                    d.turn((pipeline.getCordsX() - centerOfCam) + 1e-6);
+                    d.turn(Math.toRadians(5) + 1e-6);
                 }
             }
 
