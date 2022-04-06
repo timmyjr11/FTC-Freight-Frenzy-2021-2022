@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 @Config
 @TeleOp
 public class intakePositionTest extends LinearOpMode {
@@ -15,12 +16,12 @@ public class intakePositionTest extends LinearOpMode {
 
     int intakePosition;
 
-    double halfWayPosition = 192.25;
+
+    int range;
+    double halfWayPosition = 384.5;
 
     double error;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
-
-
 
 
     @Override
@@ -41,27 +42,35 @@ public class intakePositionTest extends LinearOpMode {
         while (opModeIsActive()) {
             if (gamepad2.right_trigger >= 0.5) {
                 intake.setPower(gamepad2.right_trigger * 0.8);
+                intakePosition = intake.getCurrentPosition();
+                range = (int) Math.floor(intake.getCurrentPosition() / 384.5);
             } else if (gamepad2.left_trigger >= 0.5) {
                 intake.setPower(-gamepad2.left_trigger * 0.95);
+                intakePosition = intake.getCurrentPosition();
+                range = (int) Math.floor(intake.getCurrentPosition() / 384.5);
             } else {
-                if (intakePosition % halfWayPosition == 0) {
+                if (intake.getCurrentPosition() % 192 == 0) {
                     intake.setPower(0);
                 } else {
-                    // If this does not work, create an enum that makes the error only update once
-                    error = intakePosition - halfWayPosition;
 
-                    intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    intake.setTargetPosition((int) Math.floor(385.5 * range));
 
-                    intake.setTargetPosition((int) Math.round((intakePosition - error)));
+                    intake.setTargetPositionTolerance(30);
 
                     intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+
                     intake.setPower(0.5);
+
+                    if (!intake.isBusy()) {
+                        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    }
                 }
+
+                telemetry.addData("range", range);
+                telemetry.addData("position", intakePosition);
+                telemetry.update();
             }
-            telemetry.addData("error", error);
-            telemetry.addData("position", intakePosition);
-            telemetry.update();
         }
     }
 }

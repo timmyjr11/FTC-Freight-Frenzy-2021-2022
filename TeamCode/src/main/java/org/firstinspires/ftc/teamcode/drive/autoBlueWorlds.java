@@ -340,7 +340,7 @@ public class autoBlueWorlds extends LinearOpMode {
         Then the robot will then move back the way it came and set up for parking*/
         TrajectorySequence rightSide = d.trajectorySequenceBuilder(start)
                 .back(5)
-                .lineToLinearHeading(new Pose2d(-60, 43, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-59.5, 43, Math.toRadians(180)))
                 .lineToLinearHeading(new Pose2d(-60, 50.75, Math.toRadians(180)))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(-3.5, () -> d.rightServoWheel.setPower(1))
@@ -419,27 +419,27 @@ public class autoBlueWorlds extends LinearOpMode {
 
         //If the  warehouse left is chosen, the robot will go into the warehouse and shift to the right side
         TrajectorySequence rightSideParkWarehouseRight = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToConstantHeading(new Vector2d(-56, 45))
-                .lineToLinearHeading(new Pose2d(10, -45, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(110, 45))
-                .lineToConstantHeading(new Vector2d(110, 58))
+                .lineToConstantHeading(new Vector2d(-56, 44))
+                .lineToLinearHeading(new Pose2d(10, 44, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(110, 44))
+                .lineToConstantHeading(new Vector2d(110, 31))
                 .build();
 
         //If warehouse left is chosen, the robot will go into the warehouse and shift to the left side
         TrajectorySequence rightSideParkWarehouseLeft = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToConstantHeading(new Vector2d(-56, 45))
-                .lineToLinearHeading(new Pose2d(10, 45, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(110, 45))
-                .lineToConstantHeading(new Vector2d(110, 33))
+                .lineToConstantHeading(new Vector2d(-56, 44))
+                .lineToLinearHeading(new Pose2d(10, 44, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(110, 44))
+                .lineToConstantHeading(new Vector2d(110, 58))
                 .build();
 
         //If the warehouse top is chosen, the robot will go into the warehouse and shift left then move up
         TrajectorySequence rightSideParkWareHouseTop = d.trajectorySequenceBuilder(rightSide.end())
-                .lineToConstantHeading(new Vector2d(-56, 45))
-                .lineToLinearHeading(new Pose2d(10, 45, Math.toRadians(0)))
-                .lineToConstantHeading(new Vector2d(110, 45))
+                .lineToConstantHeading(new Vector2d(-56, 44))
+                .lineToLinearHeading(new Pose2d(10, 44, Math.toRadians(0)))
+                .lineToConstantHeading(new Vector2d(110, 44))
                 .lineToConstantHeading(new Vector2d(110, 31))
-                .lineToConstantHeading(new Vector2d(140, 31))
+                .lineToConstantHeading(new Vector2d(130, 31))
                 .build();
 
 

@@ -335,7 +335,7 @@ public class finalDriveBlueWorlds extends LinearOpMode {
             outtakeTime.reset();
             intakeMode = ConfigurationStorage.intakeMode.objectDetected;
 
-            while(outtakeTime.milliseconds() < 1000) {
+            while(outtakeTime.milliseconds() < 500) {
                 driving();
                 action();
                 d.intake.setPower(-0.95);

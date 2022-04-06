@@ -25,6 +25,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.function.DoubleBinaryOperator;
 
 @Autonomous
 public class reversedVersionOfOpenCV extends LinearOpMode {
@@ -32,27 +35,27 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
     public static double centerOfCam = 120;
 
 
-    //SampleMecanumDrive d;
+    SampleMecanumDrive d;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     contourPipe pipeline;
 
-    OpenCvInternalCamera2 cam;
+    OpenCvWebcam cam;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //d = new SampleMecanumDrive(hardwareMap);
+        d = new SampleMecanumDrive(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources()
                 .getIdentifier("cameraMonitorViewId", "id",
                         hardwareMap.appContext.getPackageName());
 
-        /*cam = OpenCvCameraFactory.getInstance()
+        cam = OpenCvCameraFactory.getInstance()
                 .createWebcam(hardwareMap.get
                         (WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        */
-        cam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
+
+        //cam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
 
 
         //Opens the camera and sets the openCV code to the webcam
@@ -84,17 +87,25 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
             sleep(20);
+
+
             ArrayList<contourPipe.analyzedDuck> ducks = pipeline.getDuckCords();
 
             if (ducks.isEmpty()) {
                 telemetry.addLine("so sad, no ducks :(");
             } else {
-                for (contourPipe.analyzedDuck duck : ducks) {
-                    telemetry.addLine(String.format("Duck: X=%f, Y=%f", duck.cordX, duck.cordY));
+                telemetry.addData("X cords of Max Size: ", pipeline.getCordsX());
+                telemetry.addData("Y cords of Max Size: ", pipeline.getCordsY());
+                telemetry.addData("Max Size", pipeline.getSize());
+                if (pipeline.getCordsX() > centerOfCam) {
+                    d.turn((pipeline.getCordsX() - centerOfCam) - 1e-6);
+                } else if (pipeline.getCordsX() < centerOfCam) {
+                    d.turn((pipeline.getCordsX() - centerOfCam) + 1e-6);
                 }
             }
 
             telemetry.update();
+
         }
 
 
@@ -118,6 +129,15 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
         ArrayList<analyzedDuck> internalDuckList = new ArrayList<>();
         volatile ArrayList<analyzedDuck> clientDuckList = new ArrayList<>();
 
+        ArrayList<Double> internalXCords = new ArrayList<>();
+        volatile ArrayList<Double> clientXCords = new ArrayList<>();
+
+        ArrayList<Double> internalYCords = new ArrayList<>();
+        volatile ArrayList<Double> clientYCords = new ArrayList<>();
+
+        ArrayList<Double> internalSize = new ArrayList<>();
+        volatile ArrayList<Double> clientSize = new ArrayList<>();
+
         Mat cbMat = new Mat();
         Mat thresholdMat = new Mat();
         Mat morphedThreshold = new Mat();
@@ -129,18 +149,29 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
         @Override
         public Mat processFrame(Mat input) {
 
+            internalXCords.clear();
+            internalYCords.clear();
             internalDuckList.clear();
+            internalSize.clear();
 
             for(MatOfPoint contour : findContours(input)) {
                 analyzeContour(contour, input);
             }
 
             clientDuckList = new ArrayList<>(internalDuckList);
+            clientXCords = new ArrayList<>(internalXCords);
+            clientYCords = new ArrayList<>(internalYCords);
+            clientSize = new ArrayList<>(internalSize);
 
             return input;
         }
 
+        // Get the index from the max size then collect the x coordinate from that index and align with it
+
         public ArrayList<analyzedDuck> getDuckCords() { return clientDuckList; }
+        public double getCordsX() { return clientXCords.get(clientSize.indexOf(Collections.max(clientSize))); }
+        public double getSize() { return Collections.max(clientSize); }
+        public double getCordsY() { return clientYCords.get(clientSize.indexOf(Collections.max(clientSize))); }
 
         ArrayList<MatOfPoint> findContours(Mat input) {
             // A list we'll be using to store the contours we find
@@ -187,14 +218,23 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
             Point center = rotatedRectFitToContour.center;
             double centerX = rotatedRectFitToContour.center.x;
             double centerY = rotatedRectFitToContour.center.y;
+            //Create array for size
+            double size = rotatedRectFitToContour.size.area();
+
+
 
             drawTagTextX(rotatedRectFitToContour, "X: " + Double.toString(Math.round(center.x)), input);
             drawTagTextY(rotatedRectFitToContour, "Y: " + Double.toString(Math.round(center.y)), input);
+            drawTagTextSize(rotatedRectFitToContour, "Size: " + Double.toString(size), input);
 
             analyzedDuck analyzedDuck = new analyzedDuck();
             analyzedDuck.cordX = centerX;
             analyzedDuck.cordY = centerY;
             internalDuckList.add(analyzedDuck);
+            internalXCords.add(centerX);
+            internalYCords.add(centerY);
+            internalDuckList.add(analyzedDuck);
+            internalSize.add(size);
         }
 
 
@@ -230,8 +270,21 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
                     mat, // The buffer we're drawing on
                     text, // The text we're drawing
                     new Point( // The anchor point for the text
-                            rect.center.x+50,  // x anchor point
+                            rect.center.x+25,  // x anchor point
                             rect.center.y+25), // y anchor point
+                    Imgproc.FONT_HERSHEY_PLAIN, // Font
+                    1, // Font size
+                    TEAL, // Font color
+                    1);
+        }
+
+        static void drawTagTextSize(RotatedRect rect, String text, Mat mat) {
+            Imgproc.putText(
+                    mat, // The buffer we're drawing on
+                    text, // The text we're drawing
+                    new Point( // The anchor point for the text
+                            rect.center.x-25,  // x anchor point
+                            rect.center.y-25), // y anchor point
                     Imgproc.FONT_HERSHEY_PLAIN, // Font
                     1, // Font size
                     TEAL, // Font color
