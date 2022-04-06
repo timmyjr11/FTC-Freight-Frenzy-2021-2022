@@ -1,4 +1,4 @@
-package testCodes.robotTests.contours;
+package testCodes.cameras.OpenCV.contours;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 

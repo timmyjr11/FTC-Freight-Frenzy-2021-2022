@@ -1,4 +1,4 @@
-package testCodes.cameras.OpenCV;
+package testCodes.cameras.OpenCV.contours;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

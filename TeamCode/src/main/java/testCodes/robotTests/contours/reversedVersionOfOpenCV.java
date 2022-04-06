@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
@@ -20,14 +19,11 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera2;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.function.DoubleBinaryOperator;
 
 @Autonomous
 public class reversedVersionOfOpenCV extends LinearOpMode {
@@ -232,8 +228,6 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
             internalSize.add(size);
         }
 
-
-
         static void drawRotatedRect(RotatedRect rect, Mat drawOn){
             /*
              * Draws a rotated rect by drawing each of the 4 lines individually
@@ -247,6 +241,7 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
                 Imgproc.line(drawOn, points[i], points[(i+1)%4], PURPLE, 2);
             }
         }
+
         static void drawTagTextX(RotatedRect rect, String text, Mat mat) {
             Imgproc.putText(
                     mat, // The buffer we're drawing on

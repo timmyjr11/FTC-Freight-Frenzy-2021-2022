@@ -13,16 +13,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 public class intakePositionTest extends LinearOpMode {
 
     DcMotorEx intake;
-
-    int intakePosition;
-
-
     int range;
-    double halfWayPosition = 384.5;
-
-    double error;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -34,31 +26,28 @@ public class intakePositionTest extends LinearOpMode {
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        intakePosition = intake.getCurrentPosition();
-
         waitForStart();
 
         while (opModeIsActive()) {
             if (gamepad2.right_trigger >= 0.5) {
                 intake.setPower(gamepad2.right_trigger * 0.8);
-                intakePosition = intake.getCurrentPosition();
+                intake.getCurrentPosition();
                 range = (int) Math.floor(intake.getCurrentPosition() / 384.5);
             } else if (gamepad2.left_trigger >= 0.5) {
                 intake.setPower(-gamepad2.left_trigger * 0.95);
-                intakePosition = intake.getCurrentPosition();
+                intake.getCurrentPosition();
                 range = (int) Math.floor(intake.getCurrentPosition() / 384.5);
             } else {
-                if (intake.getCurrentPosition() == Math.floor(range * 384.5)) {
+                if (intake.getCurrentPosition() == Math.floor(range * 384.5) || (intake.getCurrentPosition() >= Math.floor(range * 375) && intake.getCurrentPosition() <= Math.floor(range * 390))) {
                     intake.setPower(0);
                 } else {
-
                     intake.setPower(-0.3);
+                    intake.getCurrentPosition();
                 }
-                telemetry.addData("range", range);
-                telemetry.addData("position", intakePosition);
-                telemetry.update();
             }
         }
+        telemetry.addData("range", range);
+        telemetry.addData("position", intake.getCurrentPosition());
+        telemetry.update();
     }
 }
