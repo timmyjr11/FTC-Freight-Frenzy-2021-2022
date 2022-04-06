@@ -57,7 +57,6 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
 
         //cam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
 
-
         //Opens the camera and sets the openCV code to the webcam
         cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -88,7 +87,6 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             sleep(20);
 
-
             ArrayList<contourPipe.analyzedDuck> ducks = pipeline.getDuckCords();
 
             if (ducks.isEmpty()) {
@@ -100,19 +98,14 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
                 if (pipeline.getCordsX() > centerOfCam) {
                     //Turn until it works rather than a determined angle
                     //Get cords x - center of cam but make it negative when needed
-                    d.turn(Math.toRadians(-5) - 1e-6);
+                    d.turn(Math.toRadians(-pipeline.getCordsX() - centerOfCam) - 1e-6);
                 } else if (pipeline.getCordsX() < centerOfCam) {
-                    d.turn(Math.toRadians(5) + 1e-6);
+                    d.turn(Math.toRadians(pipeline.getCordsX() - centerOfCam) + 1e-6);
                 }
             }
-
             telemetry.update();
-
         }
-
-
     }
-
 
     static class contourPipe extends OpenCvPipeline {
         static final int CB_CHAN_MASK_THRESHOLD = 80;

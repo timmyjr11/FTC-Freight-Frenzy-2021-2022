@@ -49,24 +49,12 @@ public class intakePositionTest extends LinearOpMode {
                 intakePosition = intake.getCurrentPosition();
                 range = (int) Math.floor(intake.getCurrentPosition() / 384.5);
             } else {
-                if (intake.getCurrentPosition() % 192 == 0) {
+                if (intake.getCurrentPosition() == Math.floor(range * 384.5)) {
                     intake.setPower(0);
                 } else {
 
-                    intake.setTargetPosition((int) Math.floor(385.5 * range));
-
-                    intake.setTargetPositionTolerance(30);
-
-                    intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-                    intake.setPower(0.5);
-
-                    if (!intake.isBusy()) {
-                        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    }
+                    intake.setPower(-0.3);
                 }
-
                 telemetry.addData("range", range);
                 telemetry.addData("position", intakePosition);
                 telemetry.update();
