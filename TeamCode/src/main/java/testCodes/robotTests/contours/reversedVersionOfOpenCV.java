@@ -1,6 +1,7 @@
 package testCodes.robotTests.contours;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -24,11 +25,13 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
+@Config
 @Autonomous
 public class reversedVersionOfOpenCV extends LinearOpMode {
 
     public static double centerOfCam = 120;
+    public static double leftBound = 160;
+    public static double rightBound = 200;
 
 
     SampleMecanumDrive d;
@@ -91,14 +94,18 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
                 telemetry.addData("X cords of Max Size: ", pipeline.getCordsX());
                 telemetry.addData("Y cords of Max Size: ", pipeline.getCordsY());
                 telemetry.addData("Max Size", pipeline.getSize());
-                if (pipeline.getCordsX() > centerOfCam) {
+                if (pipeline.getCordsX() < leftBound) {
                     //Turn until it works rather than a determined angle
                     //Get cords x - center of cam but make it negative when needed
-                    d.turn(Math.toRadians(-pipeline.getCordsX() - centerOfCam) - 1e-6);
-                } else if (pipeline.getCordsX() < centerOfCam) {
-                    d.turn(Math.toRadians(pipeline.getCordsX() - centerOfCam) + 1e-6);
+                    d.setMotorPowers(-0.2, -0.2, 0.2, 0.2);
+                } else if (pipeline.getCordsX() > rightBound) {
+                    d.setMotorPowers(0.2, 0.2, -0.2, -0.2);
+                } else if (pipeline.getCordsX() > leftBound && pipeline.getCordsX() < rightBound) {
+                    d.setMotorPowers(0, 0, 0, 0);
+
                 }
             }
+            d.update();
             telemetry.update();
         }
     }

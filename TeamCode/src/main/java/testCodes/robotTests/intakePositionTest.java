@@ -38,16 +38,17 @@ public class intakePositionTest extends LinearOpMode {
                 intake.getCurrentPosition();
                 range = (int) Math.floor(intake.getCurrentPosition() / 384.5);
             } else {
-                if (intake.getCurrentPosition() == Math.floor(range * 384.5) || (intake.getCurrentPosition() >= Math.floor(range * 375) && intake.getCurrentPosition() <= Math.floor(range * 390))) {
+                if (intake.getCurrentPosition() == Math.floor(range * 384.5) || (intake.getCurrentPosition() >= Math.floor(range * 380) && intake.getCurrentPosition() <= Math.floor(range * 390))) {
                     intake.setPower(0);
                 } else {
                     intake.setPower(-0.3);
                     intake.getCurrentPosition();
                 }
             }
+            telemetry.addData("range", range);
+            telemetry.addData("position", intake.getCurrentPosition());
+            telemetry.update();
         }
-        telemetry.addData("range", range);
-        telemetry.addData("position", intake.getCurrentPosition());
-        telemetry.update();
+
     }
 }
