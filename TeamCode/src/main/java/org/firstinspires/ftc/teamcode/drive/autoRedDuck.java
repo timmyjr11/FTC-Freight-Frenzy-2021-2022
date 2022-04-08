@@ -497,6 +497,7 @@ public class autoRedDuck extends LinearOpMode {
                     if (position == ConfigurationStorage.capStonePosition.center || position == ConfigurationStorage.capStonePosition.right) {
                         d.leftBox.setPosition(0.4);
                         d.rightBox.setPosition(0.4);
+                        d.intake.setPower(0);
                     }
                 })
                 .lineToLinearHeading(new Pose2d(leftBubLift, -18, Math.toRadians(180)))
@@ -838,8 +839,6 @@ public class autoRedDuck extends LinearOpMode {
             double centerY = rotatedRectFitToContour.center.y;
             //Create array for size
             double size = rotatedRectFitToContour.size.area();
-
-
 
             drawTagTextX(rotatedRectFitToContour, "X: " + Double.toString(Math.round(center.x)), input);
             drawTagTextY(rotatedRectFitToContour, "Y: " + Double.toString(Math.round(center.y)), input);
