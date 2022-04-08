@@ -5,9 +5,12 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -25,17 +28,29 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
 @Config
 @Autonomous
 public class reversedVersionOfOpenCV extends LinearOpMode {
 
-    public static double centerOfCam = 120;
-    public static double leftBound = 160;
-    public static double rightBound = 200;
+    public static double centerOfCam = 180;
+    public static double outerLeftBound = 160;
+    public static double outerRightBound = 200;
+    public static double innerLeftBound = 170;
+    public static double innerRightBound = 190;
+
+    enum rotation {
+        freeToRotate,
+        doNotLOl
+    }
 
 
     SampleMecanumDrive d;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    ElapsedTime timer = new ElapsedTime();
+
+    DcMotorEx intake;
 
     contourPipe pipeline;
 
@@ -43,7 +58,9 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        rotation rotation = reversedVersionOfOpenCV.rotation.freeToRotate;
         d = new SampleMecanumDrive(hardwareMap);
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources()
@@ -75,6 +92,12 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
             }
         });
 
+        TrajectorySequence goGetDuck = d.trajectorySequenceBuilder(d.getPoseEstimate())
+                .UNSTABLE_addTemporalMarkerOffset(0, () ->  intake.setPower(0.8) )
+                .turn(Math.toRadians(180))
+                .forward(30)
+                .build();
+
         //Allows the dashboard to see what the camera sees
         FtcDashboard.getInstance().startCameraStream(cam, 30);
 
@@ -94,21 +117,26 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
                 telemetry.addData("X cords of Max Size: ", pipeline.getCordsX());
                 telemetry.addData("Y cords of Max Size: ", pipeline.getCordsY());
                 telemetry.addData("Max Size", pipeline.getSize());
-                if (pipeline.getCordsX() < leftBound) {
-                    //Turn until it works rather than a determined angle
-                    //Get cords x - center of cam but make it negative when needed
-                    d.setMotorPowers(-0.2, -0.2, 0.2, 0.2);
-                } else if (pipeline.getCordsX() > rightBound) {
-                    d.setMotorPowers(0.2, 0.2, -0.2, -0.2);
-                } else if (pipeline.getCordsX() > leftBound && pipeline.getCordsX() < rightBound) {
+                if (pipeline.getCordsX() < outerLeftBound) {
+                    d.setMotorPowers(-0.15, -0.15, 0.15, 0.15);
+                } else if (pipeline.getCordsX() > outerRightBound) {
+                    d.setMotorPowers(0.15, 0.15, -0.15, -0.15);
+                } else if (pipeline.getCordsX() < outerLeftBound && pipeline.getCordsX() < innerLeftBound) {
+                    d.setMotorPowers(-0.05, -0.05, 0.05, 0.05);
+                } else if (pipeline.getCordsX() > outerRightBound && pipeline.getCordsX() < innerRightBound) {
+                    d.setMotorPowers(0.05, 0.05, -0.05, -0.05);
+                } else if (pipeline.getCordsX() > innerLeftBound && pipeline.getCordsX() < innerRightBound) {
                     d.setMotorPowers(0, 0, 0, 0);
-
+                    if (rotation == reversedVersionOfOpenCV.rotation.freeToRotate) {
+                        rotation = reversedVersionOfOpenCV.rotation.doNotLOl;
+                        d.followTrajectorySequence(goGetDuck);
+                    }
                 }
             }
+        }
             d.update();
             telemetry.update();
         }
-    }
 
     static class contourPipe extends OpenCvPipeline {
         static final int CB_CHAN_MASK_THRESHOLD = 80;

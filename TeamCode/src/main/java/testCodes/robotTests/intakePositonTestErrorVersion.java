@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @Config
 @TeleOp
-public class intakePositionTest extends LinearOpMode {
+public class intakePositonTestErrorVersion extends LinearOpMode {
 
     DcMotorEx intake;
     int range;
