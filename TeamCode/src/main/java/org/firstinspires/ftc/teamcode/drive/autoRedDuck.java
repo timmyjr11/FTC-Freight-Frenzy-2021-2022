@@ -494,11 +494,12 @@ public class autoRedDuck extends LinearOpMode {
                     }
                 })
                 .UNSTABLE_addTemporalMarkerOffset(-1.5, () -> {
+                    d.intake.setPower(0);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(-1.5, () -> {
                     if (position == ConfigurationStorage.capStonePosition.center || position == ConfigurationStorage.capStonePosition.right) {
                         d.leftBox.setPosition(0.4);
-                        d.rightBox.setPosition(0.4);
-                        d.intake.setPower(0);
-                    }
+                        d.rightBox.setPosition(0.4); }
                 })
                 .lineToLinearHeading(new Pose2d(leftBubLift, -18, Math.toRadians(180)))
                 .waitSeconds(2)
