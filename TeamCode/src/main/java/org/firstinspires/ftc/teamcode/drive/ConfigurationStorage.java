@@ -25,6 +25,22 @@ public class ConfigurationStorage {
         top
     }
 
+    public enum rotationForDuck {
+        freeToRotate,
+        doNotLOl
+    }
+
+    public enum goForDuck {
+        toBeDetermined,
+        doNotGoForDuck,
+        goForDuck
+    }
+
+    public enum duckFoundColorSensor {
+        duckNotFound,
+        duckFound
+    }
+
     public enum boxState {
         inside,
         halfway,
