@@ -671,8 +671,7 @@ public class autoBlueWorlds extends LinearOpMode {
     private void openCVPlacement() {
         if(startingPosition == ConfigurationStorage.sideStart.leftSide) {
             rectLeftx = 5;
-            rectLefty = 245
-            ;
+            rectLefty = 245;
             rectLeftWidth = 80;
             rectLeftHeight = 150;
 
