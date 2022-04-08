@@ -39,6 +39,7 @@ public class finalDriveRedWorlds extends LinearOpMode {
     //Finite state machine that keeps track of the automatic outtake
     ConfigurationStorage.intakeMode intakeMode = ConfigurationStorage.intakeMode.manual;
     ConfigurationStorage.runOuttake runOuttake = ConfigurationStorage.runOuttake.openToRun;
+    ConfigurationStorage.intakeSpeed intakeSpeed = ConfigurationStorage.intakeSpeed.normal;
 
     //Creates SampleMecanumDrive to be used for Roadrunner
     SampleMecanumDrive d;
@@ -151,9 +152,9 @@ public class finalDriveRedWorlds extends LinearOpMode {
         }
 
         //Pressing the right trigger starts the intake and left trigger starts the outtake
-        if (gamepad2.right_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual) {
+        if (gamepad2.right_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual && intakeSpeed == ConfigurationStorage.intakeSpeed.normal) {
             d.intake.setPower(gamepad2.right_trigger * 0.8);
-        } else if (gamepad2.left_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual) {
+        } else if (gamepad2.left_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual && intakeSpeed == ConfigurationStorage.intakeSpeed.normal) {
             d.intake.setPower(-gamepad2.left_trigger * 0.95);
         } else {
             d.intake.setPower(0);
@@ -199,6 +200,19 @@ public class finalDriveRedWorlds extends LinearOpMode {
                 d.leftBox.setPosition(0);
                 boxState = ConfigurationStorage.boxState.inside;
             }
+        }
+
+        if (gamepad2.right_bumper || gamepad2.left_bumper) {
+            intakeSpeed = ConfigurationStorage.intakeSpeed.slow;
+            if (gamepad2.right_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual) {
+                d.intake.setPower(gamepad2.right_trigger * 0.25);
+            } else if (gamepad2.left_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual) {
+                d.intake.setPower(-gamepad2.left_trigger * 0.25);
+            } else {
+                d.intake.setPower(0);
+            }
+        } else {
+            intakeSpeed = ConfigurationStorage.intakeSpeed.normal;
         }
 
         //If the right stick on game-pad 2 is pressed, it restarts the lift motor encoders

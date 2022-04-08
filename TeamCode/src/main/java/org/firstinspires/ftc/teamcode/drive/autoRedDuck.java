@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -30,6 +31,10 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import testCodes.robotTests.contours.reversedVersionOfOpenCV;
+@Deprecated
+@Disabled
 @Config
 @Autonomous(group = "Main")
 public class autoRedDuck extends LinearOpMode {
@@ -56,6 +61,7 @@ public class autoRedDuck extends LinearOpMode {
 
     //The starting Pose for roadRunner
     Pose2d start;
+    Pose2d duckPose;
 
     //Creates ConfigurationStorage that will be used for the auto configuration selector.
     ConfigurationStorage.capStonePosition position = ConfigurationStorage.capStonePosition.toBeDetermined;
@@ -84,10 +90,10 @@ public class autoRedDuck extends LinearOpMode {
     public static int rectCenterHeight = 150;
 
     //Ranges used for the duck
-    public static double outerLeftBound = 160;
-    public static double outerRightBound = 200;
-    public static double innerLeftBound = 170;
-    public static double innerRightBound = 190;
+    public static double outerLeftBound = 293;
+    public static double outerRightBound = 373;
+    public static double innerLeftBound = 313;
+    public static double innerRightBound = 353;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -438,44 +444,12 @@ public class autoRedDuck extends LinearOpMode {
                 })
                 .build();
 
-        TrajectorySequence goGetDuck = d.trajectorySequenceBuilder(d.getPoseEstimate())
-                .forward(55)
-                .build();
+
 
         TrajectorySequence leftSideGoForDuck = d.trajectorySequenceBuilder(leftSide.end())
                 .turn(Math.toRadians(90) + 1e-6)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    ArrayList<contourPipe.analyzedDuck> ducks = contourPipe.getDuckCords();
-                    cam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-                    cam.setPipeline(contourPipe);
-                    timer.reset();
-                    while (timer.seconds() < 10) {
-                        if (ducks.isEmpty()) {
-                            telemetry.addLine("so sad, no ducks :(");
-                        } else {
-                            telemetry.addData("X cords of Max Size: ", contourPipe.getCordsX());
-                            telemetry.addData("Y cords of Max Size: ", contourPipe.getCordsY());
-                            telemetry.addData("Max Size", contourPipe.getSize());
-                            if (contourPipe.getCordsX() < outerLeftBound) {
-                                d.setMotorPowers(-0.15, -0.15, 0.15, 0.15);
-                            } else if (contourPipe.getCordsX() > outerRightBound) {
-                                d.setMotorPowers(0.15, 0.15, -0.15, -0.15);
-                            } else if (contourPipe.getCordsX() < outerLeftBound && contourPipe.getCordsX() < innerLeftBound) {
-                                d.setMotorPowers(-0.05, -0.05, 0.05, 0.05);
-                            } else if (contourPipe.getCordsX() > outerRightBound && contourPipe.getCordsX() < innerRightBound) {
-                                d.setMotorPowers(0.05, 0.05, -0.05, -0.05);
-                            } else if (contourPipe.getCordsX() > innerLeftBound && contourPipe.getCordsX() < innerRightBound) {
-                                d.setMotorPowers(0, 0, 0, 0);
-                                if (rotationForDuck == ConfigurationStorage.rotationForDuck.freeToRotate) {
-                                    rotationForDuck = ConfigurationStorage.rotationForDuck.doNotLOl;
-                                    d.followTrajectorySequence(goGetDuck);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                })
-                .lineToLinearHeading(new Pose2d(-68, -18, Math.toRadians(180)))
+                .build(); //Remove later
+                /*.lineToLinearHeading(new Pose2d(-68, -18, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(-2.0, () -> {
                     if (position == ConfigurationStorage.capStonePosition.right) {
                         d.leftLiftMotor.setTargetPosition(1100);
@@ -493,13 +467,12 @@ public class autoRedDuck extends LinearOpMode {
                         d.rightLiftMotor.setPower(0.8);
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset(-1.5, () -> {
-                    d.intake.setPower(0);
-                })
+                .UNSTABLE_addTemporalMarkerOffset(-1.5, () -> d.intake.setPower(0))
                 .UNSTABLE_addTemporalMarkerOffset(-1.5, () -> {
                     if (position == ConfigurationStorage.capStonePosition.center || position == ConfigurationStorage.capStonePosition.right) {
                         d.leftBox.setPosition(0.4);
-                        d.rightBox.setPosition(0.4); }
+                        d.rightBox.setPosition(0.4);
+                    }
                 })
                 .lineToLinearHeading(new Pose2d(leftBubLift, -18, Math.toRadians(180)))
                 .waitSeconds(2)
@@ -541,7 +514,8 @@ public class autoRedDuck extends LinearOpMode {
                     d.leftLiftMotor.setPower(0);
                     d.rightLiftMotor.setPower(0);
                 })
-                .build();
+                .build(); */
+
 
         //If the storage unit is chosen, the robot will move back a bit to park fully in the storage unit
         TrajectorySequence leftSideParkStorageUnit = d.trajectorySequenceBuilder(leftSide.end())
@@ -574,6 +548,11 @@ public class autoRedDuck extends LinearOpMode {
                 .build();
 
 
+        TrajectorySequence leftSideFixStorageDuck = d.trajectorySequenceBuilder(leftSideParkStorageUnit.end())
+                .strafeRight(5)
+                .build();
+
+
         while (!isStarted()) {
             //After configuration is complete, the auto configuration is then read back to drivers to ensure the correct configuration
             telemetry.addLine("Current configuration:");
@@ -597,7 +576,8 @@ public class autoRedDuck extends LinearOpMode {
 
             if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
                 telemetry.addLine("Cannot go get duck because you are on the right side");
-            } if (startingPosition == ConfigurationStorage.sideStart.leftSide && goForDuck == ConfigurationStorage.goForDuck.goForDuck) {
+            }
+            if (startingPosition == ConfigurationStorage.sideStart.leftSide && goForDuck == ConfigurationStorage.goForDuck.goForDuck) {
                 telemetry.addLine("Will go for duck");
             } else if (startingPosition == ConfigurationStorage.sideStart.leftSide && goForDuck == ConfigurationStorage.goForDuck.doNotGoForDuck) {
                 telemetry.addLine("Will NOT go for duck");
@@ -624,18 +604,40 @@ public class autoRedDuck extends LinearOpMode {
         }
 
         //When the robot has started, the camera stops streaming
-        cam.stopStreaming();
-
+        cam.setPipeline(contourPipe);
         //The robot will then follow the path as given from the configuration
         if (startingPosition == ConfigurationStorage.sideStart.leftSide) {
             d.followTrajectorySequence(leftSide);
-            if (goForDuck == ConfigurationStorage.goForDuck.goForDuck){
+            if (goForDuck == ConfigurationStorage.goForDuck.goForDuck) {
                 d.followTrajectorySequence(leftSideGoForDuck);
+                alignToDuck();
+                d.setMotorPowers(0, 0, 0, 0);
+                if (duckPose.getHeading() < Math.toRadians(85)) {
+                    goForDuck = ConfigurationStorage.goForDuck.doNotGoForDuck;
+                    TrajectorySequence doNotGoForDuck = d.trajectorySequenceBuilder(duckPose)
+                            .lineToLinearHeading(new Pose2d(-57, -21, Math.toRadians(0)))
+                            .build();
+                    d.followTrajectorySequence(doNotGoForDuck);
+                } else if (duckPose.getHeading() >= Math.toRadians(85)) {
+                    TrajectorySequence goGetDuck = d.trajectorySequenceBuilder(duckPose)
+                            .turn(Math.toRadians(duckPose.getHeading() + 180))
+                            .UNSTABLE_addTemporalMarkerOffset(0, () -> d.intake.setPower(0.75))
+                            .forward(50)
+                            .lineToLinearHeading(new Pose2d(-57, -21, Math.toRadians(0)))
+                            .build();
+                    d.followTrajectorySequence(goGetDuck);
+                }
             }
             if (parkingPosition == ConfigurationStorage.parking.storageUnit) {
                 d.followTrajectorySequence(leftSideParkStorageUnit);
+                if (goForDuck == ConfigurationStorage.goForDuck.goForDuck) {
+                    d.followTrajectorySequence(leftSideFixStorageDuck);
+                }
             } else if (warehousePosition == ConfigurationStorage.warehouseParking.left) {
-                d.followTrajectorySequence(leftSideParkWarehouseLeft);
+                if (goForDuck == ConfigurationStorage.goForDuck.doNotGoForDuck) {
+                    d.followTrajectorySequence(leftSideParkWarehouseLeft);
+                } else if (goForDuck == ConfigurationStorage.goForDuck.doNotGoForDuck) {
+                }
             } else if (warehousePosition == ConfigurationStorage.warehouseParking.right) {
                 d.followTrajectorySequence(leftSideParkWarehouseRight);
             } else if (warehousePosition == ConfigurationStorage.warehouseParking.top) {
@@ -774,7 +776,7 @@ public class autoRedDuck extends LinearOpMode {
             internalDuckList.clear();
             internalSize.clear();
 
-            for(MatOfPoint contour : findContours(input)) {
+            for (MatOfPoint contour : findContours(input)) {
                 analyzeContour(contour, input);
             }
 
@@ -788,10 +790,21 @@ public class autoRedDuck extends LinearOpMode {
 
         // Get the index from the max size then collect the x coordinate from that index and align with it
 
-        public ArrayList<analyzedDuck> getDuckCords() { return clientDuckList; }
-        public double getCordsX() { return clientXCords.get(clientSize.indexOf(Collections.max(clientSize))); }
-        public double getSize() { return Collections.max(clientSize); }
-        public double getCordsY() { return clientYCords.get(clientSize.indexOf(Collections.max(clientSize))); }
+        public ArrayList<analyzedDuck> getDuckCords() {
+            return clientDuckList;
+        }
+
+        public double getCordsX() {
+            return clientXCords.get(clientSize.indexOf(Collections.max(clientSize)));
+        }
+
+        public double getSize() {
+            return Collections.max(clientSize);
+        }
+
+        public double getCordsY() {
+            return clientYCords.get(clientSize.indexOf(Collections.max(clientSize)));
+        }
 
         ArrayList<MatOfPoint> findContours(Mat input) {
             // A list we'll be using to store the contours we find
@@ -826,7 +839,7 @@ public class autoRedDuck extends LinearOpMode {
             Imgproc.dilate(output, output, dilateElement);
         }
 
-        void analyzeContour(MatOfPoint contour, Mat input){
+        void analyzeContour(MatOfPoint contour, Mat input) {
             // Transform the contour to a different format
             //Point[] points = contour.toArray();
             MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
@@ -855,7 +868,7 @@ public class autoRedDuck extends LinearOpMode {
             internalSize.add(size);
         }
 
-        static void drawRotatedRect(RotatedRect rect, Mat drawOn){
+        static void drawRotatedRect(RotatedRect rect, Mat drawOn) {
             /*
              * Draws a rotated rect by drawing each of the 4 lines individually
              */
@@ -863,9 +876,8 @@ public class autoRedDuck extends LinearOpMode {
             Point[] points = new Point[4];
             rect.points(points);
 
-            for(int i = 0; i < 4; ++i)
-            {
-                Imgproc.line(drawOn, points[i], points[(i+1)%4], PURPLE, 2);
+            for (int i = 0; i < 4; ++i) {
+                Imgproc.line(drawOn, points[i], points[(i + 1) % 4], PURPLE, 2);
             }
         }
 
@@ -874,8 +886,8 @@ public class autoRedDuck extends LinearOpMode {
                     mat, // The buffer we're drawing on
                     text, // The text we're drawing
                     new Point( // The anchor point for the text
-                            rect.center.x-50,  // x anchor point
-                            rect.center.y+25), // y anchor point
+                            rect.center.x - 50,  // x anchor point
+                            rect.center.y + 25), // y anchor point
                     Imgproc.FONT_HERSHEY_PLAIN, // Font
                     1, // Font size
                     TEAL, // Font color
@@ -887,8 +899,8 @@ public class autoRedDuck extends LinearOpMode {
                     mat, // The buffer we're drawing on
                     text, // The text we're drawing
                     new Point( // The anchor point for the text
-                            rect.center.x+25,  // x anchor point
-                            rect.center.y+25), // y anchor point
+                            rect.center.x + 25,  // x anchor point
+                            rect.center.y + 25), // y anchor point
                     Imgproc.FONT_HERSHEY_PLAIN, // Font
                     1, // Font size
                     TEAL, // Font color
@@ -900,8 +912,8 @@ public class autoRedDuck extends LinearOpMode {
                     mat, // The buffer we're drawing on
                     text, // The text we're drawing
                     new Point( // The anchor point for the text
-                            rect.center.x-25,  // x anchor point
-                            rect.center.y-25), // y anchor point
+                            rect.center.x - 25,  // x anchor point
+                            rect.center.y - 25), // y anchor point
                     Imgproc.FONT_HERSHEY_PLAIN, // Font
                     1, // Font size
                     TEAL, // Font color
@@ -1000,6 +1012,7 @@ public class autoRedDuck extends LinearOpMode {
                 goForDuck = ConfigurationStorage.goForDuck.doNotGoForDuck;
                 break;
             }
+            if (isStopRequested()) return;
         }
     }
 
@@ -1039,6 +1052,38 @@ public class autoRedDuck extends LinearOpMode {
             rectCentery = 255;
             rectCenterWidth = 80;
             rectCenterHeight = 150;
+        }
+    }
+
+    private void alignToDuck() {
+        ArrayList<contourPipe.analyzedDuck> ducks = contourPipe.getDuckCords();
+        timer.reset();
+        while (true) {
+            if (ducks.isEmpty()) {
+                telemetry.addLine("so sad, no ducks :(");
+                d.setMotorPowers(-0.15, -0.15, 0.15, 0.15);
+            } else {
+                telemetry.addData("X cords of Max Size: ", contourPipe.getCordsX());
+                telemetry.addData("Y cords of Max Size: ", contourPipe.getCordsY());
+                telemetry.addData("Max Size", contourPipe.getSize());
+                telemetry.update();
+                if (contourPipe.getCordsX() < outerLeftBound) {
+                    d.setMotorPowers(-0.15, -0.15, 0.15, 0.15);
+                } else if (contourPipe.getCordsX() > outerRightBound) {
+                    d.setMotorPowers(0.15, 0.15, -0.15, -0.15);
+                } else if (contourPipe.getCordsX() < outerLeftBound && contourPipe.getCordsX() < innerLeftBound) {
+                    d.setMotorPowers(-0.1, -0.1, 0.1, 0.1);
+                } else if (contourPipe.getCordsX() > outerRightBound && contourPipe.getCordsX() < innerRightBound) {
+                    d.setMotorPowers(0.1, 0.1, -0.1, -0.1);
+                } else if (contourPipe.getCordsX() > innerLeftBound && contourPipe.getCordsX() < innerRightBound) {
+                    d.setMotorPowers(0, 0, 0, 0);
+                    d.update();
+                    duckPose = d.getPoseEstimate();
+                    break;
+                }
+            }
+            d.update();
+            duckPose = d.getPoseEstimate();
         }
     }
 }

@@ -670,37 +670,38 @@ public class autoBlueWorlds extends LinearOpMode {
 
     private void openCVPlacement() {
         if(startingPosition == ConfigurationStorage.sideStart.leftSide) {
-            rectLeftx = 40;
-            rectLefty = 246;
+            rectLeftx = 5;
+            rectLefty = 245
+            ;
             rectLeftWidth = 80;
             rectLeftHeight = 150;
 
             //Creates the right rectangle for openCv
-            rectRightx = 543;
-            rectRighty = 255;
+            rectRightx = 520;
+            rectRighty = 250;
             rectRightWidth = 80;
             rectRightHeight = 150;
 
             //Creates the center rectangle for openCV
-            rectCenterx = 274;
-            rectCentery = 255;
+            rectCenterx = 250;
+            rectCentery = 250;
             rectCenterWidth = 80;
             rectCenterHeight = 150;
         } else if (startingPosition == ConfigurationStorage.sideStart.rightSide) {
             //Creates the left rectangle for openCV
-            rectLeftx = 40;
+            rectLeftx = 0;
             rectLefty = 235;
             rectLeftWidth = 80;
             rectLeftHeight = 150;
 
             //Creates the right rectangle for openCv
-            rectRightx = 550;
-            rectRighty = 240;
+            rectRightx = 515;
+            rectRighty = 250;
             rectRightWidth = 80;
             rectRightHeight = 150;
 
             //Creates the center rectangle for openCV
-            rectCenterx = 273;
+            rectCenterx = 245;
             rectCentery = 240;
             rectCenterWidth = 80;
             rectCenterHeight = 150;

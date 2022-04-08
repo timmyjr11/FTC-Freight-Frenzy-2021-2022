@@ -113,6 +113,7 @@ public class reversedVersionOfOpenCV extends LinearOpMode {
 
             if (ducks.isEmpty()) {
                 telemetry.addLine("so sad, no ducks :(");
+                d.setMotorPowers(0.15, 0.15, -0.15, -0.15);
             } else {
                 telemetry.addData("X cords of Max Size: ", pipeline.getCordsX());
                 telemetry.addData("Y cords of Max Size: ", pipeline.getCordsY());

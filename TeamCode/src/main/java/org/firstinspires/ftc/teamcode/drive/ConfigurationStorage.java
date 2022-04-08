@@ -36,11 +36,6 @@ public class ConfigurationStorage {
         goForDuck
     }
 
-    public enum duckFoundColorSensor {
-        duckNotFound,
-        duckFound
-    }
-
     public enum boxState {
         inside,
         halfway,
@@ -50,6 +45,11 @@ public class ConfigurationStorage {
     public enum intakeMode {
         manual,
         objectDetected
+    }
+
+    public enum intakeSpeed {
+        normal,
+        slow
     }
 
     public enum runOuttake {
