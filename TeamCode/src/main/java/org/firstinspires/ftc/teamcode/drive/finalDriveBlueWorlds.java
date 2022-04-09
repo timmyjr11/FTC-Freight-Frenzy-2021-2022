@@ -46,6 +46,7 @@ public class finalDriveBlueWorlds extends LinearOpMode {
     ConfigurationStorage.intakeMode intakeMode = ConfigurationStorage.intakeMode.manual;
     ConfigurationStorage.runOuttake runOuttake = ConfigurationStorage.runOuttake.openToRun;
     ConfigurationStorage.triggerHeld triggerHeld = ConfigurationStorage.triggerHeld.notBeingHeld;
+
     //Creates SampleMecanumDrive to be used for Roadrunner
     SampleMecanumDrive d;
 
@@ -150,14 +151,14 @@ public class finalDriveBlueWorlds extends LinearOpMode {
         }
 
         //Pressing right trigger more than halfway activates the right carousel wheel
-        if (gamepad1.right_trigger >= 0.3) {
+        if (gamepad1.right_trigger >= 0.5) {
             d.rightServoWheel.setPower(1);
         } else {
             d.rightServoWheel.setPower(0);
         }
 
         //Pressing left trigger more than halfway activates the left carousel wheel
-        if (gamepad1.left_trigger >= 0.3) {
+        if (gamepad1.left_trigger >= 0.5) {
             d.leftServoWheel.setPower(1);
         } else {
             d.leftServoWheel.setPower(0);
