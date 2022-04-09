@@ -18,6 +18,11 @@ public class finalDriveRedWorlds extends LinearOpMode {
     int rightLiftHeight = 0;
     int leftLiftHeight = 0;
     int topHeight = 1100;
+    double halfWay = 192.25;
+
+    int range;
+    public static int upperBound = 20;
+    public static int lowerBound = 25;
 
     //Booleans that allow the an action to happen once and not cycle if pressed
     ArrayList<Boolean> booleanArray = new ArrayList<>();
@@ -35,11 +40,12 @@ public class finalDriveRedWorlds extends LinearOpMode {
 
     //Finite state machine that allows the box to work
     ConfigurationStorage.boxState boxState = ConfigurationStorage.boxState.inside;
+    ConfigurationStorage.horizontalSlideState horizontalSlideState = ConfigurationStorage.horizontalSlideState.inside;
 
     //Finite state machine that keeps track of the automatic outtake
     ConfigurationStorage.intakeMode intakeMode = ConfigurationStorage.intakeMode.manual;
     ConfigurationStorage.runOuttake runOuttake = ConfigurationStorage.runOuttake.openToRun;
-    ConfigurationStorage.intakeSpeed intakeSpeed = ConfigurationStorage.intakeSpeed.normal;
+    ConfigurationStorage.triggerHeld triggerHeld = ConfigurationStorage.triggerHeld.notBeingHeld;
 
     //Creates SampleMecanumDrive to be used for Roadrunner
     SampleMecanumDrive d;
@@ -64,6 +70,8 @@ public class finalDriveRedWorlds extends LinearOpMode {
         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         d.leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         d.rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        d.intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        d.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
@@ -84,7 +92,8 @@ public class finalDriveRedWorlds extends LinearOpMode {
     private void action() {
 
         //Uses the D-pad for the lift
-        if (gamepad2.dpad_up && !gamepad2.dpad_down && (d.rightLiftMotor.getCurrentPosition() < topHeight && d.leftLiftMotor.getCurrentPosition() < topHeight)) {            rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
+        if (gamepad2.dpad_up && !gamepad2.dpad_down && (d.rightLiftMotor.getCurrentPosition() < topHeight && d.leftLiftMotor.getCurrentPosition() < topHeight)) {
+            rightLiftHeight = d.rightLiftMotor.getCurrentPosition();
             leftLiftHeight = d.leftLiftMotor.getCurrentPosition();
             d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -110,23 +119,27 @@ public class finalDriveRedWorlds extends LinearOpMode {
 
         //Pressing A activates the horizontal slides
         if (a2Pressed && d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200){
-            if (d.leftLinkage.getPosition() == 0 && d.rightLinkage.getPosition() == 0) {
+            if (horizontalSlideState == ConfigurationStorage.horizontalSlideState.inside) {
                 d.leftLinkage.setPosition(1);
                 d.rightLinkage.setPosition(1);
-            } else if ((d.leftLinkage.getPosition() == 1 && d.rightLinkage.getPosition() == 1) || (d.leftLinkage.getPosition() == 0.5 && d.rightLinkage.getPosition() == 0.5)) {
+                horizontalSlideState = ConfigurationStorage.horizontalSlideState.outside;
+            } else if ((horizontalSlideState == ConfigurationStorage.horizontalSlideState.outside) || (horizontalSlideState == ConfigurationStorage.horizontalSlideState.halfway)) {
                 d.leftLinkage.setPosition(0);
                 d.rightLinkage.setPosition(0);
+                horizontalSlideState = ConfigurationStorage.horizontalSlideState.inside;
             }
         } else if (a2Pressed && d.rightLiftMotor.getCurrentPosition() < 200 && d.leftLiftMotor.getCurrentPosition() < 200) {
-            if (d.leftLinkage.getPosition() == 0 && d.rightLinkage.getPosition() == 0) {
-                d.leftLinkage.setPosition(0.5);
-                d.rightLinkage.setPosition(0.5);
+            if (horizontalSlideState == ConfigurationStorage.horizontalSlideState.inside) {
+                d.leftLinkage.setPosition(0.4);
+                d.rightLinkage.setPosition(0.4);
                 d.rightBox.setPosition(0.4);
                 d.leftBox.setPosition(0.4);
                 boxState = ConfigurationStorage.boxState.halfway;
-            } else if (d.leftLinkage.getPosition() == 0.5 && d.rightLinkage.getPosition() == 0.5) {
+                horizontalSlideState = ConfigurationStorage.horizontalSlideState.halfway;
+            } else if (horizontalSlideState == ConfigurationStorage.horizontalSlideState.halfway) {
                 d.leftLinkage.setPosition(0);
                 d.rightLinkage.setPosition(0);
+                horizontalSlideState = ConfigurationStorage.horizontalSlideState.inside;
             }
         }
 
@@ -152,12 +165,23 @@ public class finalDriveRedWorlds extends LinearOpMode {
         }
 
         //Pressing the right trigger starts the intake and left trigger starts the outtake
-        if (gamepad2.right_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual && intakeSpeed == ConfigurationStorage.intakeSpeed.normal) {
+        if (gamepad2.right_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual) {
+            triggerHeld = ConfigurationStorage.triggerHeld.isBeingHeld;
             d.intake.setPower(gamepad2.right_trigger * 0.8);
-        } else if (gamepad2.left_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual && intakeSpeed == ConfigurationStorage.intakeSpeed.normal) {
+            range = (int) Math.floor(d.intake.getCurrentPosition() / halfWay);
+        } else if (gamepad2.left_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual) {
+            triggerHeld = ConfigurationStorage.triggerHeld.isBeingHeld;
             d.intake.setPower(-gamepad2.left_trigger * 0.95);
+            range = (int) Math.floor(d.intake.getCurrentPosition() / halfWay);
         } else {
-            d.intake.setPower(0);
+            triggerHeld = ConfigurationStorage.triggerHeld.notBeingHeld;
+            if (d.intake.getCurrentPosition() == Math.floor(range * halfWay) || (d.intake.getCurrentPosition() >= (Math.floor(range * halfWay) - lowerBound) && d.intake.getCurrentPosition() <= (Math.floor(range * halfWay) + upperBound))) {
+                d.intake.setPower(0);
+            } else {
+                d.intake.setPower(-0.2);
+                range = (int) Math.floor(d.intake.getCurrentPosition() / halfWay);
+                d.intake.getCurrentPosition();
+            }
         }
 
         //Once the lift goes past a certain tick threshold, the box goes to the halfway point
@@ -186,7 +210,7 @@ public class finalDriveRedWorlds extends LinearOpMode {
                     boxState = ConfigurationStorage.boxState.inside;
                 }
             }
-        } else if (y2Pressed && d.leftLinkage.getPosition() == 0.5 && d.rightLinkage.getPosition() == 0.5){
+        } else if (y2Pressed && horizontalSlideState == ConfigurationStorage.horizontalSlideState.halfway){
             if (boxState == ConfigurationStorage.boxState.inside) {
                 d.rightBox.setPosition(0.4);
                 d.leftBox.setPosition(0.4);
@@ -200,19 +224,6 @@ public class finalDriveRedWorlds extends LinearOpMode {
                 d.leftBox.setPosition(0);
                 boxState = ConfigurationStorage.boxState.inside;
             }
-        }
-
-        if (gamepad2.right_bumper || gamepad2.left_bumper) {
-            intakeSpeed = ConfigurationStorage.intakeSpeed.slow;
-            if (gamepad2.right_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual) {
-                d.intake.setPower(gamepad2.right_trigger * 0.25);
-            } else if (gamepad2.left_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual) {
-                d.intake.setPower(-gamepad2.left_trigger * 0.25);
-            } else {
-                d.intake.setPower(0);
-            }
-        } else {
-            intakeSpeed = ConfigurationStorage.intakeSpeed.normal;
         }
 
         //If the right stick on game-pad 2 is pressed, it restarts the lift motor encoders
@@ -345,7 +356,7 @@ public class finalDriveRedWorlds extends LinearOpMode {
 
     //Function used for the color sensor
     private void colorSensor() {
-        if (d.colors.alpha() > 400 && intakeMode == ConfigurationStorage.intakeMode.manual && runOuttake == ConfigurationStorage.runOuttake.openToRun ) {
+        if (d.colors.alpha() > 400 && intakeMode == ConfigurationStorage.intakeMode.manual && runOuttake == ConfigurationStorage.runOuttake.openToRun && triggerHeld == ConfigurationStorage.triggerHeld.isBeingHeld) {
             outtakeTime.reset();
             intakeMode = ConfigurationStorage.intakeMode.objectDetected;
 
@@ -353,6 +364,7 @@ public class finalDriveRedWorlds extends LinearOpMode {
                 driving();
                 action();
                 d.intake.setPower(-0.95);
+                range = (int) Math.floor(d.intake.getCurrentPosition() / halfWay);
             }
 
             intakeMode = ConfigurationStorage.intakeMode.manual;

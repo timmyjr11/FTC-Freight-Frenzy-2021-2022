@@ -47,13 +47,19 @@ public class ConfigurationStorage {
         objectDetected
     }
 
-    public enum intakeSpeed {
-        normal,
-        slow
-    }
-
     public enum runOuttake {
         openToRun,
         doNotRunAgain
+    }
+
+    public enum triggerHeld {
+        isBeingHeld,
+        notBeingHeld
+    }
+
+    public enum horizontalSlideState {
+        inside,
+        halfway,
+        outside
     }
 }
