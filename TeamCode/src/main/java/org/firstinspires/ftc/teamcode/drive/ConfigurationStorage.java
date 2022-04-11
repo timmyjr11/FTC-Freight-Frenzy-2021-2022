@@ -62,4 +62,14 @@ public class ConfigurationStorage {
         halfway,
         outside
     }
+
+    public enum rightCarouselWheelState {
+        running,
+        notRunning
+    }
+
+    public enum leftCarouselWheelState {
+        running,
+        notRunning
+    }
 }

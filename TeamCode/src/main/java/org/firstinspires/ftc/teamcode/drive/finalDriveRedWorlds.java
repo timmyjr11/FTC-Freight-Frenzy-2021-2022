@@ -47,6 +47,9 @@ public class finalDriveRedWorlds extends LinearOpMode {
     ConfigurationStorage.runOuttake runOuttake = ConfigurationStorage.runOuttake.openToRun;
     ConfigurationStorage.triggerHeld triggerHeld = ConfigurationStorage.triggerHeld.notBeingHeld;
 
+    ConfigurationStorage.rightCarouselWheelState rightCarouselWheelState = ConfigurationStorage.rightCarouselWheelState.notRunning;
+    ConfigurationStorage.leftCarouselWheelState leftCarouselWheelState = ConfigurationStorage.leftCarouselWheelState.notRunning;
+
     //Creates SampleMecanumDrive to be used for Roadrunner
     SampleMecanumDrive d;
 
@@ -118,7 +121,7 @@ public class finalDriveRedWorlds extends LinearOpMode {
         }
 
         //Pressing A activates the horizontal slides
-        if (a2Pressed && d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200){
+        if (a2Pressed && d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200) {
             if (horizontalSlideState == ConfigurationStorage.horizontalSlideState.inside) {
                 d.leftLinkage.setPosition(1);
                 d.rightLinkage.setPosition(1);
@@ -152,13 +155,25 @@ public class finalDriveRedWorlds extends LinearOpMode {
 
         //Pressing right trigger more than halfway activates the right carousel wheel
         if (gamepad1.right_trigger >= 0.5) {
+            rightCarouselWheelState = ConfigurationStorage.rightCarouselWheelState.running;
+        } else {
+            rightCarouselWheelState = ConfigurationStorage.rightCarouselWheelState.notRunning;
+        }
+
+        //Pressing left trigger more than halfway activates the left carousel wheel
+        if (gamepad1.left_trigger >= 0.5) {
+            leftCarouselWheelState = ConfigurationStorage.leftCarouselWheelState.running;
+        } else {
+            leftCarouselWheelState = ConfigurationStorage.leftCarouselWheelState.notRunning;
+        }
+
+        if (rightCarouselWheelState == ConfigurationStorage.rightCarouselWheelState.running) {
             d.rightServoWheel.setPower(1);
         } else {
             d.rightServoWheel.setPower(0);
         }
 
-        //Pressing left trigger more than halfway activates the left carousel wheel
-        if (gamepad1.left_trigger >= 0.5) {
+        if (leftCarouselWheelState == ConfigurationStorage.leftCarouselWheelState.running) {
             d.leftServoWheel.setPower(1);
         } else {
             d.leftServoWheel.setPower(0);
@@ -185,7 +200,7 @@ public class finalDriveRedWorlds extends LinearOpMode {
         }
 
         //Once the lift goes past a certain tick threshold, the box goes to the halfway point
-        if(d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200) {
+        if (d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200) {
             if (gamepad2.dpad_up) {
                 d.rightBox.setPosition(0.4);
                 d.leftBox.setPosition(0.4);
@@ -210,7 +225,7 @@ public class finalDriveRedWorlds extends LinearOpMode {
                     boxState = ConfigurationStorage.boxState.inside;
                 }
             }
-        } else if (y2Pressed && horizontalSlideState == ConfigurationStorage.horizontalSlideState.halfway){
+        } else if (y2Pressed && horizontalSlideState == ConfigurationStorage.horizontalSlideState.halfway) {
             if (boxState == ConfigurationStorage.boxState.inside) {
                 d.rightBox.setPosition(0.4);
                 d.leftBox.setPosition(0.4);
@@ -247,10 +262,10 @@ public class finalDriveRedWorlds extends LinearOpMode {
     }
 
     //Function used for switching powers in driving
-    private void driving(){
-        if (gamepad1.right_bumper){
+    private void driving() {
+        if (gamepad1.right_bumper) {
             power05();
-        } else if (gamepad1.left_bumper){
+        } else if (gamepad1.left_bumper) {
             power025();
         } else {
             power();
@@ -354,21 +369,19 @@ public class finalDriveRedWorlds extends LinearOpMode {
         return output;
     }
 
-    //Function used for the color sensor
+    //Function used for the color sensor to run automatic outtake
     private void colorSensor() {
         if (d.colors.alpha() > 400 && intakeMode == ConfigurationStorage.intakeMode.manual && runOuttake == ConfigurationStorage.runOuttake.openToRun && triggerHeld == ConfigurationStorage.triggerHeld.isBeingHeld) {
             outtakeTime.reset();
             intakeMode = ConfigurationStorage.intakeMode.objectDetected;
 
-            while(outtakeTime.milliseconds() < 500) {
-                driving();
-                action();
+            if (outtakeTime.milliseconds() < 500) {
                 d.intake.setPower(-0.95);
                 range = (int) Math.floor(d.intake.getCurrentPosition() / halfWay);
+            } else {
+                intakeMode = ConfigurationStorage.intakeMode.manual;
+                runOuttake = ConfigurationStorage.runOuttake.doNotRunAgain;
             }
-
-            intakeMode = ConfigurationStorage.intakeMode.manual;
-            runOuttake = ConfigurationStorage.runOuttake.doNotRunAgain;
         }
 
         if (d.colors.alpha() < 400) {
