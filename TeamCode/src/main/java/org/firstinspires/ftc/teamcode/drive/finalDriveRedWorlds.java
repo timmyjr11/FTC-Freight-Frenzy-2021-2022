@@ -58,6 +58,8 @@ public class finalDriveRedWorlds extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        long lastTime = System.currentTimeMillis();
+
         //Hardware maps the SampleMecanumDrive
         d = new SampleMecanumDrive(hardwareMap);
 
@@ -86,6 +88,9 @@ public class finalDriveRedWorlds extends LinearOpMode {
 
         //The loop that allows the code to keep driving and do actions
         while (opModeIsActive() && !isStopRequested()) {
+            long currentSystemTime = System.currentTimeMillis();
+            telemetry.addData("Time between frame: ", (currentSystemTime-lastTime));
+            lastTime = currentSystemTime;
             colorSensor();
             driving();
             action();
