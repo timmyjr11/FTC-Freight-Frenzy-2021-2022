@@ -91,6 +91,7 @@ public class finalDriveRedWorlds extends LinearOpMode {
             long currentSystemTime = System.currentTimeMillis();
             telemetry.addData("Time between frame: ", (currentSystemTime-lastTime));
             lastTime = currentSystemTime;
+            telemetry.update();
             colorSensor();
             driving();
             action();

@@ -38,7 +38,6 @@ public class finalDriveRedSwitchCases extends LinearOpMode {
     boolean y2Pressed;
     boolean r3_2Pressed;
     boolean leftDpad2Pressed;
-
     //Elapsed timer used for the time on the outtake
     ElapsedTime outtakeTime = new ElapsedTime(0);
 
@@ -62,8 +61,6 @@ public class finalDriveRedSwitchCases extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        long lastTime = System.currentTimeMillis();
-
         //Hardware maps the SampleMecanumDrive
         d = new SampleMecanumDrive(hardwareMap);
 
@@ -92,9 +89,6 @@ public class finalDriveRedSwitchCases extends LinearOpMode {
 
         //The loop that allows the code to keep driving and do actions
         while (opModeIsActive() && !isStopRequested()) {
-            long currentSystemTime = System.currentTimeMillis();
-            telemetry.addData("Time between frame: ", (currentSystemTime-lastTime));
-            lastTime = currentSystemTime;
             driving();
             action();
         }
@@ -169,30 +163,18 @@ public class finalDriveRedSwitchCases extends LinearOpMode {
             d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        //Pressing right trigger more than halfway activates the right carousel wheel
-        if (gamepad1.right_trigger >= 0.5) {
-            rightCarouselWheelState = ConfigurationStorage.rightCarouselWheelState.running;
-        } else {
-            rightCarouselWheelState = ConfigurationStorage.rightCarouselWheelState.notRunning;
-        }
-
         //Pressing left trigger more than halfway activates the left carousel wheel
         if (gamepad1.left_trigger >= 0.5) {
-            leftCarouselWheelState = ConfigurationStorage.leftCarouselWheelState.running;
-        } else {
-            leftCarouselWheelState = ConfigurationStorage.leftCarouselWheelState.notRunning;
-        }
-
-        if (rightCarouselWheelState == ConfigurationStorage.rightCarouselWheelState.running) {
-            d.rightServoWheel.setPower(1);
-        } else {
-            d.rightServoWheel.setPower(0);
-        }
-
-        if (leftCarouselWheelState == ConfigurationStorage.leftCarouselWheelState.running) {
             d.leftServoWheel.setPower(1);
         } else {
             d.leftServoWheel.setPower(0);
+        }
+
+        //Pressing right trigger more than halfway activates the right carousel wheel
+        if (gamepad1.right_trigger >= 0.5) {
+            d.rightServoWheel.setPower(-1);
+        } else {
+            d.rightServoWheel.setPower(0);
         }
 
         //Pressing the right trigger starts the intake and left trigger starts the outtake
