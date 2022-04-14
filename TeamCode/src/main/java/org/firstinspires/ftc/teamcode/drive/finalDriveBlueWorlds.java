@@ -5,11 +5,13 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
+
 @Config
 @TeleOp(group = "Main")
 public class finalDriveBlueWorlds extends LinearOpMode {
@@ -58,6 +60,8 @@ public class finalDriveBlueWorlds extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        long lastTime = System.currentTimeMillis();
+
         //Hardware maps the SampleMecanumDrive
         d = new SampleMecanumDrive(hardwareMap);
 
@@ -68,7 +72,7 @@ public class finalDriveBlueWorlds extends LinearOpMode {
         d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Set the pose estimate the robot knows what orientation is for field centric driving
-        d.setPoseEstimate(PoseStorage.telePowerBlue);
+        d.setPoseEstimate(PoseStorage.telePowerRed);
         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         d.leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -153,30 +157,21 @@ public class finalDriveBlueWorlds extends LinearOpMode {
             d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        //Pressing right trigger more than halfway activates the right carousel wheel
-        if (gamepad1.right_trigger >= 0.5) {
-            rightCarouselWheelState = ConfigurationStorage.rightCarouselWheelState.running;
-        } else {
-            rightCarouselWheelState = ConfigurationStorage.rightCarouselWheelState.notRunning;
-        }
-
         //Pressing left trigger more than halfway activates the left carousel wheel
-        if (gamepad1.left_trigger >= 0.5) {
-            leftCarouselWheelState = ConfigurationStorage.leftCarouselWheelState.running;
-        } else {
-            leftCarouselWheelState = ConfigurationStorage.leftCarouselWheelState.notRunning;
-        }
-
-        if (rightCarouselWheelState == ConfigurationStorage.rightCarouselWheelState.running) {
-            d.rightServoWheel.setPower(1);
-        } else {
-            d.rightServoWheel.setPower(0);
-        }
-
-        if (leftCarouselWheelState == ConfigurationStorage.leftCarouselWheelState.running) {
+      /*  if (gamepad1.left_trigger >= 0.5) {
             d.leftServoWheel.setPower(1);
         } else {
             d.leftServoWheel.setPower(0);
+        }
+       */
+
+        //Pressing right trigger more than halfway activates the right carousel wheel
+        if (gamepad1.right_trigger >= 0.5) {
+            d.rightServoWheel.setPower(-1);
+        } else if (gamepad1.left_trigger >= 0.5) {
+            d.rightServoWheel.setPower(1);
+        } else {
+            d.rightServoWheel.setPower(0);
         }
 
         //Pressing the right trigger starts the intake and left trigger starts the outtake
@@ -375,13 +370,15 @@ public class finalDriveBlueWorlds extends LinearOpMode {
             outtakeTime.reset();
             intakeMode = ConfigurationStorage.intakeMode.objectDetected;
 
-            if (outtakeTime.milliseconds() < 500) {
+            while (outtakeTime.milliseconds() < 500) {
+                driving();
+                action();
                 d.intake.setPower(-0.95);
                 range = (int) Math.floor(d.intake.getCurrentPosition() / halfWay);
-            } else {
-                intakeMode = ConfigurationStorage.intakeMode.manual;
-                runOuttake = ConfigurationStorage.runOuttake.doNotRunAgain;
             }
+
+            intakeMode = ConfigurationStorage.intakeMode.manual;
+            runOuttake = ConfigurationStorage.runOuttake.doNotRunAgain;
         }
 
         if (d.colors.alpha() < 400) {

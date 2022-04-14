@@ -11,20 +11,25 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
-
+@Deprecated
+@Disabled
 @Config
 @TeleOp(group = "Main")
-public class finalDriveRedWorlds extends LinearOpMode {
+public class finalDriveBlueWorldsV2 extends LinearOpMode {
 
-    //Variables that allows the lift to hold in place
+    //Variable to allow the motors to switch powers
+    double power;
+
+    //Variables and constants that allows the lift to hold in place
     int rightLiftHeight = 0;
     int leftLiftHeight = 0;
     int topHeight = 1100;
     double halfWay = 192.25;
 
+    // Constants that allow the robot to have the lift always vertical
     int range;
-    public static int upperBound = 20;
-    public static int lowerBound = 25;
+    int upperBound = 20;
+    int lowerBound = 25;
 
     //Booleans that allow the an action to happen once and not cycle if pressed
     ArrayList<Boolean> booleanArray = new ArrayList<>();
@@ -36,7 +41,6 @@ public class finalDriveRedWorlds extends LinearOpMode {
     boolean y2Pressed;
     boolean r3_2Pressed;
     boolean leftDpad2Pressed;
-
     //Elapsed timer used for the time on the outtake
     ElapsedTime outtakeTime = new ElapsedTime(0);
 
@@ -60,8 +64,6 @@ public class finalDriveRedWorlds extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        long lastTime = System.currentTimeMillis();
-
         //Hardware maps the SampleMecanumDrive
         d = new SampleMecanumDrive(hardwareMap);
 
@@ -72,7 +74,7 @@ public class finalDriveRedWorlds extends LinearOpMode {
         d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Set the pose estimate the robot knows what orientation is for field centric driving
-        d.setPoseEstimate(PoseStorage.telePowerRed);
+        d.setPoseEstimate(PoseStorage.telePowerBlue);
         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         d.leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -96,6 +98,7 @@ public class finalDriveRedWorlds extends LinearOpMode {
         }
     }
 
+    //Main function that contains all the actions the robot can do
     private void action() {
 
         //Uses the D-pad for the lift
@@ -126,27 +129,34 @@ public class finalDriveRedWorlds extends LinearOpMode {
 
         //Pressing A activates the horizontal slides
         if (a2Pressed && d.rightLiftMotor.getCurrentPosition() > 200 && d.leftLiftMotor.getCurrentPosition() > 200) {
-            if (horizontalSlideState == ConfigurationStorage.horizontalSlideState.inside) {
-                d.leftLinkage.setPosition(1);
-                d.rightLinkage.setPosition(1);
-                horizontalSlideState = ConfigurationStorage.horizontalSlideState.outside;
-            } else if ((horizontalSlideState == ConfigurationStorage.horizontalSlideState.outside) || (horizontalSlideState == ConfigurationStorage.horizontalSlideState.halfway)) {
-                d.leftLinkage.setPosition(0);
-                d.rightLinkage.setPosition(0);
-                horizontalSlideState = ConfigurationStorage.horizontalSlideState.inside;
+            switch (horizontalSlideState) {
+                case inside:
+                    d.leftLinkage.setPosition(1);
+                    d.rightLinkage.setPosition(1);
+                    horizontalSlideState = ConfigurationStorage.horizontalSlideState.outside;
+                    break;
+                case halfway:
+                case outside:
+                    d.leftLinkage.setPosition(0);
+                    d.rightLinkage.setPosition(0);
+                    horizontalSlideState = ConfigurationStorage.horizontalSlideState.inside;
+                    break;
             }
         } else if (a2Pressed && d.rightLiftMotor.getCurrentPosition() < 200 && d.leftLiftMotor.getCurrentPosition() < 200) {
-            if (horizontalSlideState == ConfigurationStorage.horizontalSlideState.inside) {
-                d.leftLinkage.setPosition(0.4);
-                d.rightLinkage.setPosition(0.4);
-                d.rightBox.setPosition(0.4);
-                d.leftBox.setPosition(0.4);
-                boxState = ConfigurationStorage.boxState.halfway;
-                horizontalSlideState = ConfigurationStorage.horizontalSlideState.halfway;
-            } else if (horizontalSlideState == ConfigurationStorage.horizontalSlideState.halfway) {
-                d.leftLinkage.setPosition(0);
-                d.rightLinkage.setPosition(0);
-                horizontalSlideState = ConfigurationStorage.horizontalSlideState.inside;
+            switch (horizontalSlideState) {
+                case inside:
+                    d.leftLinkage.setPosition(0.4);
+                    d.rightLinkage.setPosition(0.4);
+                    d.rightBox.setPosition(0.4);
+                    d.leftBox.setPosition(0.4);
+                    boxState = ConfigurationStorage.boxState.halfway;
+                    horizontalSlideState = ConfigurationStorage.horizontalSlideState.halfway;
+                    break;
+                case halfway:
+                    d.leftLinkage.setPosition(0);
+                    d.rightLinkage.setPosition(0);
+                    horizontalSlideState = ConfigurationStorage.horizontalSlideState.inside;
+                    break;
             }
         }
 
@@ -206,33 +216,41 @@ public class finalDriveRedWorlds extends LinearOpMode {
                if the motor threshold is below a certain amount and the horizontal slides are halfway,
                move the box and change the box-state */
             if (y2Pressed) {
-                if (boxState == ConfigurationStorage.boxState.inside) {
-                    d.rightBox.setPosition(0.4);
-                    d.leftBox.setPosition(0.4);
-                    boxState = ConfigurationStorage.boxState.halfway;
-                } else if (boxState == ConfigurationStorage.boxState.halfway) {
-                    d.rightBox.setPosition(1);
-                    d.leftBox.setPosition(1);
-                    boxState = ConfigurationStorage.boxState.outside;
-                } else if (boxState == ConfigurationStorage.boxState.outside) {
-                    d.rightBox.setPosition(0);
-                    d.leftBox.setPosition(0);
-                    boxState = ConfigurationStorage.boxState.inside;
+                switch (boxState) {
+                    case inside:
+                        d.rightBox.setPosition(0.4);
+                        d.leftBox.setPosition(0.4);
+                        boxState = ConfigurationStorage.boxState.halfway;
+                        break;
+                    case halfway:
+                        d.rightBox.setPosition(1);
+                        d.leftBox.setPosition(1);
+                        boxState = ConfigurationStorage.boxState.outside;
+                        break;
+                    case outside:
+                        d.rightBox.setPosition(0);
+                        d.leftBox.setPosition(0);
+                        boxState = ConfigurationStorage.boxState.inside;
+                        break;
                 }
             }
         } else if (y2Pressed && horizontalSlideState == ConfigurationStorage.horizontalSlideState.halfway) {
-            if (boxState == ConfigurationStorage.boxState.inside) {
-                d.rightBox.setPosition(0.4);
-                d.leftBox.setPosition(0.4);
-                boxState = ConfigurationStorage.boxState.halfway;
-            } else if (boxState == ConfigurationStorage.boxState.halfway) {
-                d.rightBox.setPosition(1);
-                d.leftBox.setPosition(1);
-                boxState = ConfigurationStorage.boxState.outside;
-            } else if (boxState == ConfigurationStorage.boxState.outside) {
-                d.rightBox.setPosition(0);
-                d.leftBox.setPosition(0);
-                boxState = ConfigurationStorage.boxState.inside;
+            switch (boxState) {
+                case inside:
+                    d.rightBox.setPosition(0.4);
+                    d.leftBox.setPosition(0.4);
+                    boxState = ConfigurationStorage.boxState.halfway;
+                    break;
+                case halfway:
+                    d.rightBox.setPosition(1);
+                    d.leftBox.setPosition(1);
+                    boxState = ConfigurationStorage.boxState.outside;
+                    break;
+                case outside:
+                    d.rightBox.setPosition(0);
+                    d.leftBox.setPosition(0);
+                    boxState = ConfigurationStorage.boxState.inside;
+                    break;
             }
         }
 
@@ -256,19 +274,17 @@ public class finalDriveRedWorlds extends LinearOpMode {
         booleanIncrementer = 0;
     }
 
-    //Function used for switching powers in driving
-    private void driving() {
-        if (gamepad1.right_bumper) {
-            power05();
-        } else if (gamepad1.left_bumper) {
-            power025();
-        } else {
-            power();
-        }
-    }
-
     //Function used to turn stick input into driving the robot
-    private void power() {
+    private void driving() {
+
+        // If statements allow for the changing of the motor power on the fly
+        if (gamepad1.right_bumper) {
+            power = 0.5;
+        } else if (gamepad1.left_bumper) {
+            power = 0.25;
+        } else {
+            power = 1;
+        }
 
         // Read pose
         // Create a vector from the gamepad x/y inputs
@@ -276,8 +292,8 @@ public class finalDriveRedWorlds extends LinearOpMode {
         Pose2d poseEstimate = d.getPoseEstimate();
 
         Vector2d input = new Vector2d(
-                -gamepad1.left_stick_y,
-                -gamepad1.left_stick_x
+                -gamepad1.left_stick_y * power,
+                -gamepad1.left_stick_x * power
         ).rotated(-poseEstimate.getHeading());
 
         // Pass in the rotated input + right stick value for rotation
@@ -286,62 +302,10 @@ public class finalDriveRedWorlds extends LinearOpMode {
                 new Pose2d(
                         input.getX(),
                         input.getY(),
-                        -gamepad1.right_stick_x
+                        -gamepad1.right_stick_x * power
                 )
         );
         // Update everything. Optometry. Etc.
-        d.update();
-    }
-
-    //Function used to turn stick input into driving the robot at half speed
-    private void power05() {
-
-        // Read pose
-        // Create a vector from the gamepad x/y inputs
-        // Then, rotate that vector by the inverse of that heading
-        Pose2d poseEstimate = d.getPoseEstimate();
-
-        Vector2d input = new Vector2d(
-                -gamepad1.left_stick_y * 0.5,
-                -gamepad1.left_stick_x * 0.5
-        ).rotated(-poseEstimate.getHeading());
-
-        // Pass in the rotated input + right stick value for rotation
-        // Rotation is not part of the rotated input thus must be passed in separately
-        d.setWeightedDrivePower(
-                new Pose2d(
-                        input.getX(),
-                        input.getY(),
-                        -gamepad1.right_stick_x * 0.5
-                )
-        );
-        // Update everything. Optometry. Etc.
-        d.update();
-    }
-
-    //Function used to turn stick input into driving the robot at quarter speed
-    private void power025() {
-
-        // Read pose
-        // Create a vector from the gamepad x/y inputs
-        // Then, rotate that vector by the inverse of that heading
-        Pose2d poseEstimate = d.getPoseEstimate();
-
-        Vector2d input = new Vector2d(
-                -gamepad1.left_stick_y * 0.25,
-                -gamepad1.left_stick_x * 0.25
-        ).rotated(-poseEstimate.getHeading());
-
-        // Pass in the rotated input + right stick value for rotation
-        // Rotation is not part of the rotated input thus must be passed in separately
-        d.setWeightedDrivePower(
-                new Pose2d(
-                        input.getX(),
-                        input.getY(),
-                        -gamepad1.right_stick_x * 0.25
-                )
-        );
-        //Update everything. Optometry. Etc.
         d.update();
     }
 

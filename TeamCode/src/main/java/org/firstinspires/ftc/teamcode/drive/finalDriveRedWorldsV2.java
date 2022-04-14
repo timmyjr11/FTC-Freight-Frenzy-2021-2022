@@ -5,14 +5,17 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
+@Deprecated
+@Disabled
 @Config
 @TeleOp(group = "Main")
-public class finalDriveRedSwitchCases extends LinearOpMode {
+public class finalDriveRedWorldsV2 extends LinearOpMode {
 
     //Variable to allow the motors to switch powers
     double power;
@@ -164,15 +167,18 @@ public class finalDriveRedSwitchCases extends LinearOpMode {
         }
 
         //Pressing left trigger more than halfway activates the left carousel wheel
-        if (gamepad1.left_trigger >= 0.5) {
+      /*  if (gamepad1.left_trigger >= 0.5) {
             d.leftServoWheel.setPower(1);
         } else {
             d.leftServoWheel.setPower(0);
         }
+       */
 
         //Pressing right trigger more than halfway activates the right carousel wheel
         if (gamepad1.right_trigger >= 0.5) {
             d.rightServoWheel.setPower(-1);
+        } else if (gamepad1.left_trigger >= 0.5) {
+            d.rightServoWheel.setPower(1);
         } else {
             d.rightServoWheel.setPower(0);
         }
