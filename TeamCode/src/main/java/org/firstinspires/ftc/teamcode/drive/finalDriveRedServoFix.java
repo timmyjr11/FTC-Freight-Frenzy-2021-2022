@@ -5,16 +5,16 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import java.util.ArrayList;
-
+@Disabled
 @Config
 @TeleOp(group = "Main")
-public class finalDriveBlueWorlds extends LinearOpMode {
+public class finalDriveRedServoFix extends LinearOpMode {
 
     //Variables that allows the lift to hold in place
     int rightLiftHeight = 0;
@@ -49,6 +49,9 @@ public class finalDriveBlueWorlds extends LinearOpMode {
     ConfigurationStorage.runOuttake runOuttake = ConfigurationStorage.runOuttake.openToRun;
     ConfigurationStorage.triggerHeld triggerHeld = ConfigurationStorage.triggerHeld.notBeingHeld;
 
+    ConfigurationStorage.rightCarouselWheelState rightCarouselWheelState = ConfigurationStorage.rightCarouselWheelState.notRunning;
+    ConfigurationStorage.leftCarouselWheelState leftCarouselWheelState = ConfigurationStorage.leftCarouselWheelState.notRunning;
+
     //Creates SampleMecanumDrive to be used for Roadrunner
     SampleMecanumDrive d;
 
@@ -57,6 +60,8 @@ public class finalDriveBlueWorlds extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        long lastTime = System.currentTimeMillis();
+
         //Hardware maps the SampleMecanumDrive
         d = new SampleMecanumDrive(hardwareMap);
 
@@ -67,7 +72,7 @@ public class finalDriveBlueWorlds extends LinearOpMode {
         d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Set the pose estimate the robot knows what orientation is for field centric driving
-        d.setPoseEstimate(PoseStorage.telePowerBlue);
+        d.setPoseEstimate(PoseStorage.telePowerRed);
         d.leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         d.rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         d.leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -169,7 +174,7 @@ public class finalDriveBlueWorlds extends LinearOpMode {
         //Pressing the right trigger starts the intake and left trigger starts the outtake
         if (gamepad2.right_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual) {
             triggerHeld = ConfigurationStorage.triggerHeld.isBeingHeld;
-            d.intake.setPower(gamepad2.right_trigger * 0.75);
+            d.intake.setPower(gamepad2.right_trigger * 0.8);
             range = (int) Math.floor(d.intake.getCurrentPosition() / halfWay);
         } else if (gamepad2.left_trigger >= 0.1 && intakeMode == ConfigurationStorage.intakeMode.manual) {
             triggerHeld = ConfigurationStorage.triggerHeld.isBeingHeld;
